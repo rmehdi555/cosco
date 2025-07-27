@@ -17,6 +17,23 @@ class DatabaseSeeder extends Seeder
             ProvinceSeeder::class,
             UserSeeder::class,
             RoleSeeder::class,
+            CategoryArticleSeeder::class,
+            ArticleSeeder::class,
+            AddressSeeder::class,
+            ProductCategorySeeder::class,
+            WishlistSeeder::class,
+            OrderSeeder::class,
+            CouponSeeder::class,
+            CartSeeder::class,
+            PaymentSeeder::class,
+            BrandSeeder::class,
+            ProductSeeder::class,
+            CartItemSeeder::class,
+            ProductReviewSeeder::class,
+            WishlistItemSeeder::class,
+            ProductImageSeeder::class,
+            OrderItemSeeder::class,
+            CouponUsageSeeder::class,
         ]);
     }
 }

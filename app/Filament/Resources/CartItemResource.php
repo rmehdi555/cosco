@@ -18,6 +18,7 @@ use Filament\Tables\Filters\Filter;
 use Filament\Tables\Filters\SelectFilter;
 use Filament\Tables\Table;
 use Illuminate\Database\Eloquent\Builder;
+use App\Enums\CartStatus;
 
 class CartItemResource extends Resource
 {
@@ -198,17 +199,6 @@ class CartItemResource extends Resource
                     ->relationship('cart', 'id')
                     ->searchable(),
 
-                SelectFilter::make('cart_status')
-                    ->label('وضعیت سبد خرید')
-                    ->relationship('cart', 'status')
-                    ->options([
-                        'pending' => 'در انتظار',
-                        'paid' => 'پرداخت شده',
-                        'shipped' => 'ارسال شده',
-                        'delivered' => 'تحویل داده شده',
-                        'cancelled' => 'لغو شده',
-                    ]),
-
                 SelectFilter::make('product')
                     ->label('محصول')
                     ->relationship('product', 'name')
@@ -365,6 +355,7 @@ class CartItemResource extends Resource
 
     public static function canViewAny(): bool
     {
-        return auth()->user()->isAdmin();
+        $user = auth()->user();
+        return $user && $user->isAdmin();
     }
 } 
