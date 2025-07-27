@@ -2,8 +2,11 @@
 
 namespace App\Models;
 
+use App\Enums\OrderStatus;
+use App\Enums\OrderPaymentStatus;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\SoftDeletes;
 
 class Order extends Model
@@ -17,4 +20,20 @@ class Order extends Model
         'payment_status',
         'shipping_address_id',
     ];
+
+    protected $casts = [
+        'total_amount' => 'decimal:2',
+        'status' => OrderStatus::class,
+        'payment_status' => OrderPaymentStatus::class,
+    ];
+
+    public function user(): BelongsTo
+    {
+        return $this->belongsTo(User::class);
+    }
+
+    public function shippingAddress(): BelongsTo
+    {
+        return $this->belongsTo(Address::class, 'shipping_address_id');
+    }
 } 

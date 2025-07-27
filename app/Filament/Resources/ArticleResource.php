@@ -5,10 +5,9 @@ namespace App\Filament\Resources;
 use App\Filament\Resources\ArticleResource\Pages;
 use App\Models\Article;
 use App\Models\User;
-use Filament\Forms\Components\DateTimePicker;
+use App\Models\ArticleCategory;
 use Filament\Forms\Components\FileUpload;
 use Filament\Forms\Components\Grid;
-use Filament\Forms\Components\RichEditor;
 use Filament\Forms\Components\Section;
 use Filament\Forms\Components\Select;
 use Filament\Forms\Components\Textarea;
@@ -47,32 +46,32 @@ class ArticleResource extends Resource
 
                     Grid::make(1)->schema([
                         Grid::make(1)->schema([
-                            TextInput::make('title')->label('عنوان نمایش دهنده گوگل')->columnSpan(2)->required(),
+                            TextInput::make('title')->label('عنوان')->columnSpan(2)->required(),
                         ]),
 
                         Section::make()->schema([
-                            Textarea::make('description')->label('خلاصه')->maxLength(65535)->required(),
+                            Textarea::make('excerpt')->label('خلاصه')->maxLength(65535)->required(),
                             TinyEditor::make('body')->label('متن')->fileAttachmentsDisk('public')->fileAttachmentsVisibility('public')->fileAttachmentsDirectory('uploads')->required()->maxHeight(500),
                         ]),
 
                         Section::make('سئو')->schema([
-                            TextInput::make('seo_title')->label('تایتل صفحه')->maxLength(255),
-                            Textarea::make('seo_description')->label('توضیحات صفحه')->maxLength(65535),
-                            Toggle::make('seo_follow')->label('follow'),
-                            Toggle::make('seo_index')->label('index'),
-                            TextInput::make('seo_canonical')->label('canonical'),
-                            TextInput::make('seo_keyword')->label('کلمه کلیدی '),
-                            TextInput::make('seo_words_concept')->label('کلمات هم کانسپت '),
+                            TextInput::make('seo_title')->label('تایتل صفحه')->maxLength(255)->nullable(),
+                            Textarea::make('seo_description')->label('توضیحات صفحه')->maxLength(65535)->nullable(),
+                            Toggle::make('seo_follow')->label('follow')->default(true),
+                            Toggle::make('seo_index')->label('index')->default(true),
+                            TextInput::make('seo_canonical')->label('canonical')->nullable(),
                         ])->collapsed(),
 
                     ])->columnSpan(2),
 
                     Section::make()->schema([
                         TextInput::make('slug')->label('اسلاگ')->unique(ignoreRecord: true)->maxLength(255)->required(),
-                        Select::make('category_id')->relationship('category', 'title')->label('دسته بندی')->required(),
-                        FileUpload::make('image_name')->image()->label('تصویر')->imageEditor()->required(),
-                        DateTimePicker::make('published_at')->label('تاریخ انتشار')->required(),
-                        Toggle::make('is_show')->label('وضعیت نمایش')->required(),
+                        Select::make('category_id')->relationship('category', 'name')->label('دسته بندی')->required(),
+                        Select::make('user_id')->relationship('user', 'first_name')->label('کاربر')->required(),
+                        FileUpload::make('image_url')->image()->label('تصویر')->imageEditor()->nullable(),
+                        TextInput::make('view_count')->label('تعداد بازدید')->numeric()->default(0),
+                        Toggle::make('is_show')->label('وضعیت نمایش')->default(true),
+                        Toggle::make('is_future')->label('انتشار آینده')->default(false),
                     ])->columnSpan(1),
                 ]),
             ]);
@@ -82,22 +81,23 @@ class ArticleResource extends Resource
     {
         return $table
             ->columns([
-                TextColumn::make('title')->label('عنوان نمایش دهنده گوگل')->searchable(),
-//                TextColumn::make('view_count')->label('تعداد نمایش'),
+                TextColumn::make('title')->label('عنوان')->searchable(),
+                TextColumn::make('view_count')->label('تعداد بازدید'),
                 TextColumn::make('link_view_article')->label('نمایش در سایت ')
                     ->url(fn(Article $article) => config('app.front_url') . "/articles/" . "{$article->slug}")
                     ->getStateUsing(fn(Article $article) => "{$article->slug}")
                     ->openUrlInNewTab()
                     ->icon('heroicon-o-link')
                     ->color('primary'),
-                TextColumn::make('category.title')->label('دسته بندی'),
-                TextColumn::make('author.name')->label('نویسنده'),
+                TextColumn::make('category.name')->label('دسته بندی'),
+                TextColumn::make('user.first_name')->label('کاربر'),
                 IconColumn::make('is_show')->label('وضعیت نمایش')->boolean(),
-                TextColumn::make('published_at')->label('تاریخ انتشار')->dateTime(),
+                IconColumn::make('is_future')->label('انتشار آینده')->boolean(),
                 TextColumn::make('created_at')->label('ایجاد در')->dateTime(),
             ])
             ->filters([
-                SelectFilter::make('category')->label('دسته بندی')->relationship('category', 'title'),
+                SelectFilter::make('category')->label('دسته بندی')->relationship('category', 'name'),
+                SelectFilter::make('user')->label('کاربر')->relationship('user', 'first_name'),
                 Filter::make('title')->form([
                     TextInput::make('title')->label('عنوان'),
                 ])->query(fn(Builder $query, array $data): Builder => $query->when(
@@ -111,13 +111,14 @@ class ArticleResource extends Resource
                     fn(Builder $query, $data): Builder => $query->where('articles.slug', 'like', '%' . $data . '%'),
                 )),
                 Filter::make('is_show')->label('وضعیت نمایش')->toggle(),
+                Filter::make('is_future')->label('انتشار آینده')->toggle(),
             ])
             ->actions([
                 Tables\Actions\EditAction::make(),
                 Tables\Actions\ViewAction::make(),
             ])
             ->bulkActions([
-//                Tables\Actions\DeleteBulkAction::make(),
+                Tables\Actions\DeleteBulkAction::make(),
             ])->defaultSort('created_at', 'desc');
     }
 

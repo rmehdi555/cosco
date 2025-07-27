@@ -18,4 +18,12 @@ class Coupon extends Model
         'max_uses',
         'used_count',
     ];
+
+    protected $casts = [
+        'discount_percent' => 'integer',
+        'discount_amount' => 'decimal:2',
+        'expires_at' => 'datetime',
+        'max_uses' => 'integer',
+        'used_count' => 'integer',
+    ];
 } 

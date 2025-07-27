@@ -20,7 +20,6 @@ return new class extends Migration {
             $table->string('slug')->unique()->index();
             $table->text('excerpt');
             $table->text('body');
-            $table->foreignId('created_by')->constrained('users');
             $table->boolean('is_show')->default('1');
             $table->string('image_url')->nullable();
             $table->bigInteger('view_count')->default('0');

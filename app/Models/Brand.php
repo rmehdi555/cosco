@@ -16,4 +16,8 @@ class Brand extends Model
         'image_url',
         'is_active',
     ];
+
+    protected $casts = [
+        'is_active' => 'boolean',
+    ];
 } 

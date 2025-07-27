@@ -17,17 +17,17 @@ class ArticleCategory extends Model
         'is_show',
         'description',
         'image_url',
+        'seo_title',
+        'seo_description',
+        'seo_follow',
+        'seo_index',
+        'seo_canonical',
     ];
 
     protected $casts = [
         'is_show' => 'boolean',
+        'seo_follow' => 'boolean',
+        'seo_index' => 'boolean',
     ];
-
-    // File relationship removed as it's not in the migration
-
-    public function seo(): MorphOne
-    {
-        return $this->morphOne(Seo::class, 'seoable');
-    }
 
 }
