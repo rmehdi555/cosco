@@ -1,0 +1,22 @@
+<?php
+
+return [
+    'register_success' => 'User registered successfully. Verification code sent to email.',
+    'user_not_found' => 'User not found.',
+    'email_already_verified' => 'Email already verified.',
+    'invalid_verification_code' => 'Invalid verification code.',
+    'verification_code_expired' => 'Verification code expired.',
+    'email_verified_success' => 'Email verified successfully.',
+    'password_reset_code_sent' => 'Password reset code sent to email.',
+    'reset_code_not_found' => 'Reset code not found.',
+    'invalid_reset_code' => 'Invalid reset code.',
+    'reset_code_expired' => 'Reset code expired.',
+    'password_reset_success' => 'Password reset successfully.',
+    'invalid_credentials' => 'Invalid credentials.',
+    'login_success' => 'Login successful.',
+    'verification_email_text' => 'Your verification code: :code',
+    'reset_password_email_text' => 'Your password reset code: :code',
+    'verification_email_subject' => 'Email Verification Code',
+    'reset_password_email_subject' => 'Password Reset Code',
+    'profile_retrieved' => 'Profile information retrieved successfully.',
+]; 

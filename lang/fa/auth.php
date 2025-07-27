@@ -1,0 +1,22 @@
+<?php
+
+return [
+    'register_success' => 'ثبت‌نام با موفقیت انجام شد. کد تایید به ایمیل ارسال شد.',
+    'user_not_found' => 'کاربر یافت نشد.',
+    'email_already_verified' => 'ایمیل قبلاً تایید شده است.',
+    'invalid_verification_code' => 'کد تایید نامعتبر است.',
+    'verification_code_expired' => 'کد تایید منقضی شده است.',
+    'email_verified_success' => 'ایمیل با موفقیت تایید شد.',
+    'password_reset_code_sent' => 'کد بازیابی رمز عبور به ایمیل ارسال شد.',
+    'reset_code_not_found' => 'کد بازیابی یافت نشد.',
+    'invalid_reset_code' => 'کد بازیابی نامعتبر است.',
+    'reset_code_expired' => 'کد بازیابی منقضی شده است.',
+    'password_reset_success' => 'رمز عبور با موفقیت تغییر یافت.',
+    'invalid_credentials' => 'اطلاعات ورود نامعتبر است.',
+    'login_success' => 'ورود با موفقیت انجام شد.',
+    'verification_email_text' => 'کد تایید شما: :code',
+    'reset_password_email_text' => 'کد بازیابی رمز عبور: :code',
+    'verification_email_subject' => 'کد تایید ایمیل',
+    'reset_password_email_subject' => 'کد بازیابی رمز عبور',
+    'profile_retrieved' => 'اطلاعات پروفایل با موفقیت دریافت شد.',
+]; 

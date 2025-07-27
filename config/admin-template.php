@@ -1,0 +1,28 @@
+<?php
+return [
+    'permissions-list' => [
+        'users::view',
+        'user-role::view',
+        'roles::view',
+        'articles::view',
+        'article-categories::view',
+        'products::view',
+        'product-categories::view',
+        'product-images::view',
+        'product-reviews::view',
+        'orders::view',
+        'order-items::view',
+        'payments::view',
+        'coupons::view',
+        'coupon-usages::view',
+        'carts::view',
+        'cart-items::view',
+        'brands::view',
+        'cities::view',
+        'countries::view',
+        'provinces::view',
+        'addresses::view',
+        'wishlists::view',
+        'wishlist-items::view',
+    ],
+];
