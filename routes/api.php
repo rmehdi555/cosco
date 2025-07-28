@@ -7,6 +7,7 @@ use App\Http\Controllers\MembershipController;
 use App\Http\Controllers\OrderController;
 use App\Http\Controllers\OrderItemController;
 use App\Http\Controllers\PaymentController;
+use App\Http\Controllers\CartController;
 
 Route::post('register', [AuthController::class, 'register']);
 Route::post('login', [AuthController::class, 'login']);
@@ -35,6 +36,7 @@ Route::middleware('auth:api')->group(function () {
     
     // Order routes
     Route::get('orders', [OrderController::class, 'index']);
+    Route::post('orders', [OrderController::class, 'store']);
     Route::get('orders/{order}', [OrderController::class, 'show']);
     
     // Order Item routes
@@ -43,6 +45,9 @@ Route::middleware('auth:api')->group(function () {
     // Payment routes
     Route::get('payments', [PaymentController::class, 'index']);
     Route::get('payments/{payment}', [PaymentController::class, 'show']);
+    
+    // Cart routes
+    Route::post('carts', [CartController::class, 'store']);
 });
 
 // Public routes

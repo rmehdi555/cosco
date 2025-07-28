@@ -3,9 +3,17 @@
 namespace App\Http\Controllers;
 
 use App\Http\Resources\OrderResource;
+use App\Http\Requests\CreateOrderRequest;
 use App\Models\Order;
+use App\Models\OrderItem;
+use App\Models\Product;
+use App\Models\Address;
+use App\Enums\OrderStatus;
+use App\Enums\OrderPaymentStatus;
 use Illuminate\Http\Request;
 use Illuminate\Http\Resources\Json\AnonymousResourceCollection;
+use Illuminate\Http\JsonResponse;
+use Illuminate\Support\Facades\DB;
 
 /**
  * @OA\Tag(
@@ -126,5 +134,120 @@ class OrderController extends Controller
         $order->load(['shippingAddress.country', 'shippingAddress.province', 'shippingAddress.city', 'orderItems.product']);
 
         return new OrderResource($order);
+    }
+
+    /**
+     * Create a new order with items
+     * 
+     * @OA\Post(
+     *     path="/api/orders",
+     *     operationId="createOrder",
+     *     tags={"Orders"},
+     *     summary="Create a new order",
+     *     description="Creates a new order with items for the authenticated user",
+     *     security={{"bearerAuth":{}}},
+     *     @OA\RequestBody(
+     *         required=true,
+     *         @OA\JsonContent(ref="#/components/schemas/CreateOrderRequest")
+     *     ),
+     *     @OA\Response(
+     *         response=201,
+     *         description="Order created successfully",
+     *         @OA\JsonContent(
+     *             type="object",
+     *             @OA\Property(property="success", type="boolean", example=true),
+     *             @OA\Property(property="message", type="string", example="سفارش با موفقیت ایجاد شد"),
+     *             @OA\Property(
+     *                 property="data",
+     *                 ref="#/components/schemas/OrderResource"
+     *             )
+     *         )
+     *     ),
+     *     @OA\Response(
+     *         response=400,
+     *         description="Validation error",
+     *         @OA\JsonContent(ref="#/components/schemas/ErrorResponse")
+     *     ),
+     *     @OA\Response(
+     *         response=401,
+     *         description="Unauthenticated",
+     *         @OA\JsonContent(ref="#/components/schemas/ErrorResponse")
+     *     ),
+     *     @OA\Response(
+     *         response=403,
+     *         description="Forbidden - Address does not belong to user",
+     *         @OA\JsonContent(ref="#/components/schemas/ErrorResponse")
+     *     )
+     * )
+     */
+    public function store(CreateOrderRequest $request): JsonResponse
+    {
+        $user = $request->user();
+        $items = $request->validated('items');
+        $shippingAddressId = $request->validated('shipping_address_id');
+
+        // Check if shipping address belongs to the user
+        $shippingAddress = Address::where('id', $shippingAddressId)
+            ->where('user_id', $user->id)
+            ->first();
+
+        if (!$shippingAddress) {
+            return response()->json([
+                'success' => false,
+                'message' => __('orders.shipping_address_not_authorized'),
+            ], 403);
+        }
+
+        try {
+            DB::beginTransaction();
+
+            // Create order
+            $order = Order::create([
+                'user_id' => $user->id,
+                'status' => OrderStatus::PENDING,
+                'total_amount' => 0, // Will be calculated after adding items
+                'payment_status' => OrderPaymentStatus::UNPAID,
+                'shipping_address_id' => $shippingAddressId,
+            ]);
+
+            $totalAmount = 0;
+
+            // Create order items
+            foreach ($items as $item) {
+                $product = Product::findOrFail($item['product_id']);
+                
+                $orderItem = OrderItem::create([
+                    'order_id' => $order->id,
+                    'product_id' => $item['product_id'],
+                    'quantity' => $item['quantity'],
+                    'price' => $product->price,
+                ]);
+
+                $totalAmount += $orderItem->price * $orderItem->quantity;
+            }
+
+            // Update order total amount
+            $order->update(['total_amount' => $totalAmount]);
+
+            // Load relationships for response
+            $order->load(['shippingAddress.country', 'shippingAddress.province', 'shippingAddress.city', 'orderItems.product']);
+
+            DB::commit();
+
+            return response()->json([
+                'success' => true,
+                'message' => __('orders.created_successfully'),
+                'data' => new OrderResource($order),
+            ], 201);
+
+        } catch (\Exception $e) {
+            DB::rollBack();
+            
+            return response()->json([
+                'success' => false,
+                'message' => __('orders.creation_failed'),
+                'error' => $e->getMessage(),
+            ], 500);
+        }
     }
 } 

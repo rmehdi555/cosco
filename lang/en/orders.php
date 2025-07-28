@@ -11,4 +11,21 @@ return [
     // Error Messages
     'order_not_found' => 'Order not found',
     'no_orders_found' => 'No orders found',
+    'creation_failed' => 'Failed to create order',
+    'shipping_address_not_authorized' => 'Shipping address does not belong to you',
+    
+    // Validation Messages
+    'items_required' => 'Order items are required',
+    'items_must_be_array' => 'Items must be an array',
+    'items_min_one' => 'At least one item must be in the order',
+    'product_id_required' => 'Product ID is required',
+    'product_id_must_be_integer' => 'Product ID must be an integer',
+    'product_not_found' => 'Product not found',
+    'quantity_required' => 'Quantity is required',
+    'quantity_must_be_integer' => 'Quantity must be an integer',
+    'quantity_min_one' => 'Quantity must be at least 1',
+    'quantity_max_limit' => 'Quantity cannot be more than 100000',
+    'shipping_address_required' => 'Shipping address is required',
+    'shipping_address_must_be_integer' => 'Shipping address ID must be an integer',
+    'shipping_address_not_found' => 'Shipping address not found',
 ]; 

@@ -653,6 +653,76 @@
                 }
             }
         },
+        "/api/carts": {
+            "post": {
+                "tags": [
+                    "Carts"
+                ],
+                "summary": "Create a new cart",
+                "description": "Creates a new cart with items for the authenticated user",
+                "operationId": "createCart",
+                "requestBody": {
+                    "required": true,
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "$ref": "#/components/schemas/CreateCartRequest"
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "201": {
+                        "description": "Cart created successfully",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "success": {
+                                            "type": "boolean",
+                                            "example": true
+                                        },
+                                        "message": {
+                                            "type": "string",
+                                            "example": "سبد خرید با موفقیت ایجاد شد"
+                                        },
+                                        "data": {
+                                            "$ref": "#/components/schemas/CartResource"
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    },
+                    "400": {
+                        "description": "Validation error",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/ErrorResponse"
+                                }
+                            }
+                        }
+                    },
+                    "401": {
+                        "description": "Unauthenticated",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/ErrorResponse"
+                                }
+                            }
+                        }
+                    }
+                },
+                "security": [
+                    {
+                        "bearerAuth": []
+                    }
+                ]
+            }
+        },
         "/api/countries/tree": {
             "get": {
                 "tags": [
@@ -1000,6 +1070,84 @@
                                         }
                                     },
                                     "type": "object"
+                                }
+                            }
+                        }
+                    }
+                },
+                "security": [
+                    {
+                        "bearerAuth": []
+                    }
+                ]
+            },
+            "post": {
+                "tags": [
+                    "Orders"
+                ],
+                "summary": "Create a new order",
+                "description": "Creates a new order with items for the authenticated user",
+                "operationId": "createOrder",
+                "requestBody": {
+                    "required": true,
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "$ref": "#/components/schemas/CreateOrderRequest"
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "201": {
+                        "description": "Order created successfully",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "success": {
+                                            "type": "boolean",
+                                            "example": true
+                                        },
+                                        "message": {
+                                            "type": "string",
+                                            "example": "سفارش با موفقیت ایجاد شد"
+                                        },
+                                        "data": {
+                                            "$ref": "#/components/schemas/OrderResource"
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    },
+                    "400": {
+                        "description": "Validation error",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/ErrorResponse"
+                                }
+                            }
+                        }
+                    },
+                    "401": {
+                        "description": "Unauthenticated",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/ErrorResponse"
+                                }
+                            }
+                        }
+                    },
+                    "403": {
+                        "description": "Forbidden - Address does not belong to user",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/ErrorResponse"
                                 }
                             }
                         }
@@ -1634,6 +1782,82 @@
     },
     "components": {
         "schemas": {
+            "CreateCartRequest": {
+                "title": "Create Cart Request",
+                "description": "Request schema for creating a new cart",
+                "required": [
+                    "items"
+                ],
+                "properties": {
+                    "items": {
+                        "description": "Array of cart items",
+                        "type": "array",
+                        "items": {
+                            "required": [
+                                "product_id",
+                                "quantity"
+                            ],
+                            "properties": {
+                                "product_id": {
+                                    "description": "Product ID",
+                                    "type": "integer",
+                                    "example": 1
+                                },
+                                "quantity": {
+                                    "description": "Quantity of the product",
+                                    "type": "integer",
+                                    "maximum": 100000,
+                                    "minimum": 1,
+                                    "example": 2
+                                }
+                            },
+                            "type": "object"
+                        }
+                    }
+                },
+                "type": "object"
+            },
+            "CreateOrderRequest": {
+                "title": "Create Order Request",
+                "description": "Request schema for creating a new order",
+                "required": [
+                    "items",
+                    "shipping_address_id"
+                ],
+                "properties": {
+                    "items": {
+                        "description": "Array of order items",
+                        "type": "array",
+                        "items": {
+                            "required": [
+                                "product_id",
+                                "quantity"
+                            ],
+                            "properties": {
+                                "product_id": {
+                                    "description": "Product ID",
+                                    "type": "integer",
+                                    "example": 1
+                                },
+                                "quantity": {
+                                    "description": "Quantity of the product",
+                                    "type": "integer",
+                                    "maximum": 100000,
+                                    "minimum": 1,
+                                    "example": 2
+                                }
+                            },
+                            "type": "object"
+                        }
+                    },
+                    "shipping_address_id": {
+                        "description": "Shipping address ID",
+                        "type": "integer",
+                        "example": 1
+                    }
+                },
+                "type": "object"
+            },
             "ForgotPasswordRequest": {
                 "title": "Forgot Password Request",
                 "description": "Request body for requesting password reset",
@@ -2111,6 +2335,96 @@
                     "is_active": {
                         "type": "boolean",
                         "example": true
+                    }
+                },
+                "type": "object"
+            },
+            "CartItemResource": {
+                "title": "Cart Item Resource",
+                "description": "Cart item resource schema",
+                "properties": {
+                    "id": {
+                        "type": "integer",
+                        "example": 1
+                    },
+                    "cart_id": {
+                        "type": "integer",
+                        "example": 1
+                    },
+                    "product_id": {
+                        "type": "integer",
+                        "example": 1
+                    },
+                    "quantity": {
+                        "type": "integer",
+                        "example": 2
+                    },
+                    "price": {
+                        "type": "number",
+                        "format": "decimal",
+                        "example": 75000
+                    },
+                    "formatted_price": {
+                        "type": "string",
+                        "example": "75,000 ریال"
+                    },
+                    "total_price": {
+                        "type": "number",
+                        "format": "decimal",
+                        "example": 150000
+                    },
+                    "formatted_total_price": {
+                        "type": "string",
+                        "example": "150,000 ریال"
+                    },
+                    "product": {
+                        "$ref": "#/components/schemas/ProductResource"
+                    },
+                    "created_at": {
+                        "type": "string",
+                        "format": "date-time"
+                    },
+                    "updated_at": {
+                        "type": "string",
+                        "format": "date-time"
+                    }
+                },
+                "type": "object"
+            },
+            "CartResource": {
+                "title": "Cart Resource",
+                "description": "Cart resource schema",
+                "properties": {
+                    "id": {
+                        "type": "integer",
+                        "example": 1
+                    },
+                    "user_id": {
+                        "type": "integer",
+                        "example": 1
+                    },
+                    "status": {
+                        "type": "string",
+                        "example": "pending"
+                    },
+                    "status_label": {
+                        "type": "string",
+                        "example": "در انتظار"
+                    },
+                    "total_amount": {
+                        "type": "number",
+                        "format": "decimal",
+                        "example": 150000
+                    },
+                    "formatted_total_amount": {
+                        "type": "string",
+                        "example": "150,000 ریال"
+                    },
+                    "cart_items": {
+                        "type": "array",
+                        "items": {
+                            "$ref": "#/components/schemas/CartItemResource"
+                        }
                     }
                 },
                 "type": "object"
@@ -2721,6 +3035,10 @@
         }
     },
     "tags": [
+        {
+            "name": "Carts",
+            "description": "API endpoints for user carts"
+        },
         {
             "name": "Memberships",
             "description": "API endpoints for user memberships"

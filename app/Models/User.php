@@ -131,6 +131,14 @@ class User extends Authenticatable
     }
 
     /**
+     * Carts relationship
+     */
+    public function carts(): HasMany
+    {
+        return $this->hasMany(Cart::class);
+    }
+
+    /**
      * Get active membership
      */
     public function getActiveMembershipAttribute()
