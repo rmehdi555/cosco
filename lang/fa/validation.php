@@ -14,4 +14,7 @@ return [
     'password_confirmation_required_with' => 'تکرار رمز عبور الزامی است.',
     'password_confirmation_string' => 'تکرار رمز عبور باید متن باشد.',
     'password_confirmation_min' => 'تکرار رمز عبور باید حداقل 8 کاراکتر باشد.',
+    'city_not_in_province' => 'شهر انتخاب شده متعلق به استان انتخاب شده نیست.',
+    'province_not_in_country' => 'استان انتخاب شده متعلق به کشور انتخاب شده نیست.',
+    'address_not_found_or_forbidden' => 'آدرس مورد نظر یافت نشد یا متعلق به شما نیست.',
 ]; 

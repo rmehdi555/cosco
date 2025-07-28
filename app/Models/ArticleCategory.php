@@ -30,4 +30,8 @@ class ArticleCategory extends Model
         'seo_index' => 'boolean',
     ];
 
+    public function articles()
+    {
+        return $this->hasMany(\App\Models\Article::class, 'category_id');
+    }
 }

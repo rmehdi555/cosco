@@ -23,6 +23,7 @@ class Product extends Model
         'is_active',
         'is_featured',
         'is_online_only',
+        'body',
     ];
 
     protected $casts = [

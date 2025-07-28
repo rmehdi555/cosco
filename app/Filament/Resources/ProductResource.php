@@ -26,6 +26,7 @@ use Filament\Tables\Filters\TernaryFilter;
 use Filament\Tables\Table;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Support\Str;
+use Mohamedsabil83\FilamentFormsTinyeditor\Components\TinyEditor;
 
 class ProductResource extends Resource
 {
@@ -108,6 +109,9 @@ class ProductResource extends Resource
                         ->placeholder('توضیحات کامل محصول را وارد کنید')
                         ->helperText('توضیحات کامل محصول برای نمایش به مشتریان'),
                 ]),
+                TinyEditor::make('body')
+                ->label('توضیحات کامل محصول')
+                ->columnSpanFull(),
 
                 Section::make('آلبوم تصاویر')->schema([
                     Repeater::make('images')
@@ -171,7 +175,7 @@ class ProductResource extends Resource
                             ->default(false)
                             ->helperText('آیا این محصول فقط آنلاین فروخته می‌شود؟'),
                     ]),
-                ]),
+                ])
             ]);
     }
 

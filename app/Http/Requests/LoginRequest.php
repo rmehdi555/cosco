@@ -11,8 +11,8 @@ use Illuminate\Foundation\Http\FormRequest;
  *   title="Login Request",
  *   description="Request body for user login",
  *   required={"email","password"},
- *   @OA\Property(property="email", type="string", format="email", example="ali@example.com"),
- *   @OA\Property(property="password", type="string", example="password123"),
+ *   @OA\Property(property="email", type="string", format="email", example="info@cosco.com"),
+ *   @OA\Property(property="password", type="string", example="aA123456"),
  * )
  */
 class LoginRequest extends FormRequest

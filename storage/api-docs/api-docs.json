@@ -15,6 +15,239 @@
         }
     ],
     "paths": {
+        "/api/addresses": {
+            "get": {
+                "tags": [
+                    "Address"
+                ],
+                "summary": "Get all addresses for the authenticated user",
+                "operationId": "33ccea30443418dbab9242aa67931614",
+                "responses": {
+                    "200": {
+                        "description": "List of addresses",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "type": "array",
+                                    "items": {
+                                        "$ref": "#/components/schemas/AddressResource"
+                                    }
+                                }
+                            }
+                        }
+                    }
+                },
+                "security": [
+                    {
+                        "bearerAuth": []
+                    }
+                ]
+            },
+            "post": {
+                "tags": [
+                    "Address"
+                ],
+                "summary": "Create a new address for the authenticated user",
+                "operationId": "5549e34fec9817a9794302a767fc7fde",
+                "requestBody": {
+                    "required": true,
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "$ref": "#/components/schemas/StoreAddressRequest"
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "201": {
+                        "description": "Address created",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/AddressResource"
+                                }
+                            }
+                        }
+                    }
+                },
+                "security": [
+                    {
+                        "bearerAuth": []
+                    }
+                ]
+            }
+        },
+        "/api/addresses/{id}": {
+            "put": {
+                "tags": [
+                    "Address"
+                ],
+                "summary": "Update an address for the authenticated user",
+                "operationId": "2f078db19c8d7e5a374faa4b048e4c45",
+                "parameters": [
+                    {
+                        "name": "id",
+                        "in": "path",
+                        "description": "Address ID",
+                        "required": true,
+                        "schema": {
+                            "type": "integer"
+                        }
+                    }
+                ],
+                "requestBody": {
+                    "required": true,
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "$ref": "#/components/schemas/UpdateAddressRequest"
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "200": {
+                        "description": "Address updated",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/AddressResource"
+                                }
+                            }
+                        }
+                    }
+                },
+                "security": [
+                    {
+                        "bearerAuth": []
+                    }
+                ]
+            }
+        },
+        "/api/article-categories": {
+            "get": {
+                "tags": [
+                    "ArticleCategory"
+                ],
+                "summary": "Get all article categories",
+                "operationId": "924628f36896402054904229c559b321",
+                "responses": {
+                    "200": {
+                        "description": "List of article categories",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "type": "array",
+                                    "items": {
+                                        "$ref": "#/components/schemas/ArticleCategoryResource"
+                                    }
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        },
+        "/api/article-categories/{id}": {
+            "get": {
+                "tags": [
+                    "ArticleCategory"
+                ],
+                "summary": "Get a single article category",
+                "operationId": "5a887ee35e3e546d5885682aa723b722",
+                "parameters": [
+                    {
+                        "name": "id",
+                        "in": "path",
+                        "description": "Category ID",
+                        "required": true,
+                        "schema": {
+                            "type": "integer"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Article category details",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/ArticleCategoryResource"
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        },
+        "/api/articles": {
+            "get": {
+                "tags": [
+                    "Article"
+                ],
+                "summary": "Get all articles (with optional search by title or category)",
+                "operationId": "11aa4cc6561a7b94c56d1201d62513ee",
+                "parameters": [
+                    {
+                        "name": "search",
+                        "in": "query",
+                        "description": "Search in article title or category name/title/slug",
+                        "required": false,
+                        "schema": {
+                            "type": "string"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "List of articles",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "type": "array",
+                                    "items": {
+                                        "$ref": "#/components/schemas/ArticleResource"
+                                    }
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        },
+        "/api/articles/{id}": {
+            "get": {
+                "tags": [
+                    "Article"
+                ],
+                "summary": "Get a single article",
+                "operationId": "b3e529eab04efb5d305b07e2e58d9869",
+                "parameters": [
+                    {
+                        "name": "id",
+                        "in": "path",
+                        "description": "Article ID",
+                        "required": true,
+                        "schema": {
+                            "type": "integer"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Article details",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/ArticleResource"
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        },
         "/api/register": {
             "post": {
                 "tags": [
@@ -396,6 +629,54 @@
                 ]
             }
         },
+        "/api/brands": {
+            "get": {
+                "tags": [
+                    "Brand"
+                ],
+                "summary": "Get all active brands",
+                "operationId": "3c41aa2e65314941e37a634e810c5f73",
+                "responses": {
+                    "200": {
+                        "description": "List of active brands",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "type": "array",
+                                    "items": {
+                                        "$ref": "#/components/schemas/BrandResource"
+                                    }
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        },
+        "/api/countries/tree": {
+            "get": {
+                "tags": [
+                    "Country"
+                ],
+                "summary": "Get all countries with their provinces and cities",
+                "operationId": "1fdd4fb266aaa1d3b61e7657f5637d4b",
+                "responses": {
+                    "200": {
+                        "description": "List of countries with provinces and cities",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "type": "array",
+                                    "items": {
+                                        "$ref": "#/components/schemas/CountryResource"
+                                    }
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        },
         "/api/product-categories/tree": {
             "get": {
                 "tags": [
@@ -462,6 +743,278 @@
                     }
                 }
             }
+        },
+        "/api/products/{id}": {
+            "get": {
+                "tags": [
+                    "Product"
+                ],
+                "summary": "Get a single product with category, brand, and reviews",
+                "operationId": "7ab21ddb713501f3d4c2914892c02a21",
+                "parameters": [
+                    {
+                        "name": "id",
+                        "in": "path",
+                        "description": "Product ID",
+                        "required": true,
+                        "schema": {
+                            "type": "integer"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Product details",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/ProductResource"
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        },
+        "/api/wishlists": {
+            "get": {
+                "tags": [
+                    "Wishlist"
+                ],
+                "summary": "Get all wishlists for the authenticated user",
+                "operationId": "978401ca2ca07b592255725cd25a443d",
+                "responses": {
+                    "200": {
+                        "description": "List of wishlists",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "type": "array",
+                                    "items": {
+                                        "$ref": "#/components/schemas/WishlistResource"
+                                    }
+                                }
+                            }
+                        }
+                    }
+                },
+                "security": [
+                    {
+                        "bearerAuth": []
+                    }
+                ]
+            },
+            "post": {
+                "tags": [
+                    "Wishlist"
+                ],
+                "summary": "Create a new wishlist for the authenticated user",
+                "operationId": "4bdf63de7775026077073b1069c45f64",
+                "requestBody": {
+                    "required": true,
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "$ref": "#/components/schemas/StoreWishlistRequest"
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "201": {
+                        "description": "Wishlist created",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/WishlistResource"
+                                }
+                            }
+                        }
+                    }
+                },
+                "security": [
+                    {
+                        "bearerAuth": []
+                    }
+                ]
+            }
+        },
+        "/api/wishlists/{id}": {
+            "get": {
+                "tags": [
+                    "Wishlist"
+                ],
+                "summary": "Get a single wishlist for the authenticated user (with items)",
+                "operationId": "b3cf1f24ca007a63db3f93f3e5e824d1",
+                "parameters": [
+                    {
+                        "name": "id",
+                        "in": "path",
+                        "description": "Wishlist ID",
+                        "required": true,
+                        "schema": {
+                            "type": "integer"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Wishlist details",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/WishlistResource"
+                                }
+                            }
+                        }
+                    }
+                },
+                "security": [
+                    {
+                        "bearerAuth": []
+                    }
+                ]
+            },
+            "put": {
+                "tags": [
+                    "Wishlist"
+                ],
+                "summary": "Update a wishlist for the authenticated user",
+                "operationId": "d716f58b19d41444916708b6e9eac2c2",
+                "parameters": [
+                    {
+                        "name": "id",
+                        "in": "path",
+                        "description": "Wishlist ID",
+                        "required": true,
+                        "schema": {
+                            "type": "integer"
+                        }
+                    }
+                ],
+                "requestBody": {
+                    "required": true,
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "$ref": "#/components/schemas/UpdateWishlistRequest"
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "200": {
+                        "description": "Wishlist updated",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/WishlistResource"
+                                }
+                            }
+                        }
+                    }
+                },
+                "security": [
+                    {
+                        "bearerAuth": []
+                    }
+                ]
+            }
+        },
+        "/api/wishlists/{wishlist}/items": {
+            "post": {
+                "tags": [
+                    "WishlistItem"
+                ],
+                "summary": "Add a product to a wishlist for the authenticated user",
+                "operationId": "ad0adfa92891c1c2ca1f9bbc64aff8a8",
+                "parameters": [
+                    {
+                        "name": "wishlist",
+                        "in": "path",
+                        "description": "Wishlist ID",
+                        "required": true,
+                        "schema": {
+                            "type": "integer"
+                        }
+                    }
+                ],
+                "requestBody": {
+                    "required": true,
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "required": [
+                                    "product_id"
+                                ],
+                                "properties": {
+                                    "product_id": {
+                                        "type": "integer",
+                                        "example": 3
+                                    }
+                                },
+                                "type": "object"
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "201": {
+                        "description": "Wishlist item created",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/WishlistItemResource"
+                                }
+                            }
+                        }
+                    }
+                },
+                "security": [
+                    {
+                        "bearerAuth": []
+                    }
+                ]
+            }
+        },
+        "/api/wishlists/{wishlist}/items/{item}": {
+            "delete": {
+                "tags": [
+                    "WishlistItem"
+                ],
+                "summary": "Remove a product from a wishlist for the authenticated user",
+                "operationId": "a59bd8683a9b5851675edff8b3f86fd0",
+                "parameters": [
+                    {
+                        "name": "wishlist",
+                        "in": "path",
+                        "description": "Wishlist ID",
+                        "required": true,
+                        "schema": {
+                            "type": "integer"
+                        }
+                    },
+                    {
+                        "name": "item",
+                        "in": "path",
+                        "description": "Wishlist Item ID",
+                        "required": true,
+                        "schema": {
+                            "type": "integer"
+                        }
+                    }
+                ],
+                "responses": {
+                    "204": {
+                        "description": "Wishlist item deleted"
+                    }
+                },
+                "security": [
+                    {
+                        "bearerAuth": []
+                    }
+                ]
+            }
         }
     },
     "components": {
@@ -492,11 +1045,11 @@
                     "email": {
                         "type": "string",
                         "format": "email",
-                        "example": "ali@example.com"
+                        "example": "info@cosco.com"
                     },
                     "password": {
                         "type": "string",
-                        "example": "password123"
+                        "example": "aA123456"
                     }
                 },
                 "type": "object"
@@ -570,6 +1123,118 @@
                 },
                 "type": "object"
             },
+            "StoreAddressRequest": {
+                "required": [
+                    "country_id",
+                    "province_id",
+                    "city_id",
+                    "postal_code",
+                    "plaque",
+                    "address",
+                    "phone"
+                ],
+                "properties": {
+                    "country_id": {
+                        "type": "integer",
+                        "example": 1
+                    },
+                    "province_id": {
+                        "type": "integer",
+                        "example": 1
+                    },
+                    "city_id": {
+                        "type": "integer",
+                        "example": 1
+                    },
+                    "postal_code": {
+                        "type": "string",
+                        "example": "1234567890"
+                    },
+                    "plaque": {
+                        "type": "string",
+                        "example": "12"
+                    },
+                    "address": {
+                        "type": "string",
+                        "example": "خیابان انقلاب، پلاک 12"
+                    },
+                    "phone": {
+                        "type": "string",
+                        "example": "02112345678"
+                    },
+                    "is_default": {
+                        "type": "boolean",
+                        "example": true
+                    },
+                    "is_active": {
+                        "type": "boolean",
+                        "example": true
+                    }
+                },
+                "type": "object"
+            },
+            "StoreWishlistRequest": {
+                "required": [
+                    "name"
+                ],
+                "properties": {
+                    "name": {
+                        "type": "string",
+                        "example": "لیست علاقه‌مندی‌ها"
+                    }
+                },
+                "type": "object"
+            },
+            "UpdateAddressRequest": {
+                "properties": {
+                    "country_id": {
+                        "type": "integer",
+                        "example": 1
+                    },
+                    "province_id": {
+                        "type": "integer",
+                        "example": 10
+                    },
+                    "city_id": {
+                        "type": "integer",
+                        "example": 100
+                    },
+                    "postal_code": {
+                        "type": "string",
+                        "example": "1234567890"
+                    },
+                    "plaque": {
+                        "type": "string",
+                        "example": "12"
+                    },
+                    "address": {
+                        "type": "string",
+                        "example": "خیابان انقلاب، پلاک 12"
+                    },
+                    "phone": {
+                        "type": "string",
+                        "example": "02112345678"
+                    },
+                    "is_default": {
+                        "type": "boolean",
+                        "example": true
+                    },
+                    "is_active": {
+                        "type": "boolean",
+                        "example": true
+                    }
+                },
+                "type": "object"
+            },
+            "UpdateWishlistRequest": {
+                "properties": {
+                    "name": {
+                        "type": "string",
+                        "example": "لیست علاقه‌مندی‌ها"
+                    }
+                },
+                "type": "object"
+            },
             "VerifyEmailRequest": {
                 "title": "Verify Email Request",
                 "description": "Request body for verifying user email",
@@ -586,6 +1251,302 @@
                     "code": {
                         "type": "string",
                         "example": "1234"
+                    }
+                },
+                "type": "object"
+            },
+            "AddressResource": {
+                "title": "Address Resource",
+                "description": "User address resource representation",
+                "properties": {
+                    "id": {
+                        "type": "integer",
+                        "example": 1
+                    },
+                    "user_id": {
+                        "type": "integer",
+                        "example": 2
+                    },
+                    "country_id": {
+                        "type": "integer",
+                        "example": 1
+                    },
+                    "province_id": {
+                        "type": "integer",
+                        "example": 10
+                    },
+                    "city_id": {
+                        "type": "integer",
+                        "example": 100
+                    },
+                    "postal_code": {
+                        "type": "string",
+                        "example": "1234567890"
+                    },
+                    "plaque": {
+                        "type": "string",
+                        "example": "12"
+                    },
+                    "address": {
+                        "type": "string",
+                        "example": "خیابان انقلاب، پلاک 12"
+                    },
+                    "phone": {
+                        "type": "string",
+                        "example": "02112345678"
+                    },
+                    "is_default": {
+                        "type": "boolean",
+                        "example": true
+                    },
+                    "is_active": {
+                        "type": "boolean",
+                        "example": true
+                    },
+                    "country": {
+                        "$ref": "#/components/schemas/CountryResource"
+                    },
+                    "province": {
+                        "$ref": "#/components/schemas/ProvinceResource"
+                    },
+                    "city": {
+                        "$ref": "#/components/schemas/CityResource"
+                    },
+                    "created_at": {
+                        "type": "string",
+                        "format": "date-time",
+                        "example": "2024-07-27T12:34:56Z"
+                    },
+                    "updated_at": {
+                        "type": "string",
+                        "format": "date-time",
+                        "example": "2024-07-27T12:34:56Z"
+                    }
+                },
+                "type": "object"
+            },
+            "ArticleCategoryResource": {
+                "title": "Article Category Resource",
+                "description": "Article category resource representation",
+                "properties": {
+                    "id": {
+                        "type": "integer",
+                        "example": 1
+                    },
+                    "name": {
+                        "type": "string",
+                        "example": "اخبار سایت"
+                    },
+                    "slug": {
+                        "type": "string",
+                        "example": "news"
+                    },
+                    "is_show": {
+                        "type": "boolean",
+                        "example": true
+                    },
+                    "description": {
+                        "type": "string",
+                        "example": "دسته اخبار سایت"
+                    },
+                    "image_url": {
+                        "type": "string",
+                        "example": "http://localhost:8000/storage/articles/news.jpg"
+                    },
+                    "seo_title": {
+                        "type": "string",
+                        "example": "سئو اخبار سایت"
+                    },
+                    "seo_description": {
+                        "type": "string",
+                        "example": "توضیحات سئو اخبار سایت"
+                    },
+                    "seo_follow": {
+                        "type": "boolean",
+                        "example": true
+                    },
+                    "seo_index": {
+                        "type": "boolean",
+                        "example": true
+                    },
+                    "seo_canonical": {
+                        "type": "string",
+                        "example": "https://example.com/news"
+                    },
+                    "articles": {
+                        "type": "array",
+                        "items": {
+                            "$ref": "#/components/schemas/ArticleResource"
+                        }
+                    },
+                    "created_at": {
+                        "type": "string",
+                        "format": "date-time",
+                        "example": "2024-07-27T12:34:56Z"
+                    },
+                    "updated_at": {
+                        "type": "string",
+                        "format": "date-time",
+                        "example": "2024-07-27T12:34:56Z"
+                    }
+                },
+                "type": "object"
+            },
+            "ArticleResource": {
+                "title": "Article Resource",
+                "description": "Article resource representation",
+                "properties": {
+                    "id": {
+                        "type": "integer",
+                        "example": 1
+                    },
+                    "category_id": {
+                        "type": "integer",
+                        "example": 2
+                    },
+                    "user_id": {
+                        "type": "integer",
+                        "example": 1
+                    },
+                    "title": {
+                        "type": "string",
+                        "example": "عنوان مقاله"
+                    },
+                    "slug": {
+                        "type": "string",
+                        "example": "article-title"
+                    },
+                    "excerpt": {
+                        "type": "string",
+                        "example": "خلاصه مقاله"
+                    },
+                    "body": {
+                        "type": "string",
+                        "example": "متن کامل مقاله"
+                    },
+                    "is_show": {
+                        "type": "boolean",
+                        "example": true
+                    },
+                    "image_url": {
+                        "type": "string",
+                        "example": "http://localhost:8000/storage/articles/article.jpg"
+                    },
+                    "view_count": {
+                        "type": "integer",
+                        "example": 123
+                    },
+                    "is_future": {
+                        "type": "boolean",
+                        "example": false
+                    },
+                    "seo_title": {
+                        "type": "string",
+                        "example": "سئو مقاله"
+                    },
+                    "seo_description": {
+                        "type": "string",
+                        "example": "توضیحات سئو مقاله"
+                    },
+                    "seo_follow": {
+                        "type": "boolean",
+                        "example": true
+                    },
+                    "seo_index": {
+                        "type": "boolean",
+                        "example": true
+                    },
+                    "seo_canonical": {
+                        "type": "string",
+                        "example": "https://example.com/article"
+                    },
+                    "created_at": {
+                        "type": "string",
+                        "format": "date-time",
+                        "example": "2024-07-27T12:34:56Z"
+                    },
+                    "updated_at": {
+                        "type": "string",
+                        "format": "date-time",
+                        "example": "2024-07-27T12:34:56Z"
+                    }
+                },
+                "type": "object"
+            },
+            "BrandResource": {
+                "title": "Brand Resource",
+                "description": "Brand resource representation",
+                "properties": {
+                    "id": {
+                        "type": "integer",
+                        "example": 1
+                    },
+                    "name": {
+                        "type": "string",
+                        "example": "سامسونگ"
+                    },
+                    "slug": {
+                        "type": "string",
+                        "example": "samsung"
+                    },
+                    "image_url": {
+                        "type": "string",
+                        "example": "/storage/brands/samsung.jpg"
+                    },
+                    "is_active": {
+                        "type": "boolean",
+                        "example": true
+                    }
+                },
+                "type": "object"
+            },
+            "CityResource": {
+                "title": "City Resource",
+                "description": "City resource representation",
+                "properties": {
+                    "id": {
+                        "type": "integer",
+                        "example": 1
+                    },
+                    "province_id": {
+                        "type": "integer",
+                        "example": 1
+                    },
+                    "title_fa": {
+                        "type": "string",
+                        "example": "تهران"
+                    },
+                    "title_en": {
+                        "type": "string",
+                        "example": "Tehran"
+                    },
+                    "province": {
+                        "$ref": "#/components/schemas/ProvinceResource"
+                    }
+                },
+                "type": "object"
+            },
+            "CountryResource": {
+                "title": "Country Resource",
+                "description": "Country resource representation",
+                "properties": {
+                    "id": {
+                        "type": "integer",
+                        "example": 1
+                    },
+                    "title_fa": {
+                        "type": "string",
+                        "example": "ایران"
+                    },
+                    "title_en": {
+                        "type": "string",
+                        "example": "Iran"
+                    },
+                    "provinces": {
+                        "type": "array",
+                        "items": {
+                            "$ref": "#/components/schemas/ProvinceResource"
+                        }
                     }
                 },
                 "type": "object"
@@ -660,6 +1621,10 @@
                         "type": "string",
                         "example": "توضیحات محصول"
                     },
+                    "body": {
+                        "type": "string",
+                        "example": "توضیحات کامل محصول"
+                    },
                     "price": {
                         "type": "number",
                         "format": "float",
@@ -687,6 +1652,86 @@
                             "type": "string",
                             "format": "url",
                             "example": "http://localhost:8000/storage/products/image1.jpg"
+                        }
+                    },
+                    "brand": {
+                        "$ref": "#/components/schemas/BrandResource"
+                    },
+                    "category": {
+                        "$ref": "#/components/schemas/ProductCategoryResource"
+                    },
+                    "reviews": {
+                        "type": "array",
+                        "items": {
+                            "$ref": "#/components/schemas/ProductReviewResource"
+                        }
+                    }
+                },
+                "type": "object"
+            },
+            "ProductReviewResource": {
+                "title": "Product Review Resource",
+                "description": "Product review resource representation",
+                "properties": {
+                    "id": {
+                        "type": "integer",
+                        "example": 1
+                    },
+                    "user_id": {
+                        "type": "integer",
+                        "example": 2
+                    },
+                    "product_id": {
+                        "type": "integer",
+                        "example": 3
+                    },
+                    "rating": {
+                        "type": "integer",
+                        "example": 5
+                    },
+                    "comment": {
+                        "type": "string",
+                        "example": "عالی بود!"
+                    },
+                    "approved": {
+                        "type": "boolean",
+                        "example": true
+                    },
+                    "parent_id": {
+                        "type": "integer",
+                        "example": null,
+                        "nullable": true
+                    }
+                },
+                "type": "object"
+            },
+            "ProvinceResource": {
+                "title": "Province Resource",
+                "description": "Province resource representation",
+                "properties": {
+                    "id": {
+                        "type": "integer",
+                        "example": 1
+                    },
+                    "country_id": {
+                        "type": "integer",
+                        "example": 1
+                    },
+                    "title_fa": {
+                        "type": "string",
+                        "example": "تهران"
+                    },
+                    "title_en": {
+                        "type": "string",
+                        "example": "Tehran"
+                    },
+                    "country": {
+                        "$ref": "#/components/schemas/CountryResource"
+                    },
+                    "cities": {
+                        "type": "array",
+                        "items": {
+                            "$ref": "#/components/schemas/CityResource"
                         }
                     }
                 },
@@ -751,6 +1796,53 @@
                     }
                 },
                 "type": "object"
+            },
+            "WishlistItemResource": {
+                "title": "Wishlist Item Resource",
+                "description": "Wishlist item resource representation",
+                "properties": {
+                    "id": {
+                        "type": "integer",
+                        "example": 1
+                    },
+                    "wishlist_id": {
+                        "type": "integer",
+                        "example": 2
+                    },
+                    "product_id": {
+                        "type": "integer",
+                        "example": 3
+                    },
+                    "product": {
+                        "$ref": "#/components/schemas/ProductResource"
+                    }
+                },
+                "type": "object"
+            },
+            "WishlistResource": {
+                "title": "Wishlist Resource",
+                "description": "Wishlist resource representation",
+                "properties": {
+                    "id": {
+                        "type": "integer",
+                        "example": 1
+                    },
+                    "name": {
+                        "type": "string",
+                        "example": "لیست علاقه‌مندی‌ها"
+                    },
+                    "user_id": {
+                        "type": "integer",
+                        "example": 2
+                    },
+                    "items": {
+                        "type": "array",
+                        "items": {
+                            "$ref": "#/components/schemas/WishlistItemResource"
+                        }
+                    }
+                },
+                "type": "object"
             }
         },
         "securitySchemes": {
@@ -763,6 +1855,18 @@
     },
     "tags": [
         {
+            "name": "Address",
+            "description": "Address"
+        },
+        {
+            "name": "ArticleCategory",
+            "description": "ArticleCategory"
+        },
+        {
+            "name": "Article",
+            "description": "Article"
+        },
+        {
             "name": "Authentication",
             "description": "Authentication"
         },
@@ -771,8 +1875,28 @@
             "description": "Profile"
         },
         {
+            "name": "Brand",
+            "description": "Brand"
+        },
+        {
+            "name": "Country",
+            "description": "Country"
+        },
+        {
             "name": "ProductCategory",
             "description": "ProductCategory"
+        },
+        {
+            "name": "Product",
+            "description": "Product"
+        },
+        {
+            "name": "Wishlist",
+            "description": "Wishlist"
+        },
+        {
+            "name": "WishlistItem",
+            "description": "WishlistItem"
         }
     ]
 }

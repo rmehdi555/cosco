@@ -16,12 +16,16 @@ use Illuminate\Http\Resources\Json\JsonResource;
  *   @OA\Property(property="name", type="string", example="گوشی موبایل سامسونگ"),
  *   @OA\Property(property="slug", type="string", example="samsung-mobile"),
  *   @OA\Property(property="description", type="string", example="توضیحات محصول"),
+ *   @OA\Property(property="body", type="string", example="توضیحات کامل محصول"),
  *   @OA\Property(property="price", type="number", format="float", example=12990000),
  *   @OA\Property(property="stock", type="integer", example=10),
  *   @OA\Property(property="is_active", type="boolean", example=true),
  *   @OA\Property(property="is_featured", type="boolean", example=false),
  *   @OA\Property(property="is_online_only", type="boolean", example=false),
  *   @OA\Property(property="images", type="array", @OA\Items(type="string", format="url", example="http://localhost:8000/storage/products/image1.jpg")),
+ *   @OA\Property(property="brand", ref="#/components/schemas/BrandResource"),
+ *   @OA\Property(property="category", ref="#/components/schemas/ProductCategoryResource"),
+ *   @OA\Property(property="reviews", type="array", @OA\Items(ref="#/components/schemas/ProductReviewResource")),
  * )
  */
 class ProductResource extends JsonResource
@@ -35,6 +39,7 @@ class ProductResource extends JsonResource
             'name' => $this->name,
             'slug' => $this->slug,
             'description' => $this->description,
+            'body' => $this->body,
             'price' => $this->price,
             'stock' => $this->stock,
             'is_active' => $this->is_active,
@@ -45,6 +50,9 @@ class ProductResource extends JsonResource
                     return $img->image_url ? asset('storage/' . $img->image_url) : null;
                 })->filter()->values();
             }, []),
+            'brand' => new BrandResource($this->whenLoaded('brand')),
+            'category' => new ProductCategoryResource($this->whenLoaded('category')),
+            'reviews' => ProductReviewResource::collection($this->whenLoaded('reviews')),
         ];
     }
 } 
