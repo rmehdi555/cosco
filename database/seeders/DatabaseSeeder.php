@@ -34,6 +34,8 @@ class DatabaseSeeder extends Seeder
             ProductImageSeeder::class,
             OrderItemSeeder::class,
             CouponUsageSeeder::class,
+            MembershipTypeSeeder::class,
+            MembershipSeeder::class,
         ]);
     }
 }

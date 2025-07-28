@@ -79,14 +79,14 @@ class CartItemResource extends Resource
                             ->label('قیمت واحد')
                             ->numeric()
                             ->minValue(0)
-                            ->prefix('تومان')
+                            ->prefix('ریال')
                             ->required()
                             ->helperText('قیمت هر واحد محصول'),
 
                         TextInput::make('total_price')
                             ->label('قیمت کل')
                             ->disabled()
-                            ->prefix('تومان')
+                            ->prefix('ریال')
                             ->helperText('قیمت کل = تعداد × قیمت واحد')
                             ->dehydrated(false)
                             ->afterStateHydrated(function (TextInput $component, $state) {

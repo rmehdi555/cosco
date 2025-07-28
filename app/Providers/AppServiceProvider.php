@@ -19,6 +19,9 @@ class AppServiceProvider extends ServiceProvider
      */
     public function boot(): void
     {
-        //
+        // Load Swagger schemas
+        if (class_exists('\App\Http\Resources\SwaggerSchemas')) {
+            new \App\Http\Resources\SwaggerSchemas();
+        }
     }
 }

@@ -88,9 +88,9 @@ class ProductResource extends Resource
                             ->label('قیمت')
                             ->numeric()
                             ->minValue(0)
-                            ->prefix('تومان')
+                            ->prefix('ریال')
                             ->required()
-                            ->helperText('قیمت محصول به تومان'),
+                            ->helperText('قیمت محصول به ریال'),
 
                         TextInput::make('stock')
                             ->label('موجودی')

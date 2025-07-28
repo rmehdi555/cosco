@@ -73,7 +73,7 @@ class CouponResource extends Resource
                             ->label('مبلغ تخفیف')
                             ->numeric()
                             ->minValue(0)
-                            ->prefix('تومان')
+                            ->prefix('ریال')
                             ->visible(fn (callable $get) => !$get('is_percentage'))
                             ->required(fn (callable $get) => !$get('is_percentage')),
                     ])->columnSpan(1),

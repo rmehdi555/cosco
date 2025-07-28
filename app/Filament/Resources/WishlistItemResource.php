@@ -64,7 +64,7 @@ class WishlistItemResource extends Resource
 
                         TextColumn::make('product_price')
                             ->label('قیمت محصول')
-                            ->state(fn ($record) => $record?->product?->price ? number_format($record->product->price) . ' تومان' : 'نامشخص')
+                            ->state(fn ($record) => $record?->product?->price ? number_format($record->product->price) . ' ریال' : 'نامشخص')
                             ->disabled()
                             ->helperText('قیمت فعلی محصول'),
                     ])->columnSpan(1),

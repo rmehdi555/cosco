@@ -2,6 +2,11 @@
 
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\AuthController;
+use App\Http\Controllers\MembershipTypeController;
+use App\Http\Controllers\MembershipController;
+use App\Http\Controllers\OrderController;
+use App\Http\Controllers\OrderItemController;
+use App\Http\Controllers\PaymentController;
 
 Route::post('register', [AuthController::class, 'register']);
 Route::post('login', [AuthController::class, 'login']);
@@ -22,7 +27,27 @@ Route::middleware('auth:api')->group(function () {
     Route::post('wishlists/{wishlist}/items', [\App\Http\Controllers\WishlistItemController::class, 'store']);
     Route::delete('wishlists/{wishlist}/items/{item}', [\App\Http\Controllers\WishlistItemController::class, 'destroy']);
     Route::get('wishlists/{id}', [\App\Http\Controllers\WishlistController::class, 'show']);
+    
+    // Membership routes
+    Route::get('memberships', [MembershipController::class, 'index']);
+    Route::get('memberships/status', [MembershipController::class, 'status']);
+    Route::get('memberships/{membership}', [MembershipController::class, 'show']);
+    
+    // Order routes
+    Route::get('orders', [OrderController::class, 'index']);
+    Route::get('orders/{order}', [OrderController::class, 'show']);
+    
+    // Order Item routes
+    Route::get('order-items/{orderItem}', [OrderItemController::class, 'show']);
+    
+    // Payment routes
+    Route::get('payments', [PaymentController::class, 'index']);
+    Route::get('payments/{payment}', [PaymentController::class, 'show']);
 });
+
+// Public routes
+Route::get('membership-types', [MembershipTypeController::class, 'index']);
+Route::get('membership-types/{membershipType}', [MembershipTypeController::class, 'show']);
 
 Route::get('product-categories/tree', [\App\Http\Controllers\ProductCategoryController::class, 'tree']);
 Route::get('product-categories/{id}/with-products', [\App\Http\Controllers\ProductCategoryController::class, 'showWithProducts']);

@@ -54,7 +54,7 @@ class CartResource extends Resource
                     ->label('مبلغ کل')
                     ->numeric()
                     ->minValue(0)
-                    ->prefix('تومان')
+                    ->prefix('ریال')
                     ->required()
                     ->helperText('مبلغ کل سبد خرید'),
             ]);

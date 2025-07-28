@@ -82,7 +82,7 @@ class PaymentResource extends Resource
                             ->label('مبلغ پرداخت')
                             ->numeric()
                             ->minValue(0)
-                            ->prefix('تومان')
+                            ->prefix('ریال')
                             ->required()
                             ->helperText('مبلغ پرداخت شده'),
                     ])->columnSpan(1),

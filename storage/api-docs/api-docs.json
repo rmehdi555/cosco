@@ -677,6 +677,621 @@
                 }
             }
         },
+        "/api/memberships": {
+            "get": {
+                "tags": [
+                    "Memberships"
+                ],
+                "summary": "Get user's memberships",
+                "description": "Returns a list of all memberships for the authenticated user",
+                "operationId": "getUserMemberships",
+                "responses": {
+                    "200": {
+                        "description": "Successful operation",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "data": {
+                                            "type": "array",
+                                            "items": {
+                                                "$ref": "#/components/schemas/MembershipResource"
+                                            }
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    },
+                    "401": {
+                        "description": "Unauthenticated"
+                    }
+                },
+                "security": [
+                    {
+                        "bearerAuth": []
+                    }
+                ]
+            }
+        },
+        "/api/memberships/status": {
+            "get": {
+                "tags": [
+                    "Memberships"
+                ],
+                "summary": "Get user's active membership status",
+                "description": "Returns the active membership status for the authenticated user",
+                "operationId": "getUserMembershipStatus",
+                "responses": {
+                    "200": {
+                        "description": "Successful operation",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "oneOf": [
+                                        {
+                                            "properties": {
+                                                "has_active_membership": {
+                                                    "type": "boolean",
+                                                    "example": true
+                                                },
+                                                "message": {
+                                                    "type": "string",
+                                                    "example": "شما عضویت فعال دارید"
+                                                },
+                                                "remaining_days": {
+                                                    "type": "integer",
+                                                    "example": 15
+                                                },
+                                                "membership": {
+                                                    "$ref": "#/components/schemas/MembershipResource"
+                                                }
+                                            },
+                                            "type": "object"
+                                        },
+                                        {
+                                            "properties": {
+                                                "has_active_membership": {
+                                                    "type": "boolean",
+                                                    "example": false
+                                                },
+                                                "message": {
+                                                    "type": "string",
+                                                    "example": "شما عضویت فعالی ندارید"
+                                                },
+                                                "remaining_days": {
+                                                    "type": "integer",
+                                                    "example": 0
+                                                },
+                                                "membership": {
+                                                    "type": "null"
+                                                }
+                                            },
+                                            "type": "object"
+                                        },
+                                        {
+                                            "properties": {
+                                                "has_active_membership": {
+                                                    "type": "boolean",
+                                                    "example": false
+                                                },
+                                                "message": {
+                                                    "type": "string",
+                                                    "example": "عضویت شما منقضی شده است"
+                                                },
+                                                "remaining_days": {
+                                                    "type": "integer",
+                                                    "example": 0
+                                                },
+                                                "membership": {
+                                                    "$ref": "#/components/schemas/MembershipResource"
+                                                }
+                                            },
+                                            "type": "object"
+                                        }
+                                    ]
+                                }
+                            }
+                        }
+                    },
+                    "401": {
+                        "description": "Unauthenticated"
+                    }
+                },
+                "security": [
+                    {
+                        "bearerAuth": []
+                    }
+                ]
+            }
+        },
+        "/api/memberships/{id}": {
+            "get": {
+                "tags": [
+                    "Memberships"
+                ],
+                "summary": "Get a specific membership",
+                "description": "Returns details of a specific membership (only user's own memberships)",
+                "operationId": "getMembership",
+                "parameters": [
+                    {
+                        "name": "id",
+                        "in": "path",
+                        "description": "Membership ID",
+                        "required": true,
+                        "schema": {
+                            "type": "integer"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Successful operation",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "data": {
+                                            "$ref": "#/components/schemas/MembershipResource"
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    },
+                    "401": {
+                        "description": "Unauthenticated"
+                    },
+                    "403": {
+                        "description": "Forbidden - Not authorized to view this membership"
+                    },
+                    "404": {
+                        "description": "Membership not found"
+                    }
+                },
+                "security": [
+                    {
+                        "bearerAuth": []
+                    }
+                ]
+            }
+        },
+        "/api/membership-types": {
+            "get": {
+                "tags": [
+                    "Membership Types"
+                ],
+                "summary": "Get all active membership types",
+                "description": "Returns a list of all active membership types ordered by price",
+                "operationId": "getMembershipTypes",
+                "responses": {
+                    "200": {
+                        "description": "Successful operation",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "data": {
+                                            "type": "array",
+                                            "items": {
+                                                "$ref": "#/components/schemas/MembershipTypeResource"
+                                            }
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        },
+        "/api/membership-types/{id}": {
+            "get": {
+                "tags": [
+                    "Membership Types"
+                ],
+                "summary": "Get a specific membership type",
+                "description": "Returns details of a specific membership type",
+                "operationId": "getMembershipType",
+                "parameters": [
+                    {
+                        "name": "id",
+                        "in": "path",
+                        "description": "Membership type ID",
+                        "required": true,
+                        "schema": {
+                            "type": "integer"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Successful operation",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "data": {
+                                            "$ref": "#/components/schemas/MembershipTypeResource"
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    },
+                    "404": {
+                        "description": "Membership type not found"
+                    }
+                }
+            }
+        },
+        "/api/orders": {
+            "get": {
+                "tags": [
+                    "Orders"
+                ],
+                "summary": "Get user's orders",
+                "description": "Returns a list of all orders for the authenticated user",
+                "operationId": "getUserOrders",
+                "parameters": [
+                    {
+                        "name": "status",
+                        "in": "query",
+                        "description": "Filter by order status",
+                        "required": false,
+                        "schema": {
+                            "type": "string",
+                            "enum": [
+                                "pending",
+                                "paid",
+                                "shipped",
+                                "delivered",
+                                "cancelled"
+                            ]
+                        }
+                    },
+                    {
+                        "name": "payment_status",
+                        "in": "query",
+                        "description": "Filter by payment status",
+                        "required": false,
+                        "schema": {
+                            "type": "string",
+                            "enum": [
+                                "unpaid",
+                                "paid",
+                                "refunded"
+                            ]
+                        }
+                    },
+                    {
+                        "name": "per_page",
+                        "in": "query",
+                        "description": "Number of items per page",
+                        "required": false,
+                        "schema": {
+                            "type": "integer",
+                            "default": 15
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Successful operation",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "data": {
+                                            "type": "array",
+                                            "items": {
+                                                "$ref": "#/components/schemas/OrderResource"
+                                            }
+                                        },
+                                        "links": {
+                                            "type": "object"
+                                        },
+                                        "meta": {
+                                            "type": "object"
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    }
+                },
+                "security": [
+                    {
+                        "bearerAuth": []
+                    }
+                ]
+            }
+        },
+        "/api/orders/{id}": {
+            "get": {
+                "tags": [
+                    "Orders"
+                ],
+                "summary": "Get a specific order",
+                "description": "Returns details of a specific order (only user's own orders)",
+                "operationId": "getOrder",
+                "parameters": [
+                    {
+                        "name": "id",
+                        "in": "path",
+                        "description": "Order ID",
+                        "required": true,
+                        "schema": {
+                            "type": "integer"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Successful operation",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "data": {
+                                            "$ref": "#/components/schemas/OrderResource"
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    }
+                },
+                "security": [
+                    {
+                        "bearerAuth": []
+                    }
+                ]
+            }
+        },
+        "/api/order-items/{id}": {
+            "get": {
+                "tags": [
+                    "Order Items"
+                ],
+                "summary": "Get a specific order item",
+                "description": "Returns details of a specific order item (only user's own order items)",
+                "operationId": "getOrderItem",
+                "parameters": [
+                    {
+                        "name": "id",
+                        "in": "path",
+                        "description": "Order Item ID",
+                        "required": true,
+                        "schema": {
+                            "type": "integer"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Successful operation",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "data": {
+                                            "$ref": "#/components/schemas/OrderItemResource"
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    },
+                    "401": {
+                        "description": "Unauthenticated",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/ErrorResponse"
+                                }
+                            }
+                        }
+                    },
+                    "403": {
+                        "description": "Forbidden - Not authorized to view this order item",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/ErrorResponse"
+                                }
+                            }
+                        }
+                    },
+                    "404": {
+                        "description": "Order item not found",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/ErrorResponse"
+                                }
+                            }
+                        }
+                    }
+                },
+                "security": [
+                    {
+                        "bearerAuth": []
+                    }
+                ]
+            }
+        },
+        "/api/payments": {
+            "get": {
+                "tags": [
+                    "Payments"
+                ],
+                "summary": "Get user's payments",
+                "description": "Returns a list of all payments for the authenticated user",
+                "operationId": "getUserPayments",
+                "parameters": [
+                    {
+                        "name": "status",
+                        "in": "query",
+                        "description": "Filter by payment status",
+                        "required": false,
+                        "schema": {
+                            "type": "string",
+                            "enum": [
+                                "pending",
+                                "completed",
+                                "failed"
+                            ]
+                        }
+                    },
+                    {
+                        "name": "method",
+                        "in": "query",
+                        "description": "Filter by payment method",
+                        "required": false,
+                        "schema": {
+                            "type": "string",
+                            "enum": [
+                                "online",
+                                "cash",
+                                "bank_transfer"
+                            ]
+                        }
+                    },
+                    {
+                        "name": "per_page",
+                        "in": "query",
+                        "description": "Number of items per page",
+                        "required": false,
+                        "schema": {
+                            "type": "integer",
+                            "default": 15
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Successful operation",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "data": {
+                                            "type": "array",
+                                            "items": {
+                                                "$ref": "#/components/schemas/PaymentResource"
+                                            }
+                                        },
+                                        "links": {
+                                            "type": "object"
+                                        },
+                                        "meta": {
+                                            "type": "object"
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    },
+                    "401": {
+                        "description": "Unauthenticated",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/ErrorResponse"
+                                }
+                            }
+                        }
+                    }
+                },
+                "security": [
+                    {
+                        "bearerAuth": []
+                    }
+                ]
+            }
+        },
+        "/api/payments/{id}": {
+            "get": {
+                "tags": [
+                    "Payments"
+                ],
+                "summary": "Get a specific payment",
+                "description": "Returns details of a specific payment (only user's own payments)",
+                "operationId": "getPayment",
+                "parameters": [
+                    {
+                        "name": "id",
+                        "in": "path",
+                        "description": "Payment ID",
+                        "required": true,
+                        "schema": {
+                            "type": "integer"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Successful operation",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "data": {
+                                            "$ref": "#/components/schemas/PaymentResource"
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    },
+                    "401": {
+                        "description": "Unauthenticated",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/ErrorResponse"
+                                }
+                            }
+                        }
+                    },
+                    "403": {
+                        "description": "Forbidden - Not authorized to view this payment",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/ErrorResponse"
+                                }
+                            }
+                        }
+                    },
+                    "404": {
+                        "description": "Payment not found",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/ErrorResponse"
+                                }
+                            }
+                        }
+                    }
+                },
+                "security": [
+                    {
+                        "bearerAuth": []
+                    }
+                ]
+            }
+        },
         "/api/product-categories/tree": {
             "get": {
                 "tags": [
@@ -1551,6 +2166,239 @@
                 },
                 "type": "object"
             },
+            "MembershipResource": {
+                "title": "Membership Resource",
+                "description": "Membership resource schema",
+                "properties": {
+                    "id": {
+                        "type": "integer",
+                        "example": 1
+                    },
+                    "serial_number": {
+                        "type": "string",
+                        "example": "MEM-001-2024"
+                    },
+                    "user_id": {
+                        "type": "integer",
+                        "example": 1
+                    },
+                    "start_date": {
+                        "type": "string",
+                        "format": "date",
+                        "example": "2024-01-01"
+                    },
+                    "end_date": {
+                        "type": "string",
+                        "format": "date",
+                        "example": "2024-02-01"
+                    },
+                    "is_active": {
+                        "type": "boolean",
+                        "example": true
+                    },
+                    "status_badge": {
+                        "type": "string",
+                        "example": "فعال"
+                    },
+                    "remaining_days": {
+                        "type": "integer",
+                        "example": 15
+                    },
+                    "duration": {
+                        "type": "string",
+                        "example": "1 month"
+                    },
+                    "membership_type": {
+                        "$ref": "#/components/schemas/MembershipTypeResource"
+                    }
+                },
+                "type": "object"
+            },
+            "MembershipTypeResource": {
+                "title": "Membership Type Resource",
+                "description": "Membership type resource schema",
+                "properties": {
+                    "id": {
+                        "type": "integer",
+                        "example": 1
+                    },
+                    "name": {
+                        "type": "string",
+                        "example": "Basic Membership"
+                    },
+                    "description": {
+                        "type": "string",
+                        "example": "Basic membership with standard benefits"
+                    },
+                    "price": {
+                        "type": "number",
+                        "format": "decimal",
+                        "example": 50000
+                    },
+                    "formatted_price": {
+                        "type": "string",
+                        "example": "50,000 ریال"
+                    },
+                    "day_cycle": {
+                        "type": "integer",
+                        "example": 30
+                    },
+                    "is_active": {
+                        "type": "boolean",
+                        "example": true
+                    }
+                },
+                "type": "object"
+            },
+            "OrderItemResource": {
+                "title": "Order Item Resource",
+                "description": "Order item resource schema",
+                "properties": {
+                    "id": {
+                        "type": "integer",
+                        "example": 1
+                    },
+                    "order_id": {
+                        "type": "integer",
+                        "example": 1
+                    },
+                    "product_id": {
+                        "type": "integer",
+                        "example": 1
+                    },
+                    "quantity": {
+                        "type": "integer",
+                        "example": 2
+                    },
+                    "price": {
+                        "type": "number",
+                        "format": "decimal",
+                        "example": 75000
+                    },
+                    "formatted_price": {
+                        "type": "string",
+                        "example": "75,000 ریال"
+                    },
+                    "total_price": {
+                        "type": "number",
+                        "format": "decimal",
+                        "example": 150000
+                    },
+                    "formatted_total_price": {
+                        "type": "string",
+                        "example": "150,000 ریال"
+                    },
+                    "product": {
+                        "$ref": "#/components/schemas/ProductResource"
+                    }
+                },
+                "type": "object"
+            },
+            "OrderResource": {
+                "title": "Order Resource",
+                "description": "Order resource schema",
+                "properties": {
+                    "id": {
+                        "type": "integer",
+                        "example": 1
+                    },
+                    "user_id": {
+                        "type": "integer",
+                        "example": 1
+                    },
+                    "status": {
+                        "type": "string",
+                        "example": "pending"
+                    },
+                    "status_label": {
+                        "type": "string",
+                        "example": "در انتظار"
+                    },
+                    "total_amount": {
+                        "type": "number",
+                        "format": "decimal",
+                        "example": 150000
+                    },
+                    "formatted_total_amount": {
+                        "type": "string",
+                        "example": "150,000 ریال"
+                    },
+                    "payment_status": {
+                        "type": "string",
+                        "example": "unpaid"
+                    },
+                    "payment_status_label": {
+                        "type": "string",
+                        "example": "پرداخت نشده"
+                    },
+                    "shipping_address": {
+                        "$ref": "#/components/schemas/AddressResource"
+                    },
+                    "order_items": {
+                        "type": "array",
+                        "items": {
+                            "$ref": "#/components/schemas/OrderItemResource"
+                        }
+                    },
+                    "created_at": {
+                        "type": "string",
+                        "format": "date-time"
+                    },
+                    "updated_at": {
+                        "type": "string",
+                        "format": "date-time"
+                    }
+                },
+                "type": "object"
+            },
+            "PaymentResource": {
+                "title": "Payment Resource",
+                "description": "Payment resource schema",
+                "properties": {
+                    "id": {
+                        "type": "integer",
+                        "example": 1
+                    },
+                    "order_id": {
+                        "type": "integer",
+                        "example": 1
+                    },
+                    "method": {
+                        "type": "string",
+                        "example": "online"
+                    },
+                    "method_label": {
+                        "type": "string",
+                        "example": "آنلاین"
+                    },
+                    "status": {
+                        "type": "string",
+                        "example": "completed"
+                    },
+                    "status_label": {
+                        "type": "string",
+                        "example": "تکمیل شده"
+                    },
+                    "paid_at": {
+                        "type": "string",
+                        "format": "date-time",
+                        "example": "2024-01-15T10:30:00Z"
+                    },
+                    "amount": {
+                        "type": "number",
+                        "format": "decimal",
+                        "example": 150000
+                    },
+                    "formatted_amount": {
+                        "type": "string",
+                        "example": "150,000 ریال"
+                    },
+                    "order": {
+                        "$ref": "#/components/schemas/OrderResource"
+                    }
+                },
+                "type": "object"
+            },
             "ProductCategoryResource": {
                 "title": "Product Category Resource",
                 "description": "Product category resource representation",
@@ -1737,6 +2585,25 @@
                 },
                 "type": "object"
             },
+            "ErrorResponse": {
+                "title": "Error Response",
+                "description": "Standard error response schema",
+                "properties": {
+                    "message": {
+                        "type": "string",
+                        "example": "Error message"
+                    },
+                    "errors": {
+                        "type": "object",
+                        "example": []
+                    },
+                    "status": {
+                        "type": "integer",
+                        "example": 400
+                    }
+                },
+                "type": "object"
+            },
             "UserResource": {
                 "title": "User Resource",
                 "description": "User resource representation",
@@ -1854,6 +2721,26 @@
         }
     },
     "tags": [
+        {
+            "name": "Memberships",
+            "description": "API endpoints for user memberships"
+        },
+        {
+            "name": "Membership Types",
+            "description": "API endpoints for membership types"
+        },
+        {
+            "name": "Orders",
+            "description": "API endpoints for user orders"
+        },
+        {
+            "name": "Order Items",
+            "description": "API endpoints for order items"
+        },
+        {
+            "name": "Payments",
+            "description": "API endpoints for user payments"
+        },
         {
             "name": "Address",
             "description": "Address"
