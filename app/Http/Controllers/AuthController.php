@@ -15,11 +15,58 @@ use App\Http\Requests\VerifyEmailRequest;
 use App\Http\Requests\ForgotPasswordRequest;
 use App\Http\Requests\ResetPasswordRequest;
 use App\Http\Requests\LoginRequest;
+use App\Http\Requests\UpdateProfileRequest;
 use App\Http\Resources\UserResource;
 use App\Http\Responses\ApiResponse;
 
+/**
+ * @OA\Info(
+ *     version="1.0.0",
+ *     title="Cosco API Documentation",
+ *     description="API documentation for Cosco application",
+ *     @OA\Contact(
+ *         email="admin@cosco.com"
+ *     )
+ * )
+ * 
+ * @OA\Server(
+ *     url=L5_SWAGGER_CONST_HOST,
+ *     description="API Server"
+ * )
+ * 
+ * @OA\SecurityScheme(
+ *     securityScheme="bearerAuth",
+ *     type="http",
+ *     scheme="bearer",
+ *     bearerFormat="JWT"
+ * )
+ */
 class AuthController extends Controller
 {
+    /**
+     * @OA\Post(
+     *     path="/api/register",
+     *     summary="Register a new user",
+     *     tags={"Authentication"},
+     *     @OA\RequestBody(
+     *         required=true,
+     *         @OA\JsonContent(ref="#/components/schemas/RegisterRequest")
+     *     ),
+     *     @OA\Response(
+     *         response=201,
+     *         description="User registered successfully",
+     *         @OA\JsonContent(
+     *             @OA\Property(property="success", type="boolean", example=true),
+     *             @OA\Property(property="message", type="string", example="ثبت‌نام با موفقیت انجام شد. کد تایید به ایمیل ارسال شد."),
+     *             @OA\Property(property="data", ref="#/components/schemas/UserResource")
+     *         )
+     *     ),
+     *     @OA\Response(
+     *         response=422,
+     *         description="Validation error"
+     *     )
+     * )
+     */
     public function register(RegisterRequest $request)
     {
         $verificationCode = random_int(1000, 9999);
@@ -43,6 +90,29 @@ class AuthController extends Controller
         return ApiResponse::success(new UserResource($user), trans('auth.register_success'), 201);
     }
 
+    /**
+     * @OA\Post(
+     *     path="/api/verify-email",
+     *     summary="Verify user email",
+     *     tags={"Authentication"},
+     *     @OA\RequestBody(
+     *         required=true,
+     *         @OA\JsonContent(ref="#/components/schemas/VerifyEmailRequest")
+     *     ),
+     *     @OA\Response(
+     *         response=200,
+     *         description="Email verified successfully",
+     *         @OA\JsonContent(
+     *             @OA\Property(property="success", type="boolean", example=true),
+     *             @OA\Property(property="message", type="string", example="ایمیل با موفقیت تایید شد.")
+     *         )
+     *     ),
+     *     @OA\Response(
+     *         response=422,
+     *         description="Invalid verification code"
+     *     )
+     * )
+     */
     public function verifyEmail(VerifyEmailRequest $request)
     {
         $user = User::where('email', $request->email)->first();
@@ -65,6 +135,28 @@ class AuthController extends Controller
         return ApiResponse::success(null, trans('auth.email_verified_success'));
     }
 
+    /**
+     * @OA\Post(
+     *     path="/api/forgot-password",
+     *     summary="Send password reset code",
+     *     tags={"Authentication"},
+     *     @OA\RequestBody(
+     *         required=true,
+     *         @OA\JsonContent(
+     *             required={"email"},
+     *             @OA\Property(property="email", type="string", format="email", example="ali@example.com")
+     *         )
+     *     ),
+     *     @OA\Response(
+     *         response=200,
+     *         description="Reset code sent successfully",
+     *         @OA\JsonContent(
+     *             @OA\Property(property="success", type="boolean", example=true),
+     *             @OA\Property(property="message", type="string", example="کد بازیابی رمز عبور به ایمیل ارسال شد.")
+     *         )
+     *     )
+     * )
+     */
     public function forgotPassword(ForgotPasswordRequest $request)
     {
         $user = User::where('email', $request->email)->first();
@@ -85,6 +177,31 @@ class AuthController extends Controller
         return ApiResponse::success(null, trans('auth.password_reset_code_sent'));
     }
 
+    /**
+     * @OA\Post(
+     *     path="/api/reset-password",
+     *     summary="Reset password with code",
+     *     tags={"Authentication"},
+     *     @OA\RequestBody(
+     *         required=true,
+     *         @OA\JsonContent(
+     *             required={"email","code","password","password_confirmation"},
+     *             @OA\Property(property="email", type="string", format="email", example="ali@example.com"),
+     *             @OA\Property(property="code", type="string", example="123456"),
+     *             @OA\Property(property="password", type="string", example="newpassword123"),
+     *             @OA\Property(property="password_confirmation", type="string", example="newpassword123")
+     *         )
+     *     ),
+     *     @OA\Response(
+     *         response=200,
+     *         description="Password reset successfully",
+     *         @OA\JsonContent(
+     *             @OA\Property(property="success", type="boolean", example=true),
+     *             @OA\Property(property="message", type="string", example="رمز عبور با موفقیت تغییر یافت.")
+     *         )
+     *     )
+     * )
+     */
     public function resetPassword(ResetPasswordRequest $request)
     {
         $record = DB::table('password_reset_tokens')->where('email', $request->email)->first();
@@ -107,6 +224,33 @@ class AuthController extends Controller
         return ApiResponse::success(null, trans('auth.password_reset_success'));
     }
 
+    /**
+     * @OA\Post(
+     *     path="/api/login",
+     *     summary="User login",
+     *     tags={"Authentication"},
+     *     @OA\RequestBody(
+     *         required=true,
+     *         @OA\JsonContent(ref="#/components/schemas/LoginRequest")
+     *     ),
+     *     @OA\Response(
+     *         response=200,
+     *         description="Login successful",
+     *         @OA\JsonContent(
+     *             @OA\Property(property="success", type="boolean", example=true),
+     *             @OA\Property(property="message", type="string", example="ورود با موفقیت انجام شد."),
+     *             @OA\Property(property="data", type="object",
+     *                 @OA\Property(property="token", type="string", example="eyJ0eXAiOiJKV1QiLCJhbGciOiJSUzI1NiJ9..."),
+     *                 @OA\Property(property="user", ref="#/components/schemas/UserResource")
+     *             )
+     *         )
+     *     ),
+     *     @OA\Response(
+     *         response=401,
+     *         description="Invalid credentials"
+     *     )
+     * )
+     */
     public function login(LoginRequest $request)
     {
         $credentials = $request->only('email', 'password');
@@ -124,9 +268,108 @@ class AuthController extends Controller
         ], trans('auth.login_success'));
     }
 
+    /**
+     * @OA\Get(
+     *     path="/api/profile",
+     *     summary="Get user profile",
+     *     tags={"Profile"},
+     *     security={{"bearerAuth":{}}},
+     *     @OA\Response(
+     *         response=200,
+     *         description="Profile retrieved successfully",
+     *         @OA\JsonContent(
+     *             @OA\Property(property="success", type="boolean", example=true),
+     *             @OA\Property(property="message", type="string", example="اطلاعات پروفایل با موفقیت دریافت شد."),
+     *             @OA\Property(property="data", type="object")
+     *         )
+     *     ),
+     *     @OA\Response(
+     *         response=401,
+     *         description="Unauthorized"
+     *     )
+     * )
+     */
     public function profile()
     {
         $user = Auth::user();
         return ApiResponse::success(new UserResource($user), trans('auth.profile_retrieved'));
+    }
+
+    /**
+     * @OA\Post(
+     *     path="/api/profile/update",
+     *     summary="Update user profile",
+     *     tags={"Profile"},
+     *     security={{"bearerAuth":{}}},
+     *     @OA\RequestBody(
+     *         required=true,
+     *         @OA\MediaType(
+     *             mediaType="multipart/form-data",
+     *             @OA\Schema(
+     *                 @OA\Property(property="first_name", type="string", example="علی"),
+     *                 @OA\Property(property="last_name", type="string", example="احمدی"),
+     *                 @OA\Property(property="password", type="string", example="newpassword123"),
+     *                 @OA\Property(property="password_confirmation", type="string", example="newpassword123"),
+     *                 @OA\Property(property="avatar_image", type="string", format="binary", description="Profile image file")
+     *             )
+     *         )
+     *     ),
+     *     @OA\Response(
+     *         response=200,
+     *         description="Profile updated successfully",
+     *         @OA\JsonContent(
+     *             @OA\Property(property="success", type="boolean", example=true),
+     *             @OA\Property(property="message", type="string", example="پروفایل با موفقیت به‌روزرسانی شد."),
+     *             @OA\Property(property="data", type="object")
+     *         )
+     *     ),
+     *     @OA\Response(
+     *         response=422,
+     *         description="Validation error"
+     *     )
+     * )
+     */
+    public function updateProfile(UpdateProfileRequest $request)
+    {
+        $user = Auth::user();
+
+        $updateData = [];
+
+        // Update first_name if provided
+        if ($request->has('first_name')) {
+            $updateData['first_name'] = $request->first_name;
+        }
+
+        // Update last_name if provided
+        if ($request->has('last_name')) {
+            $updateData['last_name'] = $request->last_name;
+        }
+
+        // Update password if provided
+        if ($request->has('password')) {
+            $updateData['password'] = Hash::make($request->password);
+        }
+
+        // Handle avatar image upload
+        if ($request->hasFile('avatar_image')) {
+            // Delete old avatar if exists
+            if ($user->avatar_image) {
+                $oldPath = storage_path('app/public/' . $user->avatar_image);
+                if (file_exists($oldPath)) {
+                    unlink($oldPath);
+                }
+            }
+
+            // Store new avatar
+            $avatarPath = $request->file('avatar_image')->store('avatars', 'public');
+            $updateData['avatar_image'] = $avatarPath;
+        }
+
+        // Update user
+        if (!empty($updateData)) {
+            $user->update($updateData);
+        }
+
+        return ApiResponse::success(new UserResource($user), trans('auth.profile_updated_success'));
     }
 } 

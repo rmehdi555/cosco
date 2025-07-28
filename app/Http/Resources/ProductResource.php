@@ -1,0 +1,50 @@
+<?php
+
+namespace App\Http\Resources;
+
+use Illuminate\Http\Resources\Json\JsonResource;
+
+/**
+ * @OA\Schema(
+ *   schema="ProductResource",
+ *   type="object",
+ *   title="Product Resource",
+ *   description="Product resource representation",
+ *   @OA\Property(property="id", type="integer", example=1),
+ *   @OA\Property(property="product_category_id", type="integer", example=2),
+ *   @OA\Property(property="brand_id", type="integer", example=1),
+ *   @OA\Property(property="name", type="string", example="گوشی موبایل سامسونگ"),
+ *   @OA\Property(property="slug", type="string", example="samsung-mobile"),
+ *   @OA\Property(property="description", type="string", example="توضیحات محصول"),
+ *   @OA\Property(property="price", type="number", format="float", example=12990000),
+ *   @OA\Property(property="stock", type="integer", example=10),
+ *   @OA\Property(property="is_active", type="boolean", example=true),
+ *   @OA\Property(property="is_featured", type="boolean", example=false),
+ *   @OA\Property(property="is_online_only", type="boolean", example=false),
+ *   @OA\Property(property="images", type="array", @OA\Items(type="string", format="url", example="http://localhost:8000/storage/products/image1.jpg")),
+ * )
+ */
+class ProductResource extends JsonResource
+{
+    public function toArray($request)
+    {
+        return [
+            'id' => $this->id,
+            'product_category_id' => $this->product_category_id,
+            'brand_id' => $this->brand_id,
+            'name' => $this->name,
+            'slug' => $this->slug,
+            'description' => $this->description,
+            'price' => $this->price,
+            'stock' => $this->stock,
+            'is_active' => $this->is_active,
+            'is_featured' => $this->is_featured,
+            'is_online_only' => $this->is_online_only,
+            'images' => $this->whenLoaded('images', function () {
+                return $this->images->map(function ($img) {
+                    return $img->image_url ? asset('storage/' . $img->image_url) : null;
+                })->filter()->values();
+            }, []),
+        ];
+    }
+} 

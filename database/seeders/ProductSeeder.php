@@ -54,7 +54,7 @@ class ProductSeeder extends Seeder
                 'updated_at' => now(),
             ],
             [
-                'product_category_id' => 1,
+                'product_category_id' => 4,
                 'brand_id' => 4,
                 'name' => 'محصول چهارم',
                 'slug' => Str::slug('محصول چهارم'),
@@ -68,7 +68,7 @@ class ProductSeeder extends Seeder
                 'updated_at' => now(),
             ],
             [
-                'product_category_id' => 1,
+                'product_category_id' => 5,
                 'brand_id' => 5,
                 'name' => 'محصول پنجم',
                 'slug' => Str::slug('محصول پنجم'),

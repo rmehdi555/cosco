@@ -12,4 +12,8 @@ Route::post('reset-password', [AuthController::class, 'resetPassword']);
 // Protected routes
 Route::middleware('auth:api')->group(function () {
     Route::get('profile', [AuthController::class, 'profile']);
-}); 
+    Route::post('profile/update', [AuthController::class, 'updateProfile']);
+});
+
+Route::get('product-categories/tree', [\App\Http\Controllers\ProductCategoryController::class, 'tree']);
+Route::get('product-categories/{id}/with-products', [\App\Http\Controllers\ProductCategoryController::class, 'showWithProducts']); 
