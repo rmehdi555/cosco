@@ -14,6 +14,7 @@ return [
     'password_reset_success' => 'Password reset successfully.',
     'invalid_credentials' => 'Invalid credentials.',
     'login_success' => 'Login successful.',
+    'account_inactive' => 'Your account is inactive. Please contact support.',
     'verification_email_text' => 'Your verification code: :code',
     'reset_password_email_text' => 'Your password reset code: :code',
     'verification_email_subject' => 'Email Verification Code',

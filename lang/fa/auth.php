@@ -14,6 +14,7 @@ return [
     'password_reset_success' => 'رمز عبور با موفقیت تغییر یافت.',
     'invalid_credentials' => 'اطلاعات ورود نامعتبر است.',
     'login_success' => 'ورود با موفقیت انجام شد.',
+    'account_inactive' => 'حساب کاربری شما غیرفعال است. لطفاً با پشتیبانی تماس بگیرید.',
     'verification_email_text' => 'کد تایید شما: :code',
     'reset_password_email_text' => 'کد بازیابی رمز عبور: :code',
     'verification_email_subject' => 'کد تایید ایمیل',

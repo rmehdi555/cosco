@@ -26,8 +26,6 @@ class UpdateProfileRequest extends FormRequest
             'first_name' => 'sometimes|string|max:255',
             'last_name' => 'sometimes|string|max:255',
             'avatar_image' => 'sometimes|image|mimes:jpeg,png,jpg,gif|max:2048', // 2MB max
-            'password' => 'sometimes|string|min:8|confirmed',
-            'password_confirmation' => 'required_with:password|string|min:8',
         ];
     }
 
@@ -46,12 +44,6 @@ class UpdateProfileRequest extends FormRequest
             'avatar_image.image' => trans('validation.avatar_image_image'),
             'avatar_image.mimes' => trans('validation.avatar_image_mimes'),
             'avatar_image.max' => trans('validation.avatar_image_max'),
-            'password.string' => trans('validation.password_string'),
-            'password.min' => trans('validation.password_min'),
-            'password.confirmed' => trans('validation.password_confirmed'),
-            'password_confirmation.required_with' => trans('validation.password_confirmation_required_with'),
-            'password_confirmation.string' => trans('validation.password_confirmation_string'),
-            'password_confirmation.min' => trans('validation.password_confirmation_min'),
         ];
     }
 } 

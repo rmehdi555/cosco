@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Models\Brand;
 use App\Http\Resources\BrandResource;
+use Illuminate\Http\Request;
 
 class BrandController extends Controller
 {
@@ -23,5 +24,38 @@ class BrandController extends Controller
     {
         $brands = Brand::where('is_active', true)->get();
         return BrandResource::collection($brands);
+    }
+
+    /**
+     * @OA\Get(
+     *   path="/api/brands/{id}",
+     *   summary="Get brand details with products",
+     *   tags={"Brand"},
+     *   @OA\Parameter(
+     *     name="id",
+     *     in="path",
+     *     required=true,
+     *     description="Brand ID",
+     *     @OA\Schema(type="integer")
+     *   ),
+     *   @OA\Response(
+     *     response=200,
+     *     description="Brand details with products",
+     *     @OA\JsonContent(ref="#/components/schemas/BrandResource")
+     *   ),
+     *   @OA\Response(
+     *     response=404,
+     *     description="Brand not found"
+     *   )
+     * )
+     */
+    public function show(Request $request, Brand $brand)
+    {
+        // Load products relationship
+        $brand->load(['products' => function ($query) {
+            $query->where('is_active', true);
+        }]);
+
+        return new BrandResource($brand);
     }
 } 

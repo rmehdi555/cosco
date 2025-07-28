@@ -62,4 +62,8 @@ Route::get('articles', [\App\Http\Controllers\ArticleController::class, 'index']
 Route::get('articles/{id}', [\App\Http\Controllers\ArticleController::class, 'show']);
 Route::get('countries/tree', [\App\Http\Controllers\CountryController::class, 'tree']);
 Route::get('products/{id}', [\App\Http\Controllers\ProductController::class, 'show']);
-Route::get('brands', [\App\Http\Controllers\BrandController::class, 'index']); 
+Route::get('brands', [\App\Http\Controllers\BrandController::class, 'index']);
+Route::get('brands/{brand}', [\App\Http\Controllers\BrandController::class, 'show']);
+
+// Global search
+Route::get('search', [\App\Http\Controllers\SearchController::class, '__invoke']); 

@@ -248,6 +248,10 @@ class AuthController extends Controller
      *     @OA\Response(
      *         response=401,
      *         description="Invalid credentials"
+     *     ),
+     *     @OA\Response(
+     *         response=403,
+     *         description="Account inactive"
      *     )
      * )
      */
@@ -260,6 +264,13 @@ class AuthController extends Controller
         }
 
         $user = Auth::user();
+        
+        // Check if user is active
+        if (!$user->is_active) {
+            Auth::logout();
+            return ApiResponse::error(trans('auth.account_inactive'), null, 403);
+        }
+
         $token = $user->createToken('api_token')->accessToken;
 
         return ApiResponse::success([
@@ -308,8 +319,6 @@ class AuthController extends Controller
      *             @OA\Schema(
      *                 @OA\Property(property="first_name", type="string", example="علی"),
      *                 @OA\Property(property="last_name", type="string", example="احمدی"),
-     *                 @OA\Property(property="password", type="string", example="newpassword123"),
-     *                 @OA\Property(property="password_confirmation", type="string", example="newpassword123"),
      *                 @OA\Property(property="avatar_image", type="string", format="binary", description="Profile image file")
      *             )
      *         )
@@ -343,11 +352,6 @@ class AuthController extends Controller
         // Update last_name if provided
         if ($request->has('last_name')) {
             $updateData['last_name'] = $request->last_name;
-        }
-
-        // Update password if provided
-        if ($request->has('password')) {
-            $updateData['password'] = Hash::make($request->password);
         }
 
         // Handle avatar image upload

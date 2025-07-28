@@ -508,6 +508,9 @@
                     },
                     "401": {
                         "description": "Invalid credentials"
+                    },
+                    "403": {
+                        "description": "Account inactive"
                     }
                 }
             }
@@ -575,14 +578,6 @@
                                         "type": "string",
                                         "example": "احمدی"
                                     },
-                                    "password": {
-                                        "type": "string",
-                                        "example": "newpassword123"
-                                    },
-                                    "password_confirmation": {
-                                        "type": "string",
-                                        "example": "newpassword123"
-                                    },
                                     "avatar_image": {
                                         "description": "Profile image file",
                                         "type": "string",
@@ -649,6 +644,41 @@
                                 }
                             }
                         }
+                    }
+                }
+            }
+        },
+        "/api/brands/{id}": {
+            "get": {
+                "tags": [
+                    "Brand"
+                ],
+                "summary": "Get brand details with products",
+                "operationId": "767f67c0955810b713c48d4100f02362",
+                "parameters": [
+                    {
+                        "name": "id",
+                        "in": "path",
+                        "description": "Brand ID",
+                        "required": true,
+                        "schema": {
+                            "type": "integer"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Brand details with products",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/BrandResource"
+                                }
+                            }
+                        }
+                    },
+                    "404": {
+                        "description": "Brand not found"
                     }
                 }
             }
@@ -1539,6 +1569,64 @@
                 }
             }
         },
+        "/api/search": {
+            "get": {
+                "tags": [
+                    "Search"
+                ],
+                "summary": "Global search across products, categories, and brands",
+                "operationId": "1692a7221b501dbcac7b3c64f4503ac1",
+                "parameters": [
+                    {
+                        "name": "q",
+                        "in": "query",
+                        "description": "Search query",
+                        "required": true,
+                        "schema": {
+                            "type": "string"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Search results",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "data": {
+                                            "type": "array",
+                                            "items": {
+                                                "properties": {
+                                                    "id": {
+                                                        "type": "integer",
+                                                        "example": 1
+                                                    },
+                                                    "name": {
+                                                        "type": "string",
+                                                        "example": "iPhone 15"
+                                                    },
+                                                    "type": {
+                                                        "type": "string",
+                                                        "example": "product"
+                                                    },
+                                                    "link": {
+                                                        "type": "string",
+                                                        "example": "/products/iphone-15"
+                                                    }
+                                                },
+                                                "type": "object"
+                                            }
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        },
         "/api/wishlists": {
             "get": {
                 "tags": [
@@ -2314,7 +2402,7 @@
             },
             "BrandResource": {
                 "title": "Brand Resource",
-                "description": "Brand resource representation",
+                "description": "Brand resource schema",
                 "properties": {
                     "id": {
                         "type": "integer",
@@ -2322,19 +2410,25 @@
                     },
                     "name": {
                         "type": "string",
-                        "example": "سامسونگ"
+                        "example": "اپل"
                     },
                     "slug": {
                         "type": "string",
-                        "example": "samsung"
+                        "example": "apple"
                     },
                     "image_url": {
                         "type": "string",
-                        "example": "/storage/brands/samsung.jpg"
+                        "example": "https://example.com/brands/apple.png"
                     },
                     "is_active": {
                         "type": "boolean",
                         "example": true
+                    },
+                    "products": {
+                        "type": "array",
+                        "items": {
+                            "$ref": "#/components/schemas/ProductResource"
+                        }
                     }
                 },
                 "type": "object"
@@ -2955,21 +3049,6 @@
                         "type": "boolean",
                         "example": true
                     },
-                    "email_verified_at": {
-                        "type": "string",
-                        "format": "date-time",
-                        "example": "2024-07-27T12:34:56Z"
-                    },
-                    "created_at": {
-                        "type": "string",
-                        "format": "date-time",
-                        "example": "2024-07-27T12:34:56Z"
-                    },
-                    "updated_at": {
-                        "type": "string",
-                        "format": "date-time",
-                        "example": "2024-07-27T12:34:56Z"
-                    },
                     "avatar_image_url": {
                         "type": "string",
                         "format": "url",
@@ -3094,6 +3173,10 @@
         {
             "name": "Product",
             "description": "Product"
+        },
+        {
+            "name": "Search",
+            "description": "Search"
         },
         {
             "name": "Wishlist",
