@@ -55,15 +55,15 @@ Route::get('membership-types', [MembershipTypeController::class, 'index']);
 Route::get('membership-types/{membershipType}', [MembershipTypeController::class, 'show']);
 
 Route::get('product-categories/tree', [\App\Http\Controllers\ProductCategoryController::class, 'tree']);
-Route::get('product-categories/{id}/with-products', [\App\Http\Controllers\ProductCategoryController::class, 'showWithProducts']);
+Route::get('product-categories/{slug}/with-products', [\App\Http\Controllers\ProductCategoryController::class, 'showWithProducts']);
 Route::get('article-categories', [\App\Http\Controllers\ArticleCategoryController::class, 'index']);
-Route::get('article-categories/{id}', [\App\Http\Controllers\ArticleCategoryController::class, 'show']);
+Route::get('article-categories/{slug}', [\App\Http\Controllers\ArticleCategoryController::class, 'show']);
 Route::get('articles', [\App\Http\Controllers\ArticleController::class, 'index']);
-Route::get('articles/{id}', [\App\Http\Controllers\ArticleController::class, 'show']);
+Route::get('articles/{slug}', [\App\Http\Controllers\ArticleController::class, 'show']);
 Route::get('countries/tree', [\App\Http\Controllers\CountryController::class, 'tree']);
-Route::get('products/{id}', [\App\Http\Controllers\ProductController::class, 'show']);
+Route::get('products/{slug}', [\App\Http\Controllers\ProductController::class, 'show']);
 Route::get('brands', [\App\Http\Controllers\BrandController::class, 'index']);
-Route::get('brands/{brand}', [\App\Http\Controllers\BrandController::class, 'show']);
+Route::get('brands/{slug}', [\App\Http\Controllers\BrandController::class, 'show']);
 
 // Global search
 Route::get('search', [\App\Http\Controllers\SearchController::class, '__invoke']); 

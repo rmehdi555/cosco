@@ -31,15 +31,15 @@ class ProductCategoryController extends Controller
 
     /**
      * @OA\Get(
-     *   path="/api/product-categories/{id}/with-products",
+     *   path="/api/product-categories/{slug}/with-products",
      *   summary="Get a category with all its subcategories and all products in this category and its subcategories",
      *   tags={"ProductCategory"},
      *   @OA\Parameter(
-     *     name="id",
+     *     name="slug",
      *     in="path",
      *     required=true,
-     *     description="Category ID",
-     *     @OA\Schema(type="integer")
+     *     description="Category slug",
+     *     @OA\Schema(type="string")
      *   ),
      *   @OA\Response(
      *     response=200,
@@ -51,9 +51,9 @@ class ProductCategoryController extends Controller
      *   )
      * )
      */
-    public function showWithProducts($id)
+    public function showWithProducts($slug)
     {
-        $category = ProductCategory::with('allChildren')->findOrFail($id);
+        $category = ProductCategory::with('allChildren')->where('slug', $slug)->firstOrFail();
         $categoryIds = $this->getAllCategoryIds($category);
         $products = Product::whereIn('product_category_id', $categoryIds)->with('images')->get();
         return response()->json([

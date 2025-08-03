@@ -46,15 +46,15 @@ class ArticleController extends Controller
 
     /**
      * @OA\Get(
-     *   path="/api/articles/{id}",
+     *   path="/api/articles/{slug}",
      *   summary="Get a single article",
      *   tags={"Article"},
      *   @OA\Parameter(
-     *     name="id",
+     *     name="slug",
      *     in="path",
      *     required=true,
-     *     description="Article ID",
-     *     @OA\Schema(type="integer")
+     *     description="Article slug",
+     *     @OA\Schema(type="string")
      *   ),
      *   @OA\Response(
      *     response=200,
@@ -63,9 +63,9 @@ class ArticleController extends Controller
      *   )
      * )
      */
-    public function show($id)
+    public function show($slug)
     {
-        $article = Article::findOrFail($id);
+        $article = Article::where('slug', $slug)->firstOrFail();
         return new ArticleResource($article);
     }
 } 

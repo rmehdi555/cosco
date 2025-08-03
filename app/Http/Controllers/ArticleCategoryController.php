@@ -27,15 +27,15 @@ class ArticleCategoryController extends Controller
 
     /**
      * @OA\Get(
-     *   path="/api/article-categories/{id}",
+     *   path="/api/article-categories/{slug}",
      *   summary="Get a single article category",
      *   tags={"ArticleCategory"},
      *   @OA\Parameter(
-     *     name="id",
+     *     name="slug",
      *     in="path",
      *     required=true,
-     *     description="Category ID",
-     *     @OA\Schema(type="integer")
+     *     description="Category slug",
+     *     @OA\Schema(type="string")
      *   ),
      *   @OA\Response(
      *     response=200,
@@ -44,9 +44,9 @@ class ArticleCategoryController extends Controller
      *   )
      * )
      */
-    public function show($id)
+    public function show($slug)
     {
-        $category = ArticleCategory::with('articles')->findOrFail($id);
+        $category = ArticleCategory::with('articles')->where('slug', $slug)->firstOrFail();
         return new ArticleCategoryResource($category);
     }
 } 

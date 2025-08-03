@@ -28,15 +28,15 @@ class BrandController extends Controller
 
     /**
      * @OA\Get(
-     *   path="/api/brands/{id}",
+     *   path="/api/brands/{slug}",
      *   summary="Get brand details with products",
      *   tags={"Brand"},
      *   @OA\Parameter(
-     *     name="id",
+     *     name="slug",
      *     in="path",
      *     required=true,
-     *     description="Brand ID",
-     *     @OA\Schema(type="integer")
+     *     description="Brand slug",
+     *     @OA\Schema(type="string")
      *   ),
      *   @OA\Response(
      *     response=200,
@@ -49,8 +49,10 @@ class BrandController extends Controller
      *   )
      * )
      */
-    public function show(Request $request, Brand $brand)
+    public function show(Request $request, $slug)
     {
+        $brand = Brand::where('slug', $slug)->firstOrFail();
+        
         // Load products relationship
         $brand->load(['products' => function ($query) {
             $query->where('is_active', true);

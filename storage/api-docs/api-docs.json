@@ -149,21 +149,21 @@
                 }
             }
         },
-        "/api/article-categories/{id}": {
+        "/api/article-categories/{slug}": {
             "get": {
                 "tags": [
                     "ArticleCategory"
                 ],
                 "summary": "Get a single article category",
-                "operationId": "5a887ee35e3e546d5885682aa723b722",
+                "operationId": "77ab6db014887146131f8444c38019b1",
                 "parameters": [
                     {
-                        "name": "id",
+                        "name": "slug",
                         "in": "path",
-                        "description": "Category ID",
+                        "description": "Category slug",
                         "required": true,
                         "schema": {
-                            "type": "integer"
+                            "type": "string"
                         }
                     }
                 ],
@@ -216,21 +216,21 @@
                 }
             }
         },
-        "/api/articles/{id}": {
+        "/api/articles/{slug}": {
             "get": {
                 "tags": [
                     "Article"
                 ],
                 "summary": "Get a single article",
-                "operationId": "b3e529eab04efb5d305b07e2e58d9869",
+                "operationId": "37d4774ebe4d73de4d890c37720fcd74",
                 "parameters": [
                     {
-                        "name": "id",
+                        "name": "slug",
                         "in": "path",
-                        "description": "Article ID",
+                        "description": "Article slug",
                         "required": true,
                         "schema": {
-                            "type": "integer"
+                            "type": "string"
                         }
                     }
                 ],
@@ -648,21 +648,21 @@
                 }
             }
         },
-        "/api/brands/{id}": {
+        "/api/brands/{slug}": {
             "get": {
                 "tags": [
                     "Brand"
                 ],
                 "summary": "Get brand details with products",
-                "operationId": "767f67c0955810b713c48d4100f02362",
+                "operationId": "638d0dbda488c6cc27fd281b5783ef8a",
                 "parameters": [
                     {
-                        "name": "id",
+                        "name": "slug",
                         "in": "path",
-                        "description": "Brand ID",
+                        "description": "Brand slug",
                         "required": true,
                         "schema": {
-                            "type": "integer"
+                            "type": "string"
                         }
                     }
                 ],
@@ -1494,21 +1494,21 @@
                 }
             }
         },
-        "/api/product-categories/{id}/with-products": {
+        "/api/product-categories/{slug}/with-products": {
             "get": {
                 "tags": [
                     "ProductCategory"
                 ],
                 "summary": "Get a category with all its subcategories and all products in this category and its subcategories",
-                "operationId": "c0871b23b003372fee9a7d600ce526a5",
+                "operationId": "e35ed420464e66736c727bca636498f8",
                 "parameters": [
                     {
-                        "name": "id",
+                        "name": "slug",
                         "in": "path",
-                        "description": "Category ID",
+                        "description": "Category slug",
                         "required": true,
                         "schema": {
-                            "type": "integer"
+                            "type": "string"
                         }
                     }
                 ],
@@ -1537,21 +1537,21 @@
                 }
             }
         },
-        "/api/products/{id}": {
+        "/api/products/{slug}": {
             "get": {
                 "tags": [
                     "Product"
                 ],
                 "summary": "Get a single product with category, brand, and reviews",
-                "operationId": "7ab21ddb713501f3d4c2914892c02a21",
+                "operationId": "2eb94cf22f00aa181040441a8ae7b07e",
                 "parameters": [
                     {
-                        "name": "id",
+                        "name": "slug",
                         "in": "path",
-                        "description": "Product ID",
+                        "description": "Product slug",
                         "required": true,
                         "schema": {
-                            "type": "integer"
+                            "type": "string"
                         }
                     }
                 ],

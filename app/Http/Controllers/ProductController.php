@@ -10,15 +10,15 @@ class ProductController extends Controller
 {
     /**
      * @OA\Get(
-     *   path="/api/products/{id}",
+     *   path="/api/products/{slug}",
      *   summary="Get a single product with category, brand, and reviews",
      *   tags={"Product"},
      *   @OA\Parameter(
-     *     name="id",
+     *     name="slug",
      *     in="path",
      *     required=true,
-     *     description="Product ID",
-     *     @OA\Schema(type="integer")
+     *     description="Product slug",
+     *     @OA\Schema(type="string")
      *   ),
      *   @OA\Response(
      *     response=200,
@@ -27,9 +27,9 @@ class ProductController extends Controller
      *   )
      * )
      */
-    public function show($id)
+    public function show($slug)
     {
-        $product = Product::with(['category', 'brand', 'reviews' => function($q) { $q->where('approved', true); }])->findOrFail($id);
+        $product = Product::with(['category', 'brand', 'reviews' => function($q) { $q->where('approved', true); }])->where('slug', $slug)->firstOrFail();
         return new ProductResource($product);
     }
 } 
