@@ -28,24 +28,24 @@ Route::middleware('auth:api')->group(function () {
     Route::post('wishlists/{wishlist}/items', [\App\Http\Controllers\WishlistItemController::class, 'store']);
     Route::delete('wishlists/{wishlist}/items/{item}', [\App\Http\Controllers\WishlistItemController::class, 'destroy']);
     Route::get('wishlists/{id}', [\App\Http\Controllers\WishlistController::class, 'show']);
-    
+
     // Membership routes
     Route::get('memberships', [MembershipController::class, 'index']);
     Route::get('memberships/status', [MembershipController::class, 'status']);
     Route::get('memberships/{membership}', [MembershipController::class, 'show']);
-    
+
     // Order routes
     Route::get('orders', [OrderController::class, 'index']);
     Route::post('orders', [OrderController::class, 'store']);
     Route::get('orders/{order}', [OrderController::class, 'show']);
-    
+
     // Order Item routes
     Route::get('order-items/{orderItem}', [OrderItemController::class, 'show']);
-    
+
     // Payment routes
     Route::get('payments', [PaymentController::class, 'index']);
     Route::get('payments/{payment}', [PaymentController::class, 'show']);
-    
+
     // Cart routes
     Route::post('carts', [CartController::class, 'store']);
 });
@@ -64,6 +64,8 @@ Route::get('countries/tree', [\App\Http\Controllers\CountryController::class, 't
 Route::get('products/{slug}', [\App\Http\Controllers\ProductController::class, 'show']);
 Route::get('brands', [\App\Http\Controllers\BrandController::class, 'index']);
 Route::get('brands/{slug}', [\App\Http\Controllers\BrandController::class, 'show']);
+
+Route::get('home-page/', [\App\Http\Controllers\HomeController::class, 'homePage']);
 
 // Global search
 Route::get('search', [\App\Http\Controllers\SearchController::class, '__invoke']);
