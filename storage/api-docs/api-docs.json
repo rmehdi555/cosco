@@ -1575,48 +1575,104 @@
                     "Search"
                 ],
                 "summary": "Global search across products, categories, and brands",
+                "description": "Search for products, categories, and brands by name or slug. Returns results grouped by type.",
                 "operationId": "1692a7221b501dbcac7b3c64f4503ac1",
                 "parameters": [
                     {
                         "name": "q",
                         "in": "query",
-                        "description": "Search query",
+                        "description": "Search query (minimum 2 characters)",
                         "required": true,
                         "schema": {
-                            "type": "string"
+                            "type": "string",
+                            "minLength": 2,
+                            "example": "iPhone"
                         }
                     }
                 ],
                 "responses": {
                     "200": {
-                        "description": "Search results",
+                        "description": "Search results grouped by type",
                         "content": {
                             "application/json": {
                                 "schema": {
                                     "properties": {
+                                        "status": {
+                                            "type": "boolean",
+                                            "example": true
+                                        },
+                                        "message": {
+                                            "type": "string",
+                                            "example": "عملیات با موفقیت انجام شد"
+                                        },
                                         "data": {
-                                            "type": "array",
-                                            "items": {
-                                                "properties": {
-                                                    "id": {
-                                                        "type": "integer",
-                                                        "example": 1
-                                                    },
-                                                    "name": {
-                                                        "type": "string",
-                                                        "example": "iPhone 15"
-                                                    },
-                                                    "type": {
-                                                        "type": "string",
-                                                        "example": "product"
-                                                    },
-                                                    "link": {
-                                                        "type": "string",
-                                                        "example": "/products/iphone-15"
+                                            "properties": {
+                                                "products": {
+                                                    "type": "array",
+                                                    "items": {
+                                                        "properties": {
+                                                            "id": {
+                                                                "type": "integer",
+                                                                "example": 1
+                                                            },
+                                                            "slug": {
+                                                                "type": "string",
+                                                                "example": "iphone-15"
+                                                            },
+                                                            "name": {
+                                                                "type": "string",
+                                                                "example": "iPhone 15"
+                                                            }
+                                                        },
+                                                        "type": "object"
                                                     }
                                                 },
-                                                "type": "object"
-                                            }
+                                                "categories": {
+                                                    "type": "array",
+                                                    "items": {
+                                                        "properties": {
+                                                            "id": {
+                                                                "type": "integer",
+                                                                "example": 2
+                                                            },
+                                                            "name": {
+                                                                "type": "string",
+                                                                "example": "Electronics"
+                                                            },
+                                                            "slug": {
+                                                                "type": "string",
+                                                                "example": "electronics"
+                                                            }
+                                                        },
+                                                        "type": "object"
+                                                    }
+                                                },
+                                                "brands": {
+                                                    "type": "array",
+                                                    "items": {
+                                                        "properties": {
+                                                            "id": {
+                                                                "type": "integer",
+                                                                "example": 3
+                                                            },
+                                                            "slug": {
+                                                                "type": "string",
+                                                                "example": "apple"
+                                                            },
+                                                            "name": {
+                                                                "type": "string",
+                                                                "example": "Apple"
+                                                            }
+                                                        },
+                                                        "type": "object"
+                                                    }
+                                                }
+                                            },
+                                            "type": "object"
+                                        },
+                                        "errors": {
+                                            "type": "null",
+                                            "example": null
                                         }
                                     },
                                     "type": "object"

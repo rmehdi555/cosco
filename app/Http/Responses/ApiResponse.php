@@ -6,23 +6,33 @@ use Illuminate\Http\JsonResponse;
 
 class ApiResponse
 {
-    public static function success($data = null, $message = 'عملیات با موفقیت انجام شد', $status = 200): JsonResponse
+    public static function success($data = null, $message = null, $status = 200): JsonResponse
     {
         return response()->json([
             'status' => true,
-            'message' => $message,
+            'message' => $message ?? __('messages.success', [], 'fa'),
             'data' => $data,
             'errors' => null,
         ], $status);
     }
 
-    public static function error($message = 'خطا رخ داده است', $errors = null, $status = 400): JsonResponse
+    public static function error($message = null, $errors = null, $status = 400): JsonResponse
     {
         return response()->json([
             'status' => false,
-            'message' => $message,
+            'message' => $message ?? __('errors.server_error', [], 'fa'),
             'data' => null,
             'errors' => $errors,
         ], $status);
+    }
+
+    public static function notFound($message = null): JsonResponse
+    {
+        return response()->json([
+            'status' => false,
+            'message' => $message ?? __('errors.not_found', [], 'fa'),
+            'data' => null,
+            'errors' => null,
+        ], 404);
     }
 } 

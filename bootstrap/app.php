@@ -14,5 +14,15 @@ return Application::configure(basePath: dirname(__DIR__))
         //
     })
     ->withExceptions(function (Exceptions $exceptions): void {
-        //
+        $exceptions->render(function (Symfony\Component\HttpKernel\Exception\NotFoundHttpException $e, Illuminate\Http\Request $request) {
+            if ($request->is('api/*')) {
+                return \App\Http\Responses\ApiResponse::notFound(__('errors.not_found'));
+            }
+        });
+        
+        $exceptions->render(function (Illuminate\Database\Eloquent\ModelNotFoundException $e, Illuminate\Http\Request $request) {
+            if ($request->is('api/*')) {
+                return \App\Http\Responses\ApiResponse::notFound(__('errors.model_not_found'));
+            }
+        });
     })->create();

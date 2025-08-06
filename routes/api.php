@@ -66,4 +66,4 @@ Route::get('brands', [\App\Http\Controllers\BrandController::class, 'index']);
 Route::get('brands/{slug}', [\App\Http\Controllers\BrandController::class, 'show']);
 
 // Global search
-Route::get('search', [\App\Http\Controllers\SearchController::class, '__invoke']); 
+Route::get('search', [\App\Http\Controllers\SearchController::class, '__invoke']);
