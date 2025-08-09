@@ -2,15 +2,15 @@
 
 namespace App\Http\Controllers;
 
-
 use App\Models\Slider;
+use App\Http\Responses\ApiResponse;
 
 class HomeController extends Controller
 {
     public function homePage()
     {
         $slider = Slider::all();
-        return response()->json([
+        return ApiResponse::success([
             'slider' => $slider,
         ]);
     }

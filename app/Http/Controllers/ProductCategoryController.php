@@ -8,6 +8,7 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Collection;
 use App\Http\Resources\ProductCategoryResource;
 use App\Http\Resources\ProductResource;
+use App\Http\Responses\ApiResponse;
 
 class ProductCategoryController extends Controller
 {
@@ -56,7 +57,7 @@ class ProductCategoryController extends Controller
         $category = ProductCategory::with('allChildren')->where('slug', $slug)->firstOrFail();
         $categoryIds = $this->getAllCategoryIds($category);
         $products = Product::whereIn('product_category_id', $categoryIds)->with('images')->get();
-        return response()->json([
+        return ApiResponse::success([
             'category' => new ProductCategoryResource($category),
             'products' => ProductResource::collection($products),
         ]);

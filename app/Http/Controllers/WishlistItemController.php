@@ -7,6 +7,7 @@ use App\Models\WishlistItem;
 use App\Http\Resources\WishlistItemResource;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
+use App\Http\Responses\ApiResponse;
 
 class WishlistItemController extends Controller
 {
@@ -83,6 +84,6 @@ class WishlistItemController extends Controller
         $wishlist = Wishlist::where('user_id', $user->id)->findOrFail($wishlist);
         $wishlistItem = WishlistItem::where('wishlist_id', $wishlist->id)->findOrFail($item);
         $wishlistItem->delete();
-        return response()->json(null, 204);
+        return ApiResponse::success(null, __('messages.deleted_successfully'), 204);
     }
 } 

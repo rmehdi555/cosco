@@ -8,6 +8,7 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use App\Http\Requests\StoreAddressRequest;
 use App\Http\Requests\UpdateAddressRequest;
+use App\Http\Responses\ApiResponse;
 
 class AddressController extends Controller
 {
@@ -86,9 +87,7 @@ class AddressController extends Controller
         $user = Auth::user();
         $address = Address::where('user_id', $user->id)->find($id);
         if (!$address) {
-            return response()->json([
-                'message' => trans('validation.address_not_found_or_forbidden'),
-            ], 404);
+            return ApiResponse::notFound(trans('validation.address_not_found_or_forbidden'));
         }
         $data = $request->validated();
         $address->update($data);

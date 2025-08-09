@@ -8,6 +8,7 @@ use App\Models\User;
 use Illuminate\Http\Request;
 use Illuminate\Http\Resources\Json\AnonymousResourceCollection;
 use Illuminate\Http\JsonResponse;
+use App\Http\Responses\ApiResponse;
 
 /**
  * @OA\Tag(
@@ -115,7 +116,7 @@ class MembershipController extends Controller
         $activeMembership = $user->active_membership;
         
         if (!$activeMembership) {
-            return response()->json([
+            return ApiResponse::success([
                 'has_active_membership' => false,
                 'message' => __('membership.no_active_membership'),
                 'remaining_days' => 0,
@@ -127,7 +128,7 @@ class MembershipController extends Controller
         $remainingDays = $activeMembership->remaining_days;
         
         if ($remainingDays <= 0) {
-            return response()->json([
+            return ApiResponse::success([
                 'has_active_membership' => false,
                 'message' => __('membership.membership_expired_user'),
                 'remaining_days' => 0,
@@ -135,7 +136,7 @@ class MembershipController extends Controller
             ]);
         }
 
-        return response()->json([
+        return ApiResponse::success([
             'has_active_membership' => true,
             'message' => __('membership.has_active_membership'),
             'remaining_days' => $remainingDays,

@@ -53,4 +53,9 @@ class Product extends Model
     {
         return $this->belongsTo(ProductImage::class, 'id', 'product_id')->where('is_main', true);
     }
+
+    public function reviews(): HasMany
+    {
+        return $this->hasMany(ProductReview::class);
+    }
 } 

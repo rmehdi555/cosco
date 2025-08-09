@@ -10,6 +10,7 @@ use App\Models\Product;
 use App\Enums\CartStatus;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Support\Facades\DB;
+use App\Http\Responses\ApiResponse;
 
 /**
  * @OA\Tag(
@@ -97,20 +98,19 @@ class CartController extends Controller
 
             DB::commit();
 
-            return response()->json([
-                'success' => true,
-                'message' => __('cart.created_successfully'),
-                'data' => new CartResource($cart),
-            ], 201);
+            return ApiResponse::success(
+                new CartResource($cart),
+                __('cart.created_successfully'),
+                201
+            );
 
         } catch (\Exception $e) {
             DB::rollBack();
             
-            return response()->json([
-                'success' => false,
-                'message' => __('cart.creation_failed'),
-                'error' => $e->getMessage(),
-            ], 500);
+            return ApiResponse::serverError(
+                __('cart.creation_failed'),
+                $e->getMessage()
+            );
         }
     }
 } 

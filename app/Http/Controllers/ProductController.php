@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use App\Models\Product;
 use App\Http\Resources\ProductResource;
 use Illuminate\Http\Request;
+use App\Http\Responses\ApiResponse;
 
 class ProductController extends Controller
 {
@@ -29,7 +30,11 @@ class ProductController extends Controller
      */
     public function show($slug)
     {
-        $product = Product::with(['category', 'brand', 'reviews' => function($q) { $q->where('approved', true); }])->where('slug', $slug)->firstOrFail();
-        return new ProductResource($product);
+        try {
+            $product = Product::with(['category', 'brand', 'reviews' => function($q) { $q->where('approved', true); }])->where('slug', $slug)->firstOrFail();
+            return ApiResponse::success(new ProductResource($product));
+        } catch (\Illuminate\Database\Eloquent\ModelNotFoundException $e) {
+            return ApiResponse::notFound(__('errors.product_not_found'));
+        }
     }
 } 

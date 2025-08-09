@@ -14,6 +14,7 @@ use Illuminate\Http\Request;
 use Illuminate\Http\Resources\Json\AnonymousResourceCollection;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Support\Facades\DB;
+use App\Http\Responses\ApiResponse;
 
 /**
  * @OA\Tag(
@@ -192,10 +193,7 @@ class OrderController extends Controller
             ->first();
 
         if (!$shippingAddress) {
-            return response()->json([
-                'success' => false,
-                'message' => __('orders.shipping_address_not_authorized'),
-            ], 403);
+            return ApiResponse::error(__('orders.shipping_address_not_authorized'), null, 403);
         }
 
         try {
@@ -234,20 +232,19 @@ class OrderController extends Controller
 
             DB::commit();
 
-            return response()->json([
-                'success' => true,
-                'message' => __('orders.created_successfully'),
-                'data' => new OrderResource($order),
-            ], 201);
+            return ApiResponse::success(
+                new OrderResource($order),
+                __('orders.created_successfully'),
+                201
+            );
 
         } catch (\Exception $e) {
             DB::rollBack();
             
-            return response()->json([
-                'success' => false,
-                'message' => __('orders.creation_failed'),
-                'error' => $e->getMessage(),
-            ], 500);
+            return ApiResponse::serverError(
+                __('orders.creation_failed'),
+                $e->getMessage()
+            );
         }
     }
 } 
