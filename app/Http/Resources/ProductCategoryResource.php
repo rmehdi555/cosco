@@ -32,7 +32,23 @@ class ProductCategoryResource extends JsonResource
             'image_url' => $this->image_url ? asset('storage/' . $this->image_url) : null,
             'description' => $this->description,
             'is_active' => $this->is_active,
-            'children' => ProductCategoryResource::collection($this->whenLoaded('children')),
+            'children' => $this->getChildrenRecursively(),
         ];
+    }
+
+    /**
+     * Get children recursively with all nested levels
+     */
+    private function getChildrenRecursively()
+    {
+        if ($this->relationLoaded('allChildren') && $this->allChildren->count() > 0) {
+            return ProductCategoryResource::collection($this->allChildren);
+        }
+        
+        if ($this->relationLoaded('children') && $this->children->count() > 0) {
+            return ProductCategoryResource::collection($this->children);
+        }
+        
+        return [];
     }
 } 
