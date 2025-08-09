@@ -17,4 +17,16 @@ return [
     'city_not_in_province' => 'شهر انتخاب شده متعلق به استان انتخاب شده نیست.',
     'province_not_in_country' => 'استان انتخاب شده متعلق به کشور انتخاب شده نیست.',
     'address_not_found_or_forbidden' => 'آدرس مورد نظر یافت نشد یا متعلق به شما نیست.',
+    
+    // RegisterRequest validation messages
+    'email.required' => 'ایمیل الزامی است.',
+    'email.string' => 'ایمیل باید متن باشد.',
+    'email.email' => 'فرمت ایمیل معتبر نیست.',
+    'email.max' => 'ایمیل نمی‌تواند بیشتر از 255 کاراکتر باشد.',
+    'email.unique' => 'این ایمیل قبلاً ثبت شده است.',
+    'cell_phone.required' => 'شماره موبایل الزامی است.',
+    'cell_phone.string' => 'شماره موبایل باید متن باشد.',
+    'cell_phone.unique' => 'این شماره موبایل قبلاً ثبت شده است.',
+    'password.required' => 'رمز عبور الزامی است.',
+    'password.min' => 'رمز عبور باید حداقل 6 کاراکتر باشد.',
 ]; 

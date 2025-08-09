@@ -35,4 +35,25 @@ class RegisterRequest extends FormRequest
             'password' => 'required|string|min:6',
         ];
     }
+
+    public function messages()
+    {
+        return [
+            'first_name.string' => __('validation.first_name_string'),
+            'first_name.max' => __('validation.first_name_max'),
+            'last_name.string' => __('validation.last_name_string'),
+            'last_name.max' => __('validation.last_name_max'),
+            'email.required' => __('validation.email.required'),
+            'email.string' => __('validation.email.string'),
+            'email.email' => __('validation.email.email'),
+            'email.max' => __('validation.email.max'),
+            'email.unique' => __('validation.email.unique'),
+            'cell_phone.required' => __('validation.cell_phone.required'),
+            'cell_phone.string' => __('validation.cell_phone.string'),
+            'cell_phone.unique' => __('validation.cell_phone.unique'),
+            'password.required' => __('validation.password.required'),
+            'password.string' => __('validation.password_string'),
+            'password.min' => __('validation.password.min'),
+        ];
+    }
 } 

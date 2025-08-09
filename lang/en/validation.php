@@ -14,4 +14,16 @@ return [
     'password_confirmation_required_with' => 'The password confirmation is required when password is present.',
     'password_confirmation_string' => 'The password confirmation must be a string.',
     'password_confirmation_min' => 'The password confirmation must be at least 8 characters.',
+    
+    // RegisterRequest validation messages
+    'email.required' => 'The email field is required.',
+    'email.string' => 'The email must be a string.',
+    'email.email' => 'The email must be a valid email address.',
+    'email.max' => 'The email may not be greater than 255 characters.',
+    'email.unique' => 'The email has already been taken.',
+    'cell_phone.required' => 'The cell phone field is required.',
+    'cell_phone.string' => 'The cell phone must be a string.',
+    'cell_phone.unique' => 'The cell phone has already been taken.',
+    'password.required' => 'The password field is required.',
+    'password.min' => 'The password must be at least 6 characters.',
 ]; 
