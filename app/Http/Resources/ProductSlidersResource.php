@@ -19,6 +19,11 @@ use Illuminate\Http\Resources\Json\JsonResource;
  *   @OA\Property(property="number_rate", type="integer", example=846),
  *   @OA\Property(property="discount_price", type="integer", example=3000),
  *   @OA\Property(
+ * *       property="image_url",
+ * *       type="array",
+ * *       @OA\Items(type="string", example="http://localhost:8000/storage/features/feature.jpg")
+ * *   ),
+ *   @OA\Property(
  *       property="type_buy",
  *       type="array",
  *       @OA\Items(
@@ -38,12 +43,18 @@ class ProductSlidersResource extends JsonResource
      */
     public function toArray(Request $request): array
     {
+        $images = [];
+        foreach ($this->images as $image) {
+            $images[] =asset('storage/' . $image->image_url);
+        }
+
         return [
             'id' => $this->id,
             'name' => $this->name,
             'slug' => $this->slug,
             'description' => $this->description,
             'price' => (int)$this->price,
+            'image_url' => $images,
             'rate' => 2,
             'number_rate' => 741,
             'discount_price' => 5000,

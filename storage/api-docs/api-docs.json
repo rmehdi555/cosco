@@ -3175,6 +3175,13 @@
                         "type": "integer",
                         "example": 3000
                     },
+                    "image_url": {
+                        "type": "array",
+                        "items": {
+                            "type": "string",
+                            "example": "http://localhost:8000/storage/features/feature.jpg"
+                        }
+                    },
                     "type_buy": {
                         "type": "array",
                         "items": {
