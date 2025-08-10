@@ -8,12 +8,6 @@
         },
         "version": "1.0.0"
     },
-    "servers": [
-        {
-            "url": "http://localhost:8072",
-            "description": "API Server"
-        }
-    ],
     "paths": {
         "/api/addresses": {
             "get": {
@@ -3165,13 +3159,37 @@
                         "type": "string",
                         "example": "توضیحات کوتاه محصول"
                     },
-                    "body": {
-                        "type": "string",
-                        "example": "توضیحات کامل محصول"
-                    },
                     "price": {
                         "type": "integer",
                         "example": 150000
+                    },
+                    "rate": {
+                        "type": "integer",
+                        "example": 2
+                    },
+                    "number_rate": {
+                        "type": "integer",
+                        "example": 846
+                    },
+                    "discount_price": {
+                        "type": "integer",
+                        "example": 3000
+                    },
+                    "type_buy": {
+                        "type": "array",
+                        "items": {
+                            "properties": {
+                                "text": {
+                                    "type": "string",
+                                    "example": "خرید آنلاین"
+                                },
+                                "bg_color": {
+                                    "type": "string",
+                                    "example": "#005dab"
+                                }
+                            },
+                            "type": "object"
+                        }
                     }
                 },
                 "type": "object"

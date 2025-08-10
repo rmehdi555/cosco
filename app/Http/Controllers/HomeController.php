@@ -53,8 +53,8 @@ class HomeController extends Controller
         $firstPicture = $sliders->get('first_picture', collect())->first();
 
         $discountsWithProducts = DiscountType::with([
-            'category.products:id,product_category_id,name,slug,description,body,price',
-            'category.sliders:id,type,title,link,image_url,target'
+            'category.products',
+            'category.sliders'
         ])->get();
 
         return ApiResponse::success([
