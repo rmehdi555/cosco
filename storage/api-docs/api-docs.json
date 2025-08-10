@@ -8,6 +8,12 @@
         },
         "version": "1.0.0"
     },
+    "servers": [
+        {
+            "url": "http://localhost:8072",
+            "description": "API Server"
+        }
+    ],
     "paths": {
         "/api/addresses": {
             "get": {
@@ -786,8 +792,8 @@
                                 "schema": {
                                     "properties": {
                                         "status": {
-                                            "type": "boolean",
-                                            "example": true
+                                            "type": "integer",
+                                            "example": 200
                                         },
                                         "message": {
                                             "type": "string",

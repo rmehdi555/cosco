@@ -20,7 +20,7 @@ class HomeController extends Controller
      *     description="Home page data",
      *     @OA\JsonContent(
      *       type="object",
-     *       @OA\Property(property="status", type="boolean", example=true),
+     *       @OA\Property(property="status", type="integer", example=200),
      *       @OA\Property(property="message", type="string", example="عملیات با موفقیت انجام شد"),
      *       @OA\Property(
      *         property="data",
