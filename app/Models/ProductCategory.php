@@ -39,4 +39,15 @@ class ProductCategory extends Model
     {
         return $this->children()->with('allChildren');
     }
-} 
+
+    public function products()
+    {
+        return $this->hasMany(Product::class);
+    }
+
+    public function sliders()
+    {
+        return $this->hasMany(Slider::class, 'type', 'slug');
+    }
+
+}

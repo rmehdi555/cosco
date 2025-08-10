@@ -8,12 +8,6 @@
         },
         "version": "1.0.0"
     },
-    "servers": [
-        {
-            "url": "http://localhost:8000",
-            "description": "API Server"
-        }
-    ],
     "paths": {
         "/api/addresses": {
             "get": {
@@ -770,6 +764,61 @@
                                     "items": {
                                         "$ref": "#/components/schemas/CountryResource"
                                     }
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        },
+        "/api/home-page/": {
+            "get": {
+                "tags": [
+                    "Home"
+                ],
+                "summary": "Get home page data including sliders, first picture and discount products",
+                "operationId": "9168dc31b6f7c97ed42cdc4ced2d9a52",
+                "responses": {
+                    "200": {
+                        "description": "Home page data",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "status": {
+                                            "type": "boolean",
+                                            "example": true
+                                        },
+                                        "message": {
+                                            "type": "string",
+                                            "example": "عملیات با موفقیت انجام شد"
+                                        },
+                                        "data": {
+                                            "properties": {
+                                                "picture": {
+                                                    "$ref": "#/components/schemas/SliderResource"
+                                                },
+                                                "offer_links": {
+                                                    "type": "array",
+                                                    "items": {
+                                                        "$ref": "#/components/schemas/SliderResource"
+                                                    }
+                                                },
+                                                "discount_products": {
+                                                    "type": "array",
+                                                    "items": {
+                                                        "$ref": "#/components/schemas/DiscountTypeResource"
+                                                    }
+                                                }
+                                            },
+                                            "type": "object"
+                                        },
+                                        "errors": {
+                                            "type": "null",
+                                            "example": null
+                                        }
+                                    },
+                                    "type": "object"
                                 }
                             }
                         }
@@ -2630,6 +2679,83 @@
                 },
                 "type": "object"
             },
+            "DiscountTypeResource": {
+                "title": "Discount Type Resource",
+                "description": "Discount type resource representation",
+                "properties": {
+                    "ads": {
+                        "properties": {
+                            "title": {
+                                "type": "string",
+                                "example": "عنوان تبلیغ"
+                            },
+                            "footer": {
+                                "type": "string",
+                                "example": "فوتر تبلیغ"
+                            },
+                            "image_url": {
+                                "type": "string",
+                                "example": "http://localhost:8000/storage/ads/ad.jpg"
+                            },
+                            "link": {
+                                "type": "string",
+                                "example": "https://example.com"
+                            },
+                            "target": {
+                                "type": "string",
+                                "example": "_blank"
+                            }
+                        },
+                        "type": "object"
+                    },
+                    "sliders": {
+                        "type": "array",
+                        "items": {
+                            "$ref": "#/components/schemas/SliderResource"
+                        }
+                    },
+                    "product_features": {
+                        "properties": {
+                            "title": {
+                                "type": "string",
+                                "example": "عنوان ویژگی محصول"
+                            },
+                            "footer": {
+                                "type": "string",
+                                "example": "فوتر ویژگی"
+                            },
+                            "image_url": {
+                                "type": "string",
+                                "example": "http://localhost:8000/storage/features/feature.jpg"
+                            },
+                            "link": {
+                                "type": "string",
+                                "example": "https://example.com"
+                            },
+                            "target": {
+                                "type": "string",
+                                "example": "_blank"
+                            },
+                            "background_color_up": {
+                                "type": "string",
+                                "example": "#ffffff"
+                            },
+                            "background_color_down": {
+                                "type": "string",
+                                "example": "#f0f0f0"
+                            },
+                            "products": {
+                                "type": "array",
+                                "items": {
+                                    "$ref": "#/components/schemas/ProductSlidersResource"
+                                }
+                            }
+                        },
+                        "type": "object"
+                    }
+                },
+                "type": "object"
+            },
             "MembershipResource": {
                 "title": "Membership Resource",
                 "description": "Membership resource schema",
@@ -3017,6 +3143,33 @@
                 },
                 "type": "object"
             },
+            "ProductSlidersResource": {
+                "title": "Product Sliders Resource",
+                "description": "Product resource for sliders representation",
+                "properties": {
+                    "name": {
+                        "type": "string",
+                        "example": "نام محصول"
+                    },
+                    "slug": {
+                        "type": "string",
+                        "example": "product-slug"
+                    },
+                    "description": {
+                        "type": "string",
+                        "example": "توضیحات کوتاه محصول"
+                    },
+                    "body": {
+                        "type": "string",
+                        "example": "توضیحات کامل محصول"
+                    },
+                    "price": {
+                        "type": "integer",
+                        "example": 150000
+                    }
+                },
+                "type": "object"
+            },
             "ProvinceResource": {
                 "title": "Province Resource",
                 "description": "Province resource representation",
@@ -3045,6 +3198,33 @@
                         "items": {
                             "$ref": "#/components/schemas/CityResource"
                         }
+                    }
+                },
+                "type": "object"
+            },
+            "SliderResource": {
+                "title": "Slider Resource",
+                "description": "Slider resource representation",
+                "properties": {
+                    "id": {
+                        "type": "integer",
+                        "example": 1
+                    },
+                    "title": {
+                        "type": "string",
+                        "example": "عنوان اسلایدر"
+                    },
+                    "link": {
+                        "type": "string",
+                        "example": "https://example.com"
+                    },
+                    "image_url": {
+                        "type": "string",
+                        "example": "http://localhost:8000/storage/sliders/slider.jpg"
+                    },
+                    "target": {
+                        "type": "string",
+                        "example": "_blank"
                     }
                 },
                 "type": "object"
@@ -3221,6 +3401,10 @@
         {
             "name": "Country",
             "description": "Country"
+        },
+        {
+            "name": "Home",
+            "description": "Home"
         },
         {
             "name": "ProductCategory",

@@ -29,5 +29,11 @@ class DiscountType extends Model
     protected $casts = [
         'is_show' => 'boolean',
         'target' => 'boolean',
+        'ads_target' => 'boolean',
     ];
+
+    public function category()
+    {
+        return $this->belongsTo(ProductCategory::class, 'product_category_id');
+    }
 }

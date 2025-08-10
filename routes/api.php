@@ -8,6 +8,7 @@ use App\Http\Controllers\OrderController;
 use App\Http\Controllers\OrderItemController;
 use App\Http\Controllers\PaymentController;
 use App\Http\Controllers\CartController;
+use App\Http\Controllers\DiscountController;
 
 Route::post('register', [AuthController::class, 'register']);
 Route::post('login', [AuthController::class, 'login']);
@@ -65,7 +66,7 @@ Route::get('products/{slug}', [\App\Http\Controllers\ProductController::class, '
 Route::get('brands', [\App\Http\Controllers\BrandController::class, 'index']);
 Route::get('brands/{slug}', [\App\Http\Controllers\BrandController::class, 'show']);
 
-Route::get('home-page/', [\App\Http\Controllers\HomeController::class, 'homePage']);
+Route::get('home-page/', [\App\Http\Controllers\HomeController::class, 'index']);
 
 // Global search
 Route::get('search', [\App\Http\Controllers\SearchController::class, '__invoke']);
