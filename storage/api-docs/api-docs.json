@@ -1896,6 +1896,10 @@
                                                             "slug": {
                                                                 "type": "string",
                                                                 "example": "electronics"
+                                                            },
+                                                            "parent": {
+                                                                "type": "string",
+                                                                "example": "دسته چهارم"
                                                             }
                                                         },
                                                         "type": "object"

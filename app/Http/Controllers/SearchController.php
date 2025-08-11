@@ -53,7 +53,8 @@ use Illuminate\Support\Str;
  *                         type="object",
  *                         @OA\Property(property="id", type="integer", example=2),
  *                         @OA\Property(property="name", type="string", example="Electronics"),
- *                         @OA\Property(property="slug", type="string", example="electronics")
+ *                         @OA\Property(property="slug", type="string", example="electronics"),
+ *                         @OA\Property(property="parent", type="string", example="دسته چهارم")
  *                     )
  *                 ),
  *                 @OA\Property(
@@ -100,12 +101,14 @@ class SearchController extends Controller
         $categories = ProductCategory::query()
             ->where('name', 'like', "%$q%")
             ->orWhere('slug', 'like', "%$q%")
+            ->with('parent')
             ->get()
             ->map(function ($item) {
                 return [
                     'id' => $item->id,
                     'name' => $item->name,
                     'slug' => $item->slug,
+                    'parent' => $item->parent ? $item->parent->name : "",
                 ];
             });
 
@@ -127,4 +130,4 @@ class SearchController extends Controller
             'brands' => $brands
         ]);
     }
-} 
+}
