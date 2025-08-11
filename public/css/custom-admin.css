@@ -1,0 +1,31 @@
+@font-face {
+    font-family: 'IranSans';
+    src: url('../fonts/iransanswebfanum.ttf') format('truetype');
+    font-weight: normal;
+    font-style: normal;
+    font-display: swap;
+}
+
+/* Apply IranSans font to all elements in admin panel */
+* {
+    font-family: 'IranSans', ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, "Noto Sans", sans-serif, "Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol", "Noto Color Emoji" !important;
+}
+
+/* Ensure RTL support for Persian text */
+[dir="rtl"] * {
+    font-family: 'IranSans', ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, "Noto Sans", sans-serif, "Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol", "Noto Color Emoji" !important;
+}
+
+/* Apply to specific Filament components */
+.fi-body,
+.fi-main,
+.fi-sidebar,
+.fi-topbar,
+.fi-form,
+.fi-ta-content,
+.fi-btn,
+.fi-input,
+.fi-select,
+.fi-textarea {
+    font-family: 'IranSans', ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, "Noto Sans", sans-serif !important;
+}
