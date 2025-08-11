@@ -8,12 +8,7 @@ use App\Http\Resources\ShowWithProductResource;
 use App\Http\Resources\SliderResource;
 use App\Models\ProductCategory;
 use App\Models\Product;
-use App\Models\Slider;
-use Illuminate\Http\Request;
-use Illuminate\Pagination\LengthAwarePaginator;
-use Illuminate\Support\Collection;
 use App\Http\Resources\ProductCategoryResource;
-use App\Http\Resources\ProductResource;
 use App\Http\Responses\ApiResponse;
 
 class ProductCategoryController extends Controller
