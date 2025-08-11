@@ -44,11 +44,11 @@ class ProductCategoryResource extends JsonResource
         if ($this->relationLoaded('allChildren') && $this->allChildren->count() > 0) {
             return ProductCategoryResource::collection($this->allChildren);
         }
-        
+
         if ($this->relationLoaded('children') && $this->children->count() > 0) {
             return ProductCategoryResource::collection($this->children);
         }
-        
+
         return [];
     }
-} 
+}

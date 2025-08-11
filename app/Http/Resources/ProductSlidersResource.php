@@ -57,7 +57,7 @@ class ProductSlidersResource extends JsonResource
             'image_url' => $images,
             'rate' => 2,
             'number_rate' => 741,
-            'discount_price' => 5000,
+            'discount_price' => 0,
             'type_buy' => [[
                 'text' => $this->is_online_only == true ? 'خرید انلاین' : '',
                 'bg_color' => '#005dab'

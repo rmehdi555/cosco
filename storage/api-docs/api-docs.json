@@ -1554,14 +1554,77 @@
                 "tags": [
                     "ProductCategory"
                 ],
-                "summary": "Get a category with all its subcategories and all products in this category and its subcategories",
+                "summary": "Get a category with its subcategories and products (with filters and pagination)",
                 "operationId": "e35ed420464e66736c727bca636498f8",
                 "parameters": [
                     {
                         "name": "slug",
                         "in": "path",
-                        "description": "Category slug",
+                        "description": "Category slug. Use 'all' to fetch all top-level categories and their products.",
                         "required": true,
+                        "schema": {
+                            "type": "string"
+                        }
+                    },
+                    {
+                        "name": "min_price",
+                        "in": "query",
+                        "description": "Minimum product price filter",
+                        "required": false,
+                        "schema": {
+                            "type": "integer",
+                            "example": 100000
+                        }
+                    },
+                    {
+                        "name": "max_price",
+                        "in": "query",
+                        "description": "Maximum product price filter",
+                        "required": false,
+                        "schema": {
+                            "type": "integer",
+                            "example": 5000000
+                        }
+                    },
+                    {
+                        "name": "sort_by",
+                        "in": "query",
+                        "description": "Sort products by one of: cheapest, expensive, newest",
+                        "required": false,
+                        "schema": {
+                            "type": "string",
+                            "enum": [
+                                "cheapest",
+                                "expensive",
+                                "newest"
+                            ]
+                        }
+                    },
+                    {
+                        "name": "page",
+                        "in": "query",
+                        "description": "Results page number",
+                        "required": false,
+                        "schema": {
+                            "type": "integer",
+                            "example": 1
+                        }
+                    },
+                    {
+                        "name": "count",
+                        "in": "query",
+                        "description": "Results per page",
+                        "required": false,
+                        "schema": {
+                            "type": "integer",
+                            "example": 12
+                        }
+                    },
+                    {
+                        "name": "category",
+                        "in": "query",
+                        "description": "Additional category filter (optional)",
+                        "required": false,
                         "schema": {
                             "type": "string"
                         }
@@ -1569,22 +1632,95 @@
                 ],
                 "responses": {
                     "200": {
-                        "description": "Category with subcategories and products",
+                        "description": "Category with subcategories, products, sliders and breadcrumb wrapped in ApiResponse",
                         "content": {
                             "application/json": {
                                 "schema": {
                                     "properties": {
-                                        "category": {
-                                            "$ref": "#/components/schemas/ProductCategoryResource"
+                                        "status": {
+                                            "type": "integer",
+                                            "example": 200
                                         },
-                                        "products": {
-                                            "type": "array",
-                                            "items": {
-                                                "$ref": "#/components/schemas/ProductResource"
-                                            }
+                                        "message": {
+                                            "type": "string",
+                                            "example": "عملیات با موفقیت انجام شد"
+                                        },
+                                        "data": {
+                                            "properties": {
+                                                "categories": {
+                                                    "type": "array",
+                                                    "items": {
+                                                        "$ref": "#/components/schemas/ShowWithProductResource"
+                                                    }
+                                                },
+                                                "products": {
+                                                    "properties": {
+                                                        "data": {
+                                                            "type": "array",
+                                                            "items": {
+                                                                "$ref": "#/components/schemas/ProductSlidersResource"
+                                                            }
+                                                        },
+                                                        "total": {
+                                                            "type": "integer",
+                                                            "example": 120
+                                                        },
+                                                        "perPage": {
+                                                            "type": "integer",
+                                                            "example": 12
+                                                        },
+                                                        "currentPage": {
+                                                            "type": "integer",
+                                                            "example": 1
+                                                        },
+                                                        "lastPage": {
+                                                            "type": "integer",
+                                                            "example": 10
+                                                        }
+                                                    },
+                                                    "type": "object"
+                                                },
+                                                "sliders": {
+                                                    "type": "array",
+                                                    "items": {
+                                                        "$ref": "#/components/schemas/SliderResource"
+                                                    }
+                                                },
+                                                "breadcrumb": {
+                                                    "type": "array",
+                                                    "items": {
+                                                        "properties": {
+                                                            "name": {
+                                                                "type": "string",
+                                                                "example": "کالای دیجیتال"
+                                                            },
+                                                            "slug": {
+                                                                "type": "string",
+                                                                "example": "digital-goods"
+                                                            }
+                                                        },
+                                                        "type": "object"
+                                                    }
+                                                }
+                                            },
+                                            "type": "object"
+                                        },
+                                        "errors": {
+                                            "type": "null",
+                                            "example": null
                                         }
                                     },
                                     "type": "object"
+                                }
+                            }
+                        }
+                    },
+                    "404": {
+                        "description": "Category not found",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/ErrorResponse"
                                 }
                             }
                         }
@@ -3235,6 +3371,35 @@
                         "items": {
                             "$ref": "#/components/schemas/CityResource"
                         }
+                    }
+                },
+                "type": "object"
+            },
+            "ShowWithProductResource": {
+                "title": "Show With Product Category Resource",
+                "description": "Flattened category fields for listing alongside products",
+                "properties": {
+                    "id": {
+                        "type": "integer",
+                        "example": 3
+                    },
+                    "name": {
+                        "type": "string",
+                        "example": "موبایل و تبلت"
+                    },
+                    "slug": {
+                        "type": "string",
+                        "example": "mobile-tablet"
+                    },
+                    "image_url": {
+                        "type": "string",
+                        "example": "http://localhost:8000/storage/categories/mobile.jpg",
+                        "nullable": true
+                    },
+                    "description": {
+                        "type": "string",
+                        "example": "توضیح کوتاه دسته",
+                        "nullable": true
                     }
                 },
                 "type": "object"

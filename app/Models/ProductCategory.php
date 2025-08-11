@@ -50,4 +50,22 @@ class ProductCategory extends Model
         return $this->hasMany(Slider::class, 'type', 'slug');
     }
 
+    public function getBreadcrumb()
+    {
+        $breadcrumbs = collect([]);
+        $category = $this->parent;
+
+        while ($category) {
+            $breadcrumbs->prepend([
+                'name' => $category->name,
+                'slug' => $category->slug,
+            ]);
+            $category = $category->parent;
+        }
+
+        return $breadcrumbs->values();
+    }
+
+
+
 }

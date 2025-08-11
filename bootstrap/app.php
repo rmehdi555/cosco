@@ -19,13 +19,13 @@ return Application::configure(basePath: dirname(__DIR__))
                 return \App\Http\Responses\ApiResponse::notFound(__('errors.not_found'));
             }
         });
-        
+
         $exceptions->render(function (Illuminate\Database\Eloquent\ModelNotFoundException $e, Illuminate\Http\Request $request) {
             if ($request->is('api/*')) {
                 return \App\Http\Responses\ApiResponse::notFound(__('errors.model_not_found'));
             }
         });
-        
+
         $exceptions->render(function (Illuminate\Validation\ValidationException $e, Illuminate\Http\Request $request) {
             if ($request->is('api/*')) {
                 return \App\Http\Responses\ApiResponse::validationError($e->errors(), __('errors.validation_failed'));
