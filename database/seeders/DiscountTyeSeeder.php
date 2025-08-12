@@ -19,6 +19,8 @@ class DiscountTyeSeeder extends Seeder
                 'title' => 'لوازم خانگی تخفیف دار ماه مرداد1404/05/20',
                 'background_color_up' => '#FF0000',
                 'background_color_down' => '#00FF00',
+                'ads_background_color_up' => '#FF0000',
+                'ads_background_color_down' => '#00FF00',
                 'ads_image_url' => 'http://localhost:8072/storage/product-images/01K1ZVJ3P079NZDQH8TP4N5692.jpg',
                 'image_url' => asset('storage/' . $product->image_url),
                 'footer' => 'خرید آنلاین | معتبر تا 1404/6/10 | آخرین تخفیف سال',

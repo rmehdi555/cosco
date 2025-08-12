@@ -31,7 +31,7 @@ class SliderResource extends JsonResource
             'id' => $this->id ?? 1,
             'title' => $this->title ?? '',
             'link' => $this->link ?? '',
-            'image_url' => $this->image_url ?? '',
+            'image_url' => asset('storage/' . $this->ads_image_url),
             'target' => $this->target ?? '',
         ];
     }

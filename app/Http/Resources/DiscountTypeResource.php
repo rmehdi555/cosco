@@ -59,9 +59,11 @@ class DiscountTypeResource extends JsonResource
                 'image_url' => asset('storage/' . $this->ads_image_url),
                 'link' => $this->ads_link,
                 'target' => $this->ads_target,
+                'background_color_up' => $this->ads_background_color_up,
+                'background_color_down' => $this->ads_background_color_down,
             ],
-            'sliders' => $this->category && $this->category->sliders->isNotEmpty()
-                ? SliderResource::collection($this->category->sliders)
+            'sliders' => $this->productCategory && $this->productCategory->sliders->isNotEmpty()
+                ? SliderResource::collection($this->productCategory->sliders)
                 : [],
             'product_features' => [
                 'title' => $this->title,
@@ -71,8 +73,8 @@ class DiscountTypeResource extends JsonResource
                 'target' => $this->target,
                 'background_color_up' => $this->background_color_up,
                 'background_color_down' => $this->background_color_down,
-                'products' => $this->category && $this->category->products->isNotEmpty()
-                    ? ProductSlidersResource::collection($this->category->products)
+                'products' => $this->productCategory && $this->productCategory->products->isNotEmpty()
+                    ? ProductSlidersResource::collection($this->productCategory->products)
                     : []
             ]
         ];

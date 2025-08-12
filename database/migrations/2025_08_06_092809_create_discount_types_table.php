@@ -26,6 +26,8 @@ return new class extends Migration
             $table->string('ads_image_url')->nullable();
             $table->string('ads_link')->nullable();
             $table->boolean('ads_target')->nullable()->default('1');
+            $table->string('ads_background_color_up')->nullable();
+            $table->string('ads_background_color_down')->nullable();
             $table->boolean('is_show')->default('1');
             $table->softDeletes();
             $table->timestamps();

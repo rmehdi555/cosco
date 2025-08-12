@@ -23,6 +23,8 @@ class DiscountType extends Model
         'ads_image_url',
         'ads_link',
         'ads_target',
+        'ads_background_color_up',
+        'ads_background_color_down',
         'is_show',
     ];
 
