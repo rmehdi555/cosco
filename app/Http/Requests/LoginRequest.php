@@ -10,8 +10,9 @@ use Illuminate\Foundation\Http\FormRequest;
  *   type="object",
  *   title="Login Request",
  *   description="Request body for user login",
- *   required={"email","password"},
- *   @OA\Property(property="email", type="string", format="email", example="info@cosco.com"),
+ *   required={"password"},
+ *   @OA\Property(property="email", type="string", format="email", example="info@cosco.com", nullable=true, description="User's email address"),
+ *   @OA\Property(property="cell_phone", type="string", example="09123456789", nullable=true, description="User's cell phone number"),
  *   @OA\Property(property="password", type="string", example="aA123456"),
  * )
  */
@@ -25,8 +26,27 @@ class LoginRequest extends FormRequest
     public function rules()
     {
         return [
-            'email' => 'required|email',
+            'email' => 'nullable|email',
+            'cell_phone' => 'nullable|string',
             'password' => 'required|string',
         ];
+    }
+
+    public function messages()
+    {
+        return [
+            'email.email' => 'فرمت ایمیل نامعتبر است.',
+            'password.required' => 'رمز عبور الزامی است.',
+            'password.string' => 'رمز عبور باید متن باشد.',
+        ];
+    }
+
+    public function withValidator($validator)
+    {
+        $validator->after(function ($validator) {
+            if (!$this->email && !$this->cell_phone) {
+                $validator->errors()->add('identifier', 'لطفاً ایمیل یا شماره موبایل را وارد کنید.');
+            }
+        });
     }
 } 

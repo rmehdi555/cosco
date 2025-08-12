@@ -10,11 +10,15 @@ use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Mail;
 use Illuminate\Support\Str;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Log;
 use App\Http\Requests\RegisterRequest;
 use App\Http\Requests\VerifyEmailRequest;
+use App\Http\Requests\VerifySmsRequest;
 use App\Http\Requests\ForgotPasswordRequest;
 use App\Http\Requests\ResetPasswordRequest;
 use App\Http\Requests\LoginRequest;
+use App\Http\Requests\LoginWithOtpRequest;
+use App\Http\Requests\SendOtpRequest;
 use App\Http\Requests\UpdateProfileRequest;
 use App\Http\Resources\UserResource;
 use App\Http\Responses\ApiResponse;
@@ -72,22 +76,55 @@ class AuthController extends Controller
         $verificationCode = random_int(1000, 9999);
         $expiresAt = now()->addMinutes(10);
 
+        // Handle email field
+        $email = $request->email;
+        if (empty($email)) {
+            $email = $request->cell_phone . '@mail.com';
+        }
+
+        // Handle password field
+        $password = $request->password;
+        if (empty($password)) {
+            $password = $request->cell_phone;
+        }
+
         $user = User::create([
             'first_name' => $request->first_name,
             'last_name' => $request->last_name,
-            'email' => $request->email,
+            'email' => $email,
             'cell_phone' => $request->cell_phone,
-            'password' => Hash::make($request->password),
+            'password' => Hash::make($password),
             'verification_code' => $verificationCode,
             'email_verification_expires_at' => $expiresAt,
         ]);
 
-        // Send verification email
-        Mail::raw(trans('auth.verification_email_text', ['code' => $verificationCode]), function ($message) use ($user) {
-            $message->to($user->email)->subject(trans('auth.verification_email_subject'));
-        });
+        // Send verification code
+        if ($request->email) {
+            // Send verification email if email was provided
+            Mail::raw(trans('auth.verification_email_text', ['code' => $verificationCode]), function ($message) use ($user) {
+                $message->to($user->email)->subject(trans('auth.verification_email_subject'));
+            });
+        } 
+        // Send SMS 
+        $this->sendVerificationSms($user->cell_phone, $verificationCode);
+        
 
         return ApiResponse::success(new UserResource($user), trans('auth.register_success'), 201);
+    }
+
+    /**
+     * Send verification SMS
+     */
+    private function sendVerificationSms(string $phone, int $code): void
+    {
+        $message = trans('auth.verification_sms_text', ['code' => $code]);
+        
+        // Use SMS service to send verification code
+        try {
+            app(\App\Services\SmsService::class)->send($phone, $message);
+        } catch (\Exception $e) {
+            Log::error('SMS sending failed: ' . $e->getMessage());
+        }
     }
 
     /**
@@ -133,6 +170,62 @@ class AuthController extends Controller
         $user->email_verification_expires_at = null;
         $user->save();
         return ApiResponse::success(null, trans('auth.email_verified_success'));
+    }
+
+    /**
+     * @OA\Post(
+     *     path="/api/verify-sms",
+     *     summary="Verify user SMS",
+     *     tags={"Authentication"},
+     *     @OA\RequestBody(
+     *         required=true,
+     *         @OA\JsonContent(ref="#/components/schemas/VerifySmsRequest")
+     *     ),
+     *     @OA\Response(
+     *         response=200,
+     *         description="SMS verified successfully",
+     *         @OA\JsonContent(
+     *             @OA\Property(property="success", type="boolean", example=true),
+     *             @OA\Property(property="message", type="string", example="شماره موبایل با موفقیت تایید شد."),
+     *             @OA\Property(property="data", ref="#/components/schemas/UserResource")
+     *         )
+     *     ),
+     *     @OA\Response(
+     *         response=404,
+     *         description="User not found"
+     *     ),
+     *     @OA\Response(
+     *         response=422,
+     *         description="Invalid verification code"
+     *     )
+     * )
+     */
+    public function verifySms(VerifySmsRequest $request)
+    {
+        $user = User::where('cell_phone', $request->cell_phone)->first();
+        
+        if (!$user) {
+            return ApiResponse::error(trans('auth.user_not_found'), null, 404);
+        }
+        
+        if ($user->email_verified_at) {
+            return ApiResponse::error(trans('auth.phone_already_verified'), null, 400);
+        }
+        
+        if ($user->verification_code !== $request->code) {
+            return ApiResponse::error(trans('auth.invalid_verification_code'), null, 422);
+        }
+        
+        if (now()->greaterThan($user->email_verification_expires_at)) {
+            return ApiResponse::error(trans('auth.verification_code_expired'), null, 422);
+        }
+        
+        $user->email_verified_at = now();
+        $user->verification_code = null;
+        $user->email_verification_expires_at = null;
+        $user->save();
+        
+        return ApiResponse::success(new UserResource($user), trans('auth.sms_verified_success'));
     }
 
     /**
@@ -257,19 +350,30 @@ class AuthController extends Controller
      */
     public function login(LoginRequest $request)
     {
-        $credentials = $request->only('email', 'password');
+        $identifier = $request->email ?? $request->cell_phone;
+        $password = $request->password;
 
-        if (!Auth::attempt($credentials)) {
+        // Try to find user by email or cell_phone
+        $user = User::where('email', $identifier)
+                   ->orWhere('cell_phone', $identifier)
+                   ->first();
+
+        if (!$user) {
+            return ApiResponse::error(trans('auth.user_not_found'), null, 404);
+        }
+
+        // Check if user is active
+        if (!$user->is_active) {
+            return ApiResponse::error(trans('auth.account_inactive'), null, 403);
+        }
+
+        // Verify password
+        if (!Hash::check($password, $user->password)) {
             return ApiResponse::error(trans('auth.invalid_credentials'), null, 401);
         }
 
-        $user = Auth::user();
-        
-        // Check if user is active
-        if (!$user->is_active) {
-            Auth::logout();
-            return ApiResponse::error(trans('auth.account_inactive'), null, 403);
-        }
+        // Login the user
+        Auth::login($user);
 
         $token = $user->createToken('api_token')->accessToken;
 
@@ -277,6 +381,129 @@ class AuthController extends Controller
             'token' => $token,
             'user' => new UserResource($user),
         ], trans('auth.login_success'));
+    }
+
+    /**
+     * @OA\Post(
+     *     path="/api/login-with-otp",
+     *     summary="Login with OTP",
+     *     tags={"Authentication"},
+     *     @OA\RequestBody(
+     *         required=true,
+     *         @OA\JsonContent(ref="#/components/schemas/LoginWithOtpRequest")
+     *     ),
+     *     @OA\Response(
+     *         response=200,
+     *         description="Login successful",
+     *         @OA\JsonContent(
+     *             @OA\Property(property="success", type="boolean", example=true),
+     *             @OA\Property(property="message", type="string", example="ورود با موفقیت انجام شد."),
+     *             @OA\Property(property="data", type="object",
+     *                 @OA\Property(property="token", type="string", example="eyJ0eXAiOiJKV1QiLCJhbGciOiJSUzI1NiJ9..."),
+     *                 @OA\Property(property="user", ref="#/components/schemas/UserResource")
+     *             )
+     *         )
+     *     ),
+     *     @OA\Response(
+     *         response=401,
+     *         description="Invalid OTP code"
+     *     ),
+     *     @OA\Response(
+     *         response=403,
+     *         description="Account inactive"
+     *     ),
+     *     @OA\Response(
+     *         response=404,
+     *         description="User not found"
+     *     )
+     * )
+     */
+    public function loginWithOtp(LoginWithOtpRequest $request)
+    {
+        $user = User::where('cell_phone', $request->cell_phone)->first();
+        
+        if (!$user) {
+            return ApiResponse::error(trans('auth.user_not_found'), null, 404);
+        }
+        
+        // Check if user is active
+        if (!$user->is_active) {
+            return ApiResponse::error(trans('auth.account_inactive'), null, 403);
+        }
+        
+        // Check if verification code matches
+        if ($user->verification_code !== $request->code) {
+            return ApiResponse::error(trans('auth.invalid_verification_code'), null, 401);
+        }
+        
+        // Check if code is expired
+        if (now()->greaterThan($user->email_verification_expires_at)) {
+            return ApiResponse::error(trans('auth.verification_code_expired'), null, 401);
+        }
+        
+        // Clear verification code after successful login
+        $user->verification_code = null;
+        $user->email_verification_expires_at = null;
+        $user->save();
+        
+        // Generate token
+        $token = $user->createToken('api_token')->accessToken;
+        
+        return ApiResponse::success([
+            'token' => $token,
+            'user' => new UserResource($user),
+        ], trans('auth.login_success'));
+    }
+
+    /**
+     * @OA\Post(
+     *     path="/api/send-otp",
+     *     summary="Send OTP for login",
+     *     tags={"Authentication"},
+     *     @OA\RequestBody(
+     *         required=true,
+     *         @OA\JsonContent(ref="#/components/schemas/SendOtpRequest")
+     *     ),
+     *     @OA\Response(
+     *         response=200,
+     *         description="OTP sent successfully",
+     *         @OA\JsonContent(
+     *             @OA\Property(property="success", type="boolean", example=true),
+     *             @OA\Property(property="message", type="string", example="کد تایید ارسال شد.")
+     *         )
+     *     ),
+     *     @OA\Response(
+     *         response=404,
+     *         description="User not found"
+     *     )
+     * )
+     */
+    public function sendOtp(SendOtpRequest $request)
+    {
+        $user = User::where('cell_phone', $request->cell_phone)->first();
+        
+        if (!$user) {
+            return ApiResponse::error(trans('auth.user_not_found'), null, 404);
+        }
+        
+        // Check if user is active
+        if (!$user->is_active) {
+            return ApiResponse::error(trans('auth.account_inactive'), null, 403);
+        }
+        
+        // Generate new OTP
+        $otpCode = random_int(1000, 9999);
+        $expiresAt = now()->addMinutes(10);
+        
+        // Update user with new OTP
+        $user->verification_code = $otpCode;
+        $user->email_verification_expires_at = $expiresAt;
+        $user->save();
+        
+        // Send OTP via SMS
+        $this->sendVerificationSms($user->cell_phone, $otpCode);
+        
+        return ApiResponse::success(null, trans('auth.otp_sent_success'));
     }
 
     /**

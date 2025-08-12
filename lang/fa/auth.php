@@ -1,12 +1,15 @@
 <?php
 
 return [
-    'register_success' => 'ثبت‌نام با موفقیت انجام شد. کد تایید به ایمیل ارسال شد.',
+    'register_success' => 'ثبت‌نام با موفقیت انجام شد. کد تایید ارسال شد.',
     'user_not_found' => 'کاربر یافت نشد.',
     'email_already_verified' => 'ایمیل قبلاً تایید شده است.',
     'invalid_verification_code' => 'کد تایید نامعتبر است.',
     'verification_code_expired' => 'کد تایید منقضی شده است.',
     'email_verified_success' => 'ایمیل با موفقیت تایید شد.',
+    'sms_verified_success' => 'شماره موبایل با موفقیت تایید شد.',
+    'phone_already_verified' => 'شماره موبایل قبلاً تایید شده است.',
+    'otp_sent_success' => 'کد تایید ارسال شد.',
     'password_reset_code_sent' => 'کد بازیابی رمز عبور به ایمیل ارسال شد.',
     'reset_code_not_found' => 'کد بازیابی یافت نشد.',
     'invalid_reset_code' => 'کد بازیابی نامعتبر است.',
@@ -16,6 +19,7 @@ return [
     'login_success' => 'ورود با موفقیت انجام شد.',
     'account_inactive' => 'حساب کاربری شما غیرفعال است. لطفاً با پشتیبانی تماس بگیرید.',
     'verification_email_text' => 'کد تایید شما: :code',
+    'verification_sms_text' => 'کد تایید شما: :code',
     'reset_password_email_text' => 'کد بازیابی رمز عبور: :code',
     'verification_email_subject' => 'کد تایید ایمیل',
     'reset_password_email_subject' => 'کد بازیابی رمز عبور',

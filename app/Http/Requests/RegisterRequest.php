@@ -10,12 +10,12 @@ use Illuminate\Foundation\Http\FormRequest;
  *   type="object",
  *   title="Register Request",
  *   description="Request body for user registration",
- *   required={"email","cell_phone","password"},
+ *   required={"cell_phone"},
  *   @OA\Property(property="first_name", type="string", maxLength=255, example="علی"),
  *   @OA\Property(property="last_name", type="string", maxLength=255, example="احمدی"),
- *   @OA\Property(property="email", type="string", format="email", maxLength=255, example="ali@example.com"),
+ *   @OA\Property(property="email", type="string", format="email", maxLength=255, example="ali@example.com", nullable=true, description="If not provided, will be set to cell_phone@mail.com"),
  *   @OA\Property(property="cell_phone", type="string", example="09123456789"),
- *   @OA\Property(property="password", type="string", minLength=6, example="password123"),
+ *   @OA\Property(property="password", type="string", minLength=6, example="password123", nullable=true, description="If not provided, will be set to cell_phone"),
  * )
  */
 class RegisterRequest extends FormRequest
@@ -30,9 +30,9 @@ class RegisterRequest extends FormRequest
         return [
             'first_name' => 'nullable|string|max:255',
             'last_name' => 'nullable|string|max:255',
-            'email' => 'required|string|email|max:255|unique:users',
+            'email' => 'nullable|string|email|max:255|unique:users',
             'cell_phone' => 'required|string|unique:users',
-            'password' => 'required|string|min:6',
+            'password' => 'nullable|string|min:6',
         ];
     }
 

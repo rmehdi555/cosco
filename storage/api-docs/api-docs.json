@@ -402,6 +402,56 @@
                 }
             }
         },
+        "/api/verify-sms": {
+            "post": {
+                "tags": [
+                    "Authentication"
+                ],
+                "summary": "Verify user SMS",
+                "operationId": "b0606bf63acd67d4ef454ac32a07fcdc",
+                "requestBody": {
+                    "required": true,
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "$ref": "#/components/schemas/VerifySmsRequest"
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "200": {
+                        "description": "SMS verified successfully",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "success": {
+                                            "type": "boolean",
+                                            "example": true
+                                        },
+                                        "message": {
+                                            "type": "string",
+                                            "example": "شماره موبایل با موفقیت تایید شد."
+                                        },
+                                        "data": {
+                                            "$ref": "#/components/schemas/UserResource"
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    },
+                    "404": {
+                        "description": "User not found"
+                    },
+                    "422": {
+                        "description": "Invalid verification code"
+                    }
+                }
+            }
+        },
         "/api/forgot-password": {
             "post": {
                 "tags": [
@@ -574,6 +624,112 @@
                     },
                     "403": {
                         "description": "Account inactive"
+                    }
+                }
+            }
+        },
+        "/api/login-with-otp": {
+            "post": {
+                "tags": [
+                    "Authentication"
+                ],
+                "summary": "Login with OTP",
+                "operationId": "4ed66891d7f35b21a9b98d866bb3a33c",
+                "requestBody": {
+                    "required": true,
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "$ref": "#/components/schemas/LoginWithOtpRequest"
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "200": {
+                        "description": "Login successful",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "success": {
+                                            "type": "boolean",
+                                            "example": true
+                                        },
+                                        "message": {
+                                            "type": "string",
+                                            "example": "ورود با موفقیت انجام شد."
+                                        },
+                                        "data": {
+                                            "properties": {
+                                                "token": {
+                                                    "type": "string",
+                                                    "example": "eyJ0eXAiOiJKV1QiLCJhbGciOiJSUzI1NiJ9..."
+                                                },
+                                                "user": {
+                                                    "$ref": "#/components/schemas/UserResource"
+                                                }
+                                            },
+                                            "type": "object"
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    },
+                    "401": {
+                        "description": "Invalid OTP code"
+                    },
+                    "403": {
+                        "description": "Account inactive"
+                    },
+                    "404": {
+                        "description": "User not found"
+                    }
+                }
+            }
+        },
+        "/api/send-otp": {
+            "post": {
+                "tags": [
+                    "Authentication"
+                ],
+                "summary": "Send OTP for login",
+                "operationId": "40f7591016f0d0a5ce412e71fee1f351",
+                "requestBody": {
+                    "required": true,
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "$ref": "#/components/schemas/SendOtpRequest"
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "200": {
+                        "description": "OTP sent successfully",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "success": {
+                                            "type": "boolean",
+                                            "example": true
+                                        },
+                                        "message": {
+                                            "type": "string",
+                                            "example": "کد تایید ارسال شد."
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    },
+                    "404": {
+                        "description": "User not found"
                     }
                 }
             }
@@ -2398,14 +2554,21 @@
                 "title": "Login Request",
                 "description": "Request body for user login",
                 "required": [
-                    "email",
                     "password"
                 ],
                 "properties": {
                     "email": {
+                        "description": "User's email address",
                         "type": "string",
                         "format": "email",
-                        "example": "info@cosco.com"
+                        "example": "info@cosco.com",
+                        "nullable": true
+                    },
+                    "cell_phone": {
+                        "description": "User's cell phone number",
+                        "type": "string",
+                        "example": "09123456789",
+                        "nullable": true
                     },
                     "password": {
                         "type": "string",
@@ -2414,13 +2577,32 @@
                 },
                 "type": "object"
             },
+            "LoginWithOtpRequest": {
+                "title": "Login with OTP Request",
+                "description": "Request body for login with OTP",
+                "required": [
+                    "cell_phone",
+                    "code"
+                ],
+                "properties": {
+                    "cell_phone": {
+                        "description": "User's cell phone number",
+                        "type": "string",
+                        "example": "09123456789"
+                    },
+                    "code": {
+                        "description": "4-digit OTP code",
+                        "type": "string",
+                        "example": "1234"
+                    }
+                },
+                "type": "object"
+            },
             "RegisterRequest": {
                 "title": "Register Request",
                 "description": "Request body for user registration",
                 "required": [
-                    "email",
-                    "cell_phone",
-                    "password"
+                    "cell_phone"
                 ],
                 "properties": {
                     "first_name": {
@@ -2434,19 +2616,23 @@
                         "example": "احمدی"
                     },
                     "email": {
+                        "description": "If not provided, will be set to cell_phone@mail.com",
                         "type": "string",
                         "format": "email",
                         "maxLength": 255,
-                        "example": "ali@example.com"
+                        "example": "ali@example.com",
+                        "nullable": true
                     },
                     "cell_phone": {
                         "type": "string",
                         "example": "09123456789"
                     },
                     "password": {
+                        "description": "If not provided, will be set to cell_phone",
                         "type": "string",
                         "minLength": 6,
-                        "example": "password123"
+                        "example": "password123",
+                        "nullable": true
                     }
                 },
                 "type": "object"
@@ -2479,6 +2665,21 @@
                         "type": "string",
                         "minLength": 6,
                         "example": "newpassword123"
+                    }
+                },
+                "type": "object"
+            },
+            "SendOtpRequest": {
+                "title": "Send OTP Request",
+                "description": "Request body for sending OTP for login",
+                "required": [
+                    "cell_phone"
+                ],
+                "properties": {
+                    "cell_phone": {
+                        "description": "User's cell phone number",
+                        "type": "string",
+                        "example": "09123456789"
                     }
                 },
                 "type": "object"
@@ -2609,6 +2810,27 @@
                         "example": "ali@example.com"
                     },
                     "code": {
+                        "type": "string",
+                        "example": "1234"
+                    }
+                },
+                "type": "object"
+            },
+            "VerifySmsRequest": {
+                "title": "Verify SMS Request",
+                "description": "Request body for SMS verification",
+                "required": [
+                    "cell_phone",
+                    "code"
+                ],
+                "properties": {
+                    "cell_phone": {
+                        "description": "User's cell phone number",
+                        "type": "string",
+                        "example": "09123456789"
+                    },
+                    "code": {
+                        "description": "4-digit verification code",
                         "type": "string",
                         "example": "1234"
                     }
@@ -3257,6 +3479,12 @@
                         "items": {
                             "$ref": "#/components/schemas/OrderItemResource"
                         }
+                    },
+                    "received_at": {
+                        "type": "string",
+                        "format": "date-time",
+                        "example": "2024-01-15T10:30:00Z",
+                        "nullable": true
                     },
                     "created_at": {
                         "type": "string",

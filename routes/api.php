@@ -13,6 +13,9 @@ use App\Http\Controllers\DiscountController;
 Route::post('register', [AuthController::class, 'register']);
 Route::post('login', [AuthController::class, 'login']);
 Route::post('verify-email', [AuthController::class, 'verifyEmail']);
+Route::post('verify-sms', [AuthController::class, 'verifySms']);
+Route::post('send-otp', [AuthController::class, 'sendOtp']);
+Route::post('login-with-otp', [AuthController::class, 'loginWithOtp']);
 Route::post('forgot-password', [AuthController::class, 'forgotPassword']);
 Route::post('reset-password', [AuthController::class, 'resetPassword']);
 

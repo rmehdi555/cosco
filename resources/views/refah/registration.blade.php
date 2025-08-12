@@ -357,7 +357,7 @@
                 dateConversionTimeout = setTimeout(() => {
                     convertPersianDateOnServer(value)
                         .then(gregorianDate => {
-                            document.getElementById('birth_date').value = gregorianDate;
+                        document.getElementById('birth_date').value = gregorianDate;
                             errorDiv.style.display = 'none';
                         })
                         .catch(error => {
@@ -367,7 +367,7 @@
                             document.getElementById('birth_date').value = '';
                         });
                 }, 500); // 500ms delay to avoid too many requests
-            } else {
+                } else {
                 // Clear hidden field if date is incomplete
                 document.getElementById('birth_date').value = '';
             }
