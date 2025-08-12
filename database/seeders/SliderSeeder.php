@@ -14,12 +14,11 @@ class SliderSeeder extends Seeder
      */
     public function run(): void
     {
-        $product = ProductImage::find(5);
         DB::table('sliders')->insert([
             [
                 'title' => 'جدیدترین ها',
                 'link' => 'https://rdst.ca/categorys/all',
-                'image_url' => asset('storage/' . $product->image_url),
+                'image_url' => 'product-categories/01K2EG1P20F8FHXAESYTDN6ZS4.webp',
                 'type' => 'first_picture',
                 'is_show' => 1,
                 'target' => 1,
@@ -29,7 +28,7 @@ class SliderSeeder extends Seeder
             [
                 'title' => 'کاسکو',
                 'link' => 'https://www.costco.com/join-costco.html?redirectLogin=false',
-                'image_url' => asset('storage/' . $product->image_url),
+                'image_url' => 'product-categories/01K2EG1P20F8FHXAESYTDN6ZS4.webp',
                 'type' => 'first_slider',
                 'is_show' => 1,
                 'target' => 1,
@@ -39,7 +38,7 @@ class SliderSeeder extends Seeder
             [
                 'title' => 'اسلایدر دوم',
                 'link' => 'https://www.costco.com/join-costco.html?redirectLogin=false',
-                'image_url' => asset('storage/' . $product->image_url),
+                'image_url' => 'product-categories/01K2EG1P20F8FHXAESYTDN6ZS4.webp',
                 'type' => 'dsth-aol',
                 'is_show' => 1,
                 'target' => 1,
@@ -49,7 +48,7 @@ class SliderSeeder extends Seeder
             [
                 'title' => 'اسلایدر سوم',
                 'link' => 'https://www.costco.com/join-costco.html?redirectLogin=false',
-                'image_url' => asset('storage/' . $product->image_url),
+                'image_url' => 'product-categories/01K2EG1P20F8FHXAESYTDN6ZS4.webp',
                 'type' => 'dsth-dom',
                 'is_show' => 1,
                 'target' => 1,
