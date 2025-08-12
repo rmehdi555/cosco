@@ -13,6 +13,7 @@ use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Support\Facades\Auth;
 use Filament\Forms\Components\Select;
 use Filament\Forms\Components\TextInput;
+use Filament\Forms\Components\DatePicker;
 use Filament\Forms\Form;
 use Filament\Resources\Resource;
 use Filament\Tables;
@@ -76,6 +77,11 @@ class OrderResource extends Resource
                     ->required()
                     ->searchable()
                     ->placeholder('انتخاب آدرس ارسال'),
+
+                DatePicker::make('received_at')
+                    ->label('تاریخ دریافت')
+                    ->helperText('تاریخ دریافت سفارش توسط مشتری')
+                    ->placeholder('انتخاب تاریخ دریافت'),
             ]);
     }
 
@@ -126,6 +132,12 @@ class OrderResource extends Resource
 
                 TextColumn::make('created_at')
                     ->label('تاریخ ایجاد')
+                    ->dateTime()
+                    ->sortable()
+                    ->toggleable(isToggledHiddenByDefault: true),
+
+                TextColumn::make('received_at')
+                    ->label('تاریخ دریافت')
                     ->dateTime()
                     ->sortable()
                     ->toggleable(isToggledHiddenByDefault: true),

@@ -65,10 +65,11 @@ class ViewOrder extends ViewRecord
                                                 ->formatStateUsing(fn ($state) => Verta::instance($state)->format('Y/n/j H:i:s'))
                                                 ->icon('heroicon-m-calendar'),
                                             
-                                            TextEntry::make('updated_at')
-                                                ->label('آخرین بروزرسانی')
-                                                ->formatStateUsing(fn ($state) => Verta::instance($state)->format('Y/n/j H:i:s'))
-                                                ->icon('heroicon-m-clock'),
+                                            TextEntry::make('received_at')
+                                                ->label('تاریخ دریافت')
+                                                ->formatStateUsing(fn ($state) => $state ? Verta::instance($state)->format('Y/n/j H:i:s') : '-')
+                                                ->icon('heroicon-m-check-circle'),
+                                            
                                         ])
                                         ->columns(2),
                                 ]),

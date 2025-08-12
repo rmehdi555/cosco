@@ -20,12 +20,14 @@ class Order extends Model
         'total_amount',
         'payment_status',
         'shipping_address_id',
+        'received_at',
     ];
 
     protected $casts = [
         'total_amount' => 'decimal:2',
         'status' => OrderStatus::class,
         'payment_status' => OrderPaymentStatus::class,
+        'received_at' => 'datetime',
     ];
 
     public function user(): BelongsTo

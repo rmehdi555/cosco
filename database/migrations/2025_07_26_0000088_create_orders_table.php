@@ -18,6 +18,7 @@ return new class extends Migration
             $table->decimal('total_amount', 20, 2);
             $table->enum('payment_status', ['unpaid', 'paid', 'refunded']);
             $table->foreignId('shipping_address_id')->constrained('addresses')->onDelete('cascade');
+            $table->timestamp('received_at')->nullable();
             $table->timestamps();
             $table->softDeletes();
         });

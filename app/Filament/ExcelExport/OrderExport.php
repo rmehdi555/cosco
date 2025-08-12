@@ -44,6 +44,7 @@ class OrderExport extends BaseExport
             'وضعیت سفارش',
             'مبلغ کل',
             'تاریخ سفارش',
+            'تاریخ دریافت',
             'آدرس تحویل',
         ];
     }
@@ -59,6 +60,7 @@ class OrderExport extends BaseExport
             self::formatOrderStatus($order->status),
             $order->total_amount ? number_format($order->total_amount) . ' ریال' : '-',
             $order->created_at ? Verta::instance($order->created_at)->format('Y/n/j H:i') : '-',
+            $order->received_at ? Verta::instance($order->received_at)->format('Y/n/j H:i') : '-',
             $order->shipping_address ?? '-',
         ];
     }

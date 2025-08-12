@@ -27,6 +27,7 @@ use Illuminate\Http\Resources\Json\JsonResource;
  *         type="array",
  *         @OA\Items(ref="#/components/schemas/OrderItemResource")
  *     ),
+ *     @OA\Property(property="received_at", type="string", format="date-time", nullable=true, example="2024-01-15T10:30:00Z"),
  *     @OA\Property(property="created_at", type="string", format="date-time"),
  *     @OA\Property(property="updated_at", type="string", format="date-time")
  * )
@@ -51,6 +52,7 @@ class OrderResource extends JsonResource
             'payment_status_label' => $this->payment_status?->label(),
             'shipping_address' => new AddressResource($this->shippingAddress),
             'order_items' => OrderItemResource::collection($this->whenLoaded('orderItems')),
+            'received_at' => $this->received_at?->toISOString(),
             'created_at' => $this->created_at?->toISOString(),
             'updated_at' => $this->updated_at?->toISOString(),
         ];
