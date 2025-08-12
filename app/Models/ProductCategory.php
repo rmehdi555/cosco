@@ -50,6 +50,11 @@ class ProductCategory extends Model
         return $this->hasMany(Slider::class, 'type', 'slug');
     }
 
+    public function discountTypes()
+    {
+        return $this->hasMany(DiscountType::class, 'product_category_id');
+    }
+
     public function getBreadcrumb()
     {
         $breadcrumbs = collect([]);

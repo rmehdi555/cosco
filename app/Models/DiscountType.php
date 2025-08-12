@@ -32,7 +32,7 @@ class DiscountType extends Model
         'ads_target' => 'boolean',
     ];
 
-    public function category()
+    public function productCategory()
     {
         return $this->belongsTo(ProductCategory::class, 'product_category_id');
     }
