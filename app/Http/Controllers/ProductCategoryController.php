@@ -131,7 +131,7 @@ class ProductCategoryController extends Controller
         if ($request->slug === 'all') {
             $categories = ProductCategory::
 //            where('is_active', true)
-                where('parent_id', null)->with('sliders')->get();
+            where('parent_id', null)->with('sliders')->get();
             foreach ($categories as $category) {
                 $categoryIds[] = $category->id;
             }
@@ -171,7 +171,7 @@ class ProductCategoryController extends Controller
                 isset($request->max_price) and isset($request->min_price),
                 fn($q) => $q->whereBetween('price', [(int)$request->min_price, (int)$request->max_price])
             )
-            ->paginate($request->count);
+            ->paginate($request->count ?? 12);
 
         return ApiResponse::success([
             'categories' => ShowWithProductResource::collection($categories),
