@@ -35,12 +35,28 @@ class RefahRegistrationController extends Controller
         return response()->json($cities);
     }
 
+    public function checkMobileAvailability(Request $request)
+    {
+        $cellPhone = $request->input('cell_phone');
+        
+        if (empty($cellPhone)) {
+            return response()->json(['available' => true]);
+        }
+        
+        $exists = RefahUser::where('cell_phone', $cellPhone)->exists();
+        
+        return response()->json([
+            'available' => !$exists,
+            'message' => $exists ? 'این شماره موبایل قبلاً ثبت شده است' : 'شماره موبایل در دسترس است'
+        ]);
+    }
+
     public function store(Request $request): RedirectResponse
     {
         $validated = $request->validate([
             'first_name' => 'required|string|max:255',
             'last_name' => 'required|string|max:255',
-            'cell_phone' => 'required|string|max:20',
+            'cell_phone' => 'required|string|max:20|unique:refah_users,cell_phone',
             'national_code' => 'required|string|max:20|unique:refah_users,national_code',
             'birth_date' => 'required|date',
             'gender' => 'required|in:male,female',
@@ -57,6 +73,26 @@ class RefahRegistrationController extends Controller
             'refah_cart_id' => 'required|exists:refah_cart,id',
             'how_to_receive' => 'required|in:in_person,mail_to_address',
             'payment_method' => 'required|in:cash,card,online,installment',
+        ], [
+            'cell_phone.unique' => 'این شماره موبایل قبلاً ثبت شده است.',
+            'national_code.unique' => 'این کد ملی قبلاً ثبت شده است.',
+            'first_name.required' => 'نام الزامی است.',
+            'last_name.required' => 'نام خانوادگی الزامی است.',
+            'cell_phone.required' => 'شماره موبایل الزامی است.',
+            'national_code.required' => 'کد ملی الزامی است.',
+            'birth_date.required' => 'تاریخ تولد الزامی است.',
+            'gender.required' => 'جنسیت الزامی است.',
+            'number_of_family_members.required' => 'تعداد اعضای خانواده الزامی است.',
+            'province_id.required' => 'انتخاب استان الزامی است.',
+            'city_id.required' => 'انتخاب شهر الزامی است.',
+            'postal_code.required' => 'کد پستی الزامی است.',
+            'address.required' => 'آدرس الزامی است.',
+            'job.required' => 'شغل الزامی است.',
+            'income.required' => 'درآمد الزامی است.',
+            'refah_organization_id.required' => 'انتخاب سازمان الزامی است.',
+            'refah_cart_id.required' => 'انتخاب بسته رفاهی الزامی است.',
+            'how_to_receive.required' => 'نحوه دریافت الزامی است.',
+            'payment_method.required' => 'روش پرداخت الزامی است.',
         ]);
 
         // Generate unique 6-digit code starting with non-zero

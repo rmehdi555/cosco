@@ -245,6 +245,37 @@
             font-size: 0.9rem;
         }
 
+        .success-message-inline {
+            background: #48bb78;
+            color: white;
+            padding: 8px 12px;
+            border-radius: 6px;
+            margin-top: 5px;
+            font-size: 0.85rem;
+        }
+
+        .loading-message {
+            background: #3182ce;
+            color: white;
+            padding: 8px 12px;
+            border-radius: 6px;
+            margin-top: 5px;
+            font-size: 0.85rem;
+        }
+
+        .input-validation {
+            position: relative;
+        }
+
+        .input-validation input:valid.available {
+            border-color: #48bb78;
+        }
+
+        .input-validation input:invalid,
+        .input-validation input.unavailable {
+            border-color: #e53e3e;
+        }
+
         /* Footer Styles */
         .footer {
             background: #2d3748;
@@ -506,9 +537,10 @@
                             <div class="error-message">{{ $message }}</div>
                         @enderror
                     </div>
-                    <div>
+                    <div class="input-validation">
                         <label for="cell_phone">شماره موبایل *</label>
                         <input type="tel" id="cell_phone" name="cell_phone" value="{{ old('cell_phone') }}" required>
+                        <div id="mobile_validation_message" style="display: none;"></div>
                         @error('cell_phone')
                             <div class="error-message">{{ $message }}</div>
                         @enderror
@@ -711,7 +743,7 @@
 
 
 
-            <button type="submit" class="submit-btn">ثبت‌نام</button>
+            <button type="submit" class="submit-btn">ثبت‌ نام</button>
             </form>
         </div>
     </main>
@@ -816,12 +848,71 @@
             return originalFetch(url, options);
         };
 
+        // Mobile number validation
+        let mobileCheckTimeout;
+        function checkMobileAvailability(phoneNumber) {
+            const messageDiv = document.getElementById('mobile_validation_message');
+            const cellPhoneInput = document.getElementById('cell_phone');
+            
+            // Clear previous timeout
+            if (mobileCheckTimeout) {
+                clearTimeout(mobileCheckTimeout);
+            }
+            
+            // Don't check if empty or less than 10 digits
+            if (!phoneNumber || phoneNumber.length < 10) {
+                messageDiv.style.display = 'none';
+                cellPhoneInput.classList.remove('available', 'unavailable');
+                return;
+            }
+            
+            // Show loading message
+            messageDiv.innerHTML = '<div class="loading-message">در حال بررسی...</div>';
+            messageDiv.style.display = 'block';
+            
+            // Set timeout to avoid too many requests
+            mobileCheckTimeout = setTimeout(() => {
+                fetch('/refah/check-mobile', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'X-CSRF-TOKEN': token
+                    },
+                    body: JSON.stringify({
+                        cell_phone: phoneNumber
+                    })
+                })
+                .then(response => response.json())
+                .then(data => {
+                    if (data.available) {
+                        messageDiv.innerHTML = '<div class="success-message-inline">✓ شماره موبایل در دسترس است</div>';
+                        cellPhoneInput.classList.remove('unavailable');
+                        cellPhoneInput.classList.add('available');
+                    } else {
+                        messageDiv.innerHTML = '<div class="error-message">' + data.message + '</div>';
+                        cellPhoneInput.classList.remove('available');
+                        cellPhoneInput.classList.add('unavailable');
+                    }
+                })
+                .catch(error => {
+                    messageDiv.innerHTML = '<div class="error-message">خطا در بررسی شماره موبایل</div>';
+                    cellPhoneInput.classList.remove('available', 'unavailable');
+                });
+            }, 800); // 800ms delay
+        }
+
         // Load provinces on page load (country is fixed to ID 1)
         document.addEventListener('DOMContentLoaded', function() {
             // Add event listener for Persian date input
             const persianDateInput = document.getElementById('birth_date_persian');
             persianDateInput.addEventListener('input', function() {
                 formatPersianDate(this);
+            });
+            
+            // Add event listener for mobile number validation
+            const cellPhoneInput = document.getElementById('cell_phone');
+            cellPhoneInput.addEventListener('input', function() {
+                checkMobileAvailability(this.value.trim());
             });
             
             const provinceSelect = document.getElementById('province_id');
