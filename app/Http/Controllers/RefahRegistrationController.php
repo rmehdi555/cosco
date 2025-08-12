@@ -9,9 +9,12 @@ use App\Models\Country;
 use App\Models\Province;
 use App\Models\City;
 use App\Services\SmsService;
+use App\Http\Requests\RefahRegistrationRequest;
 use Illuminate\Http\Request;
 use Illuminate\View\View;
 use Illuminate\Http\RedirectResponse;
+use Illuminate\Support\Facades\Log;
+use Hekmatinasser\Verta\Verta;
 
 class RefahRegistrationController extends Controller
 {
@@ -51,49 +54,56 @@ class RefahRegistrationController extends Controller
         ]);
     }
 
-    public function store(Request $request): RedirectResponse
+    public function convertPersianDate(Request $request)
     {
-        $validated = $request->validate([
-            'first_name' => 'required|string|max:255',
-            'last_name' => 'required|string|max:255',
-            'cell_phone' => 'required|string|max:20|unique:refah_users,cell_phone',
-            'national_code' => 'required|string|max:20|unique:refah_users,national_code',
-            'birth_date' => 'required|date',
-            'gender' => 'required|in:male,female',
-            'number_of_family_members' => 'required|integer|min:1',
-            'country_id' => 'required|exists:countries,id',
-            'province_id' => 'required|exists:provinces,id',
-            'city_id' => 'required|exists:cities,id',
-            'postal_code' => 'required|string|max:20',
-            'address' => 'required|string|max:500',
-            'phone' => 'nullable|string|max:20',
-            'job' => 'required|string|max:255',
-            'income' => 'required|numeric|min:0',
-            'refah_organization_id' => 'required|exists:refah_organizations,id',
-            'refah_cart_id' => 'required|exists:refah_cart,id',
-            'how_to_receive' => 'required|in:in_person,mail_to_address',
-            'payment_method' => 'required|in:cash,card,online,installment',
-        ], [
-            'cell_phone.unique' => 'این شماره موبایل قبلاً ثبت شده است.',
-            'national_code.unique' => 'این کد ملی قبلاً ثبت شده است.',
-            'first_name.required' => 'نام الزامی است.',
-            'last_name.required' => 'نام خانوادگی الزامی است.',
-            'cell_phone.required' => 'شماره موبایل الزامی است.',
-            'national_code.required' => 'کد ملی الزامی است.',
-            'birth_date.required' => 'تاریخ تولد الزامی است.',
-            'gender.required' => 'جنسیت الزامی است.',
-            'number_of_family_members.required' => 'تعداد اعضای خانواده الزامی است.',
-            'province_id.required' => 'انتخاب استان الزامی است.',
-            'city_id.required' => 'انتخاب شهر الزامی است.',
-            'postal_code.required' => 'کد پستی الزامی است.',
-            'address.required' => 'آدرس الزامی است.',
-            'job.required' => 'شغل الزامی است.',
-            'income.required' => 'درآمد الزامی است.',
-            'refah_organization_id.required' => 'انتخاب سازمان الزامی است.',
-            'refah_cart_id.required' => 'انتخاب بسته رفاهی الزامی است.',
-            'how_to_receive.required' => 'نحوه دریافت الزامی است.',
-            'payment_method.required' => 'روش پرداخت الزامی است.',
-        ]);
+        $persianDate = $request->input('persian_date');
+        
+        if (empty($persianDate)) {
+            return response()->json(['success' => false, 'message' => 'تاریخ وارد نشده است']);
+        }
+        
+        try {
+            // Validate Persian date format (YYYY/MM/DD)
+            if (!preg_match('/^\d{4}\/\d{1,2}\/\d{1,2}$/', $persianDate)) {
+                return response()->json(['success' => false, 'message' => 'فرمت تاریخ صحیح نیست']);
+            }
+            
+            $parts = explode('/', $persianDate);
+            $year = (int) $parts[0];
+            $month = (int) $parts[1];
+            $day = (int) $parts[2];
+            
+            // Validate date ranges
+            if ($year < 1300 || $year > 1450) {
+                return response()->json(['success' => false, 'message' => 'سال باید بین 1300 تا 1450 باشد']);
+            }
+            
+            if ($month < 1 || $month > 12) {
+                return response()->json(['success' => false, 'message' => 'ماه معتبر نیست']);
+            }
+            
+            if ($day < 1 || $day > 31) {
+                return response()->json(['success' => false, 'message' => 'روز معتبر نیست']);
+            }
+            
+            // Convert Persian date to Gregorian using Verta
+            $gregorianArray = Verta::jalaliToGregorian($year, $month, $day);
+            $gregorianDate = sprintf('%04d-%02d-%02d', $gregorianArray[0], $gregorianArray[1], $gregorianArray[2]);
+            
+            return response()->json([
+                'success' => true,
+                'gregorian_date' => $gregorianDate,
+                'persian_date' => $persianDate
+            ]);
+            
+        } catch (\Exception $e) {
+            return response()->json(['success' => false, 'message' => 'تاریخ وارد شده معتبر نیست']);
+        }
+    }
+
+    public function store(RefahRegistrationRequest $request): RedirectResponse
+    {
+        $validated = $request->validated();
 
         // Generate unique 6-digit code starting with non-zero
         $code = $this->generateUniqueCode();
@@ -113,7 +123,7 @@ class RefahRegistrationController extends Controller
             );
         } catch (\Exception $e) {
             // Log SMS error but don't fail the registration
-            \Log::error('Failed to send Refah Kala registration SMS', [
+            Log::error('Failed to send Refah Kala registration SMS', [
                 'user_id' => $user->id,
                 'phone' => $validated['cell_phone'],
                 'error' => $e->getMessage()

@@ -552,7 +552,8 @@
                 <div class="form-row">
                     <div>
                         <label for="birth_date_persian">تاریخ تولد (شمسی) *</label>
-                        <input type="text" id="birth_date_persian" placeholder="1380/01/01" maxlength="10" required>
+                        <input type="text" id="birth_date_persian" placeholder="1380/01/01" maxlength="10" required 
+                               value="{{ old('birth_date_persian') }}">
                         <input type="hidden" id="birth_date" name="birth_date" value="{{ old('birth_date') }}">
                         @error('birth_date')
                             <div class="error-message">{{ $message }}</div>
@@ -762,41 +763,32 @@
     </footer>
 
     <script>
-        // Persian to Gregorian Date Converter
-        function persianToGregorian(persianYear, persianMonth, persianDay) {
-            const PERSIAN_EPOCH = 1948321; // Julian day number for 1/1/1 Persian
-            
-            const epyear = persianYear - ((persianYear >= 0) ? 474 : 473);
-            const epcycle = Math.floor(epyear / 2820) + 1;
-            const cyear = epyear - (epcycle - 1) * 2820;
-            
-            const epy = (cyear < 0) ? cyear + 2816 : ((cyear < 128) ? cyear + 29 : cyear + 2816);
-            
-            const auxb = (epy * 682) % 1029983;
-            const aux = (auxb >= 366) ? Math.floor(auxb / 1029983 * 366) : 0;
-            
-            const epmonth = (persianMonth <= 6) ? persianMonth : persianMonth + 1;
-            const epday = persianDay;
-            
-            const julday = persianDay +
-                ((persianMonth <= 6) ? (persianMonth - 1) * 31 : ((persianMonth - 1) * 30) + 6) +
-                Math.floor(((cyear * 682) % 1029983 + (auxb - aux)) / 1029983 * 365) +
-                (epcycle - 1) * 1029983 +
-                PERSIAN_EPOCH - 1;
-            
-            // Convert Julian Day to Gregorian
-            const a = julday + 32044;
-            const b = Math.floor((4 * a + 3) / 146097);
-            const c = a - Math.floor((b * 146097) / 4);
-            const d = Math.floor((4 * c + 3) / 1461);
-            const e = c - Math.floor((1461 * d) / 4);
-            const m = Math.floor((5 * e + 2) / 153);
-            
-            const day = e - Math.floor((153 * m + 2) / 5) + 1;
-            const month = m + 3 - (12 * Math.floor(m / 10));
-            const year = 100 * b + d - 4800 + Math.floor(m / 10);
-            
-            return { year, month, day };
+        // Persian date conversion using backend Verta library
+        let dateConversionTimeout;
+        function convertPersianDateOnServer(persianDate) {
+            return new Promise((resolve, reject) => {
+                fetch('/refah/convert-date', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'X-CSRF-TOKEN': token
+                    },
+                    body: JSON.stringify({
+                        persian_date: persianDate
+                    })
+                })
+                .then(response => response.json())
+                .then(data => {
+                    if (data.success) {
+                        resolve(data.gregorian_date);
+                    } else {
+                        reject(new Error(data.message));
+                    }
+                })
+                .catch(error => {
+                    reject(error);
+                });
+            });
         }
 
         function formatPersianDate(input) {
@@ -813,25 +805,33 @@
             
             input.value = value;
             
-            // Validate and convert when complete
+            // Clear previous timeout
+            if (dateConversionTimeout) {
+                clearTimeout(dateConversionTimeout);
+            }
+            
+            // Hide error initially
+            const errorDiv = document.getElementById('birth_date_error');
+            errorDiv.style.display = 'none';
+            
+            // Validate and convert when complete (with debounce)
             if (value.length === 10) {
-                const parts = value.split('/');
-                const year = parseInt(parts[0]);
-                const month = parseInt(parts[1]);
-                const day = parseInt(parts[2]);
-                
-                if (year >= 1300 && year <= 1450 && month >= 1 && month <= 12 && day >= 1 && day <= 31) {
-                    try {
-                        const gregorian = persianToGregorian(year, month, day);
-                        const gregorianDate = `${gregorian.year}-${String(gregorian.month).padStart(2, '0')}-${String(gregorian.day).padStart(2, '0')}`;
-                        document.getElementById('birth_date').value = gregorianDate;
-                        document.getElementById('birth_date_error').style.display = 'none';
-                    } catch (e) {
-                        document.getElementById('birth_date_error').style.display = 'block';
-                    }
-                } else {
-                    document.getElementById('birth_date_error').style.display = 'block';
-                }
+                dateConversionTimeout = setTimeout(() => {
+                    convertPersianDateOnServer(value)
+                        .then(gregorianDate => {
+                            document.getElementById('birth_date').value = gregorianDate;
+                            errorDiv.style.display = 'none';
+                        })
+                        .catch(error => {
+                            console.error('Date conversion error:', error);
+                            errorDiv.textContent = error.message || 'فرمت تاریخ صحیح نیست';
+                            errorDiv.style.display = 'block';
+                            document.getElementById('birth_date').value = '';
+                        });
+                }, 500); // 500ms delay to avoid too many requests
+            } else {
+                // Clear hidden field if date is incomplete
+                document.getElementById('birth_date').value = '';
             }
         }
 

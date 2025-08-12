@@ -15,3 +15,4 @@ Route::post('/refah/registration', [RefahRegistrationController::class, 'store']
 Route::get('/refah/provinces/{country_id}', [RefahRegistrationController::class, 'getProvinces']);
 Route::get('/refah/cities/{province_id}', [RefahRegistrationController::class, 'getCities']);
 Route::post('/refah/check-mobile', [RefahRegistrationController::class, 'checkMobileAvailability']);
+Route::post('/refah/convert-date', [RefahRegistrationController::class, 'convertPersianDate']);
