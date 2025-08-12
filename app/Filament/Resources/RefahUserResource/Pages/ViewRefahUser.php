@@ -8,6 +8,7 @@ use Filament\Resources\Pages\ViewRecord;
 use Filament\Infolists\Components\Section;
 use Filament\Infolists\Components\TextEntry;
 use Filament\Infolists\Infolist;
+use Hekmatinasser\Verta\Verta;
 
 class ViewRefahUser extends ViewRecord
 {
@@ -55,7 +56,12 @@ class ViewRefahUser extends ViewRecord
 
                         TextEntry::make('birth_date')
                             ->label('تاریخ تولد')
-                            ->date('Y/m/d'),
+                            ->formatStateUsing(function ($state) {
+                                if ($state) {
+                                    return Verta::instance($state)->format('Y/n/j');
+                                }
+                                return '-';
+                            }),
 
                         TextEntry::make('gender')
                             ->label('جنسیت')
@@ -180,11 +186,21 @@ class ViewRefahUser extends ViewRecord
                     ->schema([
                         TextEntry::make('created_at')
                             ->label('تاریخ ثبت‌نام')
-                            ->dateTime('Y/m/d H:i:s'),
+                            ->formatStateUsing(function ($state) {
+                                if ($state) {
+                                    return Verta::instance($state)->format('Y/n/j H:i:s');
+                                }
+                                return '-';
+                            }),
 
                         TextEntry::make('updated_at')
                             ->label('آخرین بروزرسانی')
-                            ->dateTime('Y/m/d H:i:s'),
+                            ->formatStateUsing(function ($state) {
+                                if ($state) {
+                                    return Verta::instance($state)->format('Y/n/j H:i:s');
+                                }
+                                return '-';
+                            }),
                     ])
                     ->columns(2),
             ]);

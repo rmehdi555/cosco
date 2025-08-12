@@ -8,6 +8,9 @@ use App\Filament\Resources\OrderResource\Pages;
 use App\Models\Order;
 use App\Models\User;
 use App\Models\Address;
+use App\Filament\ExcelExport\OrderExport;
+use Illuminate\Database\Eloquent\Collection;
+use Illuminate\Support\Facades\Auth;
 use Filament\Forms\Components\Select;
 use Filament\Forms\Components\TextInput;
 use Filament\Forms\Form;
@@ -201,6 +204,15 @@ class OrderResource extends Resource
                     ->label('این ماه')
                     ->query(fn (Builder $query): Builder => $query->whereMonth('created_at', now()->month)),
             ])
+            ->headerActions([
+                Tables\Actions\Action::make('export')
+                    ->label('خروجی Excel')
+                    ->icon('heroicon-o-arrow-down-tray')
+                    ->color('success')
+                    ->action(function () {
+                        return OrderExport::exportAll();
+                    }),
+            ])
             ->actions([
                 Tables\Actions\ViewAction::make(),
                 Tables\Actions\EditAction::make(),
@@ -208,6 +220,13 @@ class OrderResource extends Resource
             ])
             ->bulkActions([
                 Tables\Actions\BulkActionGroup::make([
+                    Tables\Actions\Action::make('export_selected')
+                        ->label('خروجی انتخاب شده‌ها')
+                        ->icon('heroicon-o-arrow-down-tray')
+                        ->color('success')
+                        ->action(function (Collection $records) {
+                            return OrderExport::exportSelected($records);
+                        }),
                     Tables\Actions\DeleteBulkAction::make(),
                 ]),
             ])
@@ -226,6 +245,8 @@ class OrderResource extends Resource
 
     public static function canViewAny(): bool
     {
-        return auth()->user()->isAdmin();
+        /** @var User|null $user */
+        $user = Auth::user();
+        return $user && $user->isAdmin();
     }
 } 

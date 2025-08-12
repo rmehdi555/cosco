@@ -9,6 +9,8 @@ use App\Models\Province;
 use App\Models\City;
 use App\Models\RefahCart;
 use App\Models\RefahOrganization;
+use App\Filament\ExcelExport\RefahUserExport;
+use Hekmatinasser\Verta\Verta;
 use Filament\Forms\Components\DatePicker;
 use Filament\Forms\Components\Grid;
 use Filament\Forms\Components\Section;
@@ -23,6 +25,7 @@ use Filament\Tables\Actions\DeleteAction;
 use Filament\Tables\Actions\DeleteBulkAction;
 use Filament\Tables\Actions\EditAction;
 use Filament\Tables\Actions\ViewAction;
+use Filament\Tables\Actions\Action;
 use Filament\Tables\Columns\TextColumn;
 use Filament\Tables\Filters\SelectFilter;
 use Filament\Tables\Table;
@@ -78,7 +81,8 @@ class RefahUserResource extends Resource
                             DatePicker::make('birth_date')
                                 ->label('تاریخ تولد')
                                 ->native(false)
-                                ->displayFormat('Y/m/d'),
+                                ->displayFormat('Y/m/d')
+                                ->helperText('تاریخ به صورت شمسی نمایش داده می‌شود'),
 
                             Select::make('gender')
                                 ->label('جنسیت')
@@ -231,10 +235,10 @@ class RefahUserResource extends Resource
                     ->copyMessage('کد ملی کپی شد'),
 
                 TextColumn::make('code')
-                    ->label('کد کاربر')
+                    ->label('کد پیگیری')
                     ->searchable()
                     ->copyable()
-                    ->copyMessage('کد کاربر کپی شد')
+                    ->copyMessage('کد پیگیری کپی شد')
                     ->badge()
                     ->color('primary'),
 
@@ -260,7 +264,12 @@ class RefahUserResource extends Resource
 
                 TextColumn::make('birth_date')
                     ->label('تاریخ تولد')
-                    ->date('Y/m/d')
+                    ->formatStateUsing(function ($state) {
+                        if ($state) {
+                            return Verta::instance($state)->format('Y/n/j');
+                        }
+                        return '-';
+                    })
                     ->sortable()
                     ->toggleable(),
 
@@ -337,7 +346,12 @@ class RefahUserResource extends Resource
 
                 TextColumn::make('created_at')
                     ->label('تاریخ ثبت‌نام')
-                    ->dateTime('Y/m/d H:i')
+                    ->formatStateUsing(function ($state) {
+                        if ($state) {
+                            return Verta::instance($state)->format('Y/n/j H:i');
+                        }
+                        return '-';
+                    })
                     ->sortable()
                     ->toggleable(isToggledHiddenByDefault: true),
             ])
@@ -386,6 +400,15 @@ class RefahUserResource extends Resource
                     ])
                     ->native(false),
             ])
+            ->headerActions([
+                Action::make('export')
+                    ->label('خروجی Excel')
+                    ->icon('heroicon-o-arrow-down-tray')
+                    ->color('success')
+                    ->action(function () {
+                        return RefahUserExport::exportAll();
+                    }),
+            ])
             ->actions([
                 ViewAction::make()
                     ->label('مشاهده'),
@@ -396,6 +419,13 @@ class RefahUserResource extends Resource
             ])
             ->bulkActions([
                 BulkActionGroup::make([
+                    Action::make('export_selected')
+                        ->label('خروجی انتخاب شده‌ها')
+                        ->icon('heroicon-o-arrow-down-tray')
+                        ->color('success')
+                        ->action(function (Collection $records) {
+                            return RefahUserExport::exportSelected($records);
+                        }),
                     DeleteBulkAction::make()
                         ->label('حذف انتخاب شده‌ها'),
                 ]),
