@@ -64,17 +64,16 @@ class ArticleController extends Controller
     {
         $query = Article::query();
         if ($search = request('search')) {
-            $query->where(function($q) use ($search) {
+            $query->where(function ($q) use ($search) {
                 $q->where('title', 'like', "%$search%")
-                  ->orWhereHas('category', function($q2) use ($search) {
-                      $q2->where('name', 'like', "%$search%")
-                         ->orWhere('title', 'like', "%$search%")
-                         ->orWhere('slug', 'like', "%$search%")
-                         ;
-                  });
+                    ->orWhereHas('category', function ($q2) use ($search) {
+                        $q2->where('name', 'like', "%$search%")
+                            ->orWhere('title', 'like', "%$search%")
+                            ->orWhere('slug', 'like', "%$search%");
+                    });
             });
         }
-        $articles = $query->paginate($request->count);
+        $articles = $query->paginate($request->count ?? 12);
         return ApiResponse::success([
             'articles' => [
                 'data' => ArticleResource::collection($articles),
