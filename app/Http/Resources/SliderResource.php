@@ -28,11 +28,11 @@ class SliderResource extends JsonResource
     public function toArray(Request $request): array
     {
         return [
-            'id' => $this->id,
-            'title' => $this->title,
-            'link' => $this->link,
-            'image_url' => asset('storage/' . $this->image_url),
-            'target' => $this->target,
+            'id' => $this->id ?? 1,
+            'title' => $this->title ?? '',
+            'link' => $this->link ?? '',
+            'image_url' => $this->image_url ?? '',
+            'target' => $this->target ?? '',
         ];
     }
 }

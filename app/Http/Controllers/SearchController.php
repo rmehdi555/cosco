@@ -2,6 +2,9 @@
 
 namespace App\Http\Controllers;
 
+use App\Http\Requests\AllSearchesRequest;
+use App\Http\Resources\ProductResource;
+use App\Http\Resources\ProductSlidersResource;
 use App\Models\Product;
 use App\Models\ProductCategory;
 use App\Models\Brand;
@@ -75,7 +78,7 @@ use Illuminate\Support\Str;
  */
 class SearchController extends Controller
 {
-    public function __invoke(Request $request)
+    public function search(Request $request)
     {
         $q = $request->input('q');
         if (!$q || !is_string($q) || Str::length($q) < 2) {
@@ -128,6 +131,109 @@ class SearchController extends Controller
             'products' => $products,
             'categories' => $categories,
             'brands' => $brands
+        ]);
+    }
+
+    /**
+     * @OA\Get(
+     *     path="/api/search-all",
+     *     summary="Search products with pagination and sorting",
+     *     description="جستجوی محصولات با پارامترهای صفحه‌بندی و مرتب‌سازی",
+     *     tags={"Search"},
+     *     @OA\Parameter(
+     *         name="q",
+     *         in="query",
+     *         required=true,
+     *         description="عبارت جستجو (حداقل 2 کاراکتر)",
+     *         @OA\Schema(type="string", minLength=2, example="iphone")
+     *     ),
+     *     @OA\Parameter(
+     *         name="page",
+     *         in="query",
+     *         required=false,
+     *         description="شماره صفحه",
+     *         @OA\Schema(type="integer", example=1)
+     *     ),
+     *     @OA\Parameter(
+     *         name="count",
+     *         in="query",
+     *         required=false,
+     *         description="تعداد آیتم‌ها در هر صفحه",
+     *         @OA\Schema(type="integer", example=12)
+     *     ),
+     *     @OA\Parameter(
+     *         name="sort_by",
+     *         in="query",
+     *         required=false,
+     *         description="مرتب‌سازی نتایج",
+     *         @OA\Schema(type="string", enum={"cheapest","expensive","newest"}, example="newest")
+     *     ),
+     *     @OA\Response(
+     *         response=200,
+     *         description="لیست نتایج جستجو",
+     *         @OA\JsonContent(
+     *             type="object",
+     *             @OA\Property(property="status", type="boolean", example=true),
+     *             @OA\Property(property="message", type="string", example="عملیات با موفقیت انجام شد"),
+     *             @OA\Property(
+     *                 property="data",
+     *                 type="object",
+     *                 @OA\Property(
+     *                     property="products",
+     *                     type="object",
+     *                     @OA\Property(
+     *                         property="data",
+     *                         type="array",
+     *                         @OA\Items(ref="#/components/schemas/ProductSlidersResource")
+     *                     ),
+     *                     @OA\Property(property="total", type="integer", example=120),
+     *                     @OA\Property(property="perPage", type="integer", example=12),
+     *                     @OA\Property(property="currentPage", type="integer", example=1),
+     *                     @OA\Property(property="lastPage", type="integer", example=10)
+     *                 )
+     *             ),
+     *             @OA\Property(property="errors", type="null", example=null)
+     *         )
+     *     ),
+     *     @OA\Response(
+     *         response=422,
+     *         description="Validation error"
+     *     )
+     * )
+     */
+    public function searchAll(AllSearchesRequest $request)
+    {
+        $q = $request->q;
+        if (!$q || !is_string($q) || Str::length($q) < 2) {
+            return ApiResponse::success([
+                'products' => [],
+                'categories' => [],
+                'brands' => []
+            ]);
+        }
+
+        $products = Product::query()
+//            ->where('is_active', true)
+            ->where('name', 'like', "%$q%")
+            ->orWhere('slug', 'like', "%$q%")
+            ->when(isset($request->sortby), function ($q) use ($request) {
+                if ($request->sortby == 'cheapest') {
+                    return $q->orderBy('price', 'asc');
+                } elseif ($request->sortby == 'expensive') {
+                    return $q->orderBy('price', 'desc');
+                } elseif ($request->sortby == 'newest') {
+                    return $q->orderBy('updated_at', 'desc');
+                }
+            })->latest()->paginate($request->count ?? 12);
+
+        return ApiResponse::success([
+            'products' => [
+                'data' => ProductSlidersResource::collection($products),
+                'total' => $products->total(),
+                'perPage' => $products->perPage(),
+                'currentPage' => $products->currentPage(),
+                'lastPage' => $products->lastPage(),
+            ],
         ]);
     }
 }

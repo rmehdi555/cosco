@@ -55,4 +55,4 @@ class ApiResponse
             'errors' => $error,
         ], 500);
     }
-} 
+}

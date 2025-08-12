@@ -13,7 +13,7 @@ class DiscountTyeSeeder extends Seeder
      */
     public function run(): void
     {
-        $product = ProductImage::find(6);
+        $product = ProductImage::find(5);
         DB::table('discount_types')->insert([
             [
                 'title' => 'لوازم خانگی تخفیف دار ماه مرداد1404/05/20',

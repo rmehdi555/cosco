@@ -45,7 +45,7 @@ class ProductSlidersResource extends JsonResource
     {
         $images = [];
         foreach ($this->images as $image) {
-            $images[] =asset('storage/' . $image->image_url);
+            $images[] = asset('storage/' . $image->image_url);
         }
 
         return [
@@ -54,7 +54,7 @@ class ProductSlidersResource extends JsonResource
             'slug' => $this->slug,
             'description' => $this->description,
             'price' => (int)$this->price,
-            'image_url' => $images,
+            'image_url' => [$images[0]],
             'rate' => 2,
             'number_rate' => 741,
             'discount_price' => 0,
