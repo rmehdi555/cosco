@@ -59,8 +59,8 @@ class ProductSlidersResource extends JsonResource
             'number_rate' => 741,
             'discount_price' => 0,
             'type_buy' => [[
-                'text' => $this->is_online_only == true ? 'خرید انلاین' : '',
-                'bg_color' => '#005dab'
+                'text' => $this->is_online_only == true ? 'خرید انلاین' : 'خرید حضوری',
+                'bg_color' => $this->is_online_only == true ? '#005dab' : '#008000',
             ]]
         ];
     }

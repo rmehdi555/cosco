@@ -53,7 +53,7 @@ class ProductCategory extends Model
     public function getBreadcrumb()
     {
         $breadcrumbs = collect([]);
-        $category = $this->parent;
+        $category = $this;
 
         while ($category) {
             $breadcrumbs->prepend([
