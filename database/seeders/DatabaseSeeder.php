@@ -36,6 +36,7 @@ class DatabaseSeeder extends Seeder
             CouponUsageSeeder::class,
             MembershipTypeSeeder::class,
             MembershipSeeder::class,
+            RefahSeeder::class,
         ]);
     }
 }

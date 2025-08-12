@@ -13,6 +13,7 @@ return new class extends Migration
     {
         Schema::create('refah_users', function (Blueprint $table) {
             $table->id();
+            $table->string('code')->unique();
             $table->string('first_name')->nullable();
             $table->string('last_name')->nullable();
             $table->string('cell_phone')->nullable();
@@ -24,12 +25,14 @@ return new class extends Migration
             $table->foreignId('province_id')->nullable()->constrained('provinces');
             $table->foreignId('city_id')->nullable()->constrained('cities');
             $table->string('postal_code')->nullable();
+            $table->text('address')->nullable();
             $table->string('phone')->nullable();
             $table->string('job')->nullable();
             $table->decimal('income', 20, 2)->nullable();
             $table->foreignId('refah_cart_id')->nullable()->constrained('refah_cart');
             $table->enum('how_to_receive', ['in_person', 'mail_to_address'])->default('in_person'); 
             $table->enum('payment_method', ['cash', 'card', 'online', 'installment'])->default('cash');
+            $table->foreignId('refah_organization_id')->nullable()->constrained('refah_organizations');
             $table->timestamps();
             $table->softDeletes();
         });

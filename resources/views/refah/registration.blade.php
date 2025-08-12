@@ -286,6 +286,101 @@
             color: #a0aec0;
         }
 
+        .footer-phone a {
+            color: #e2e8f0;
+            text-decoration: none;
+            transition: color 0.3s ease;
+            cursor: pointer;
+        }
+
+        .footer-phone a:hover {
+            color: #48bb78;
+            text-decoration: underline;
+        }
+
+        /* Package Selection Styles */
+        .package-selection {
+            display: flex;
+            flex-direction: column;
+            gap: 15px;
+            margin-top: 10px;
+        }
+
+        .package-item {
+            position: relative;
+            border: 2px solid #e2e8f0;
+            border-radius: 8px;
+            transition: all 0.3s ease;
+            background: white;
+        }
+
+        .package-item:hover {
+            border-color: #3182ce;
+            box-shadow: 0 2px 8px rgba(49, 130, 206, 0.1);
+        }
+
+        .package-item input[type="radio"] {
+            width: 20px;
+            height: 20px;
+            accent-color: #3182ce;
+            cursor: pointer;
+            margin: 0;
+            flex-shrink: 0;
+        }
+
+        .package-item input[type="radio"]:checked + .package-label {
+            border-color: #3182ce;
+            background: #f7fafc;
+        }
+
+        .package-label {
+            display: flex;
+            align-items: flex-start;
+            gap: 15px;
+            padding: 15px;
+            cursor: pointer;
+            border-radius: 6px;
+            transition: all 0.3s ease;
+            width: 100%;
+        }
+
+        .package-content {
+            flex: 1;
+        }
+
+        .package-header {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            gap: 15px;
+            margin-bottom: 8px;
+        }
+
+        .package-title {
+            font-size: 1.1rem;
+            font-weight: 600;
+            color: #2d3748;
+            margin: 0;
+            flex: 1;
+        }
+
+        .package-price {
+            font-size: 1rem;
+            font-weight: 600;
+            color: #48bb78;
+            margin: 0;
+            white-space: nowrap;
+        }
+
+        .package-description {
+            font-size: 0.9rem;
+            color: #718096;
+            line-height: 1.5;
+            margin-top: 8px;
+            padding-top: 8px;
+            border-top: 1px solid #e2e8f0;
+        }
+
         @media (max-width: 768px) {
             .header-content {
                 padding: 0 10px;
@@ -322,6 +417,27 @@
                 height: 300px;
                 margin-top: 20px;
             }
+
+            .package-label {
+                padding: 12px;
+                gap: 12px;
+            }
+
+            .package-header {
+                gap: 10px;
+            }
+
+            .package-title {
+                font-size: 1rem;
+            }
+
+            .package-price {
+                font-size: 0.9rem;
+            }
+
+            .package-description {
+                font-size: 0.8rem;
+            }
         }
     </style>
 </head>
@@ -332,8 +448,8 @@
             <div class="logo">
                 <img src="{{ asset('images/refah-logo.jpg') }}" alt="لوگو" onerror="this.style.display='none'">
             </div>
-            <div class="site-title">سامانه معیشتی</div>
-            <a href="#" class="track-order-btn">پیگیری سفارش</a>
+            <div class="site-title">سامانه رفاه کالا </div>
+            <a href="tel:02126206918" class="track-order-btn">پیگیری سفارش</a>
         </div>
     </header>
 
@@ -349,7 +465,7 @@
         <!-- Registration Form -->
         <div class="form-container">
             <div class="form-header">
-                <h1 class="form-title">فرم ثبت‌نام رفاه</h1>
+                <h1 class="form-title">فرم ثبت‌نام رفاه کالا</h1>
                 <p class="form-subtitle">لطفاً اطلاعات خود را با دقت وارد نمایید</p>
             </div>
 
@@ -504,28 +620,6 @@
                         @enderror
                     </div>
                     <div>
-                        <!-- Empty div for grid layout -->
-                    </div>
-                </div>
-            </div>
-
-            <div class="form-group">
-                <div class="form-row">
-                    <div>
-                        <label for="refah_cart_id">بسته رفاهی *</label>
-                        <select id="refah_cart_id" name="refah_cart_id" required>
-                            <option value="">انتخاب کنید</option>
-                            @foreach($refahCarts as $cart)
-                                <option value="{{ $cart->id }}" {{ old('refah_cart_id') == $cart->id ? 'selected' : '' }}>
-                                    {{ $cart->title }} - {{ number_format($cart->price) }} ریال
-                                </option>
-                            @endforeach
-                        </select>
-                        @error('refah_cart_id')
-                            <div class="error-message">{{ $message }}</div>
-                        @enderror
-                    </div>
-                    <div>
                         <label for="how_to_receive">نحوه دریافت *</label>
                         <select id="how_to_receive" name="how_to_receive" required>
                             <option value="">انتخاب کنید</option>
@@ -542,6 +636,32 @@
             <div class="form-group">
                 <div class="form-row single">
                     <div>
+                        <label for="address">آدرس کامل *</label>
+                        <textarea id="address" name="address" rows="3" placeholder="آدرس کامل خود را وارد کنید" required>{{ old('address') }}</textarea>
+                        @error('address')
+                            <div class="error-message">{{ $message }}</div>
+                        @enderror
+                    </div>
+                </div>
+            </div>
+
+            <div class="form-group">
+                <div class="form-row">
+                    <div>
+                        <label for="refah_organization_id">سازمان  *</label>
+                        <select id="refah_organization_id" name="refah_organization_id" required>
+                            <option value="">انتخاب کنید</option>
+                            @foreach($refahOrganizations as $organization)
+                                <option value="{{ $organization->id }}" {{ old('refah_organization_id') == $organization->id ? 'selected' : '' }}>
+                                    {{ $organization->title }}
+                                </option>
+                            @endforeach
+                        </select>
+                        @error('refah_organization_id')
+                            <div class="error-message">{{ $message }}</div>
+                        @enderror
+                    </div>
+                    <div>
                         <label for="payment_method">روش پرداخت *</label>
                         <select id="payment_method" name="payment_method" required>
                             <option value="">انتخاب کنید</option>
@@ -557,6 +677,40 @@
                 </div>
             </div>
 
+            <div class="form-group">
+                <div class="form-row single">
+                    <div>
+                        <label>انتخاب نوع بسته رفاهی *</label>
+                        <div class="package-selection">
+                            @foreach($refahCarts as $cart)
+                                <div class="package-item">
+                                    <label for="cart_{{ $cart->id }}" class="package-label">
+                                        <input type="radio" id="cart_{{ $cart->id }}" name="refah_cart_id" value="{{ $cart->id }}" 
+                                               {{ old('refah_cart_id') == $cart->id ? 'checked' : '' }} required>
+                                        <div class="package-content">
+                                            <div class="package-header">
+                                                <div class="package-title">{{ $cart->title }}</div>
+                                                <div class="package-price">{{ number_format($cart->price) }} ریال</div>
+                                            </div>
+                                            @if($cart->description)
+                                                <div class="package-description">{{ $cart->description }}</div>
+                                            @endif
+                                        </div>
+                                    </label>
+                                </div>
+                            @endforeach
+                        </div>
+                        @error('refah_cart_id')
+                            <div class="error-message">{{ $message }}</div>
+                        @enderror
+                    </div>
+                </div>
+            </div>
+
+
+
+
+
             <button type="submit" class="submit-btn">ثبت‌نام</button>
             </form>
         </div>
@@ -565,11 +719,12 @@
     <!-- Footer -->
     <footer class="footer">
         <div class="footer-content">
-            <div class="footer-title">   سامانه معیشتی رفاه کالا</div>
-            <div class="footer-phone">تلفن: 021-12345678</div>
-            <div class="footer-address">آدرس: تهران، خیابان فرضی، پلاک 123</div>
+            <div class="footer-title">   سامانه رفاه کالا</div>
+            <div class="footer-phone">تلفن: <a href="tel:02126206918" style="color: #e2e8f0; text-decoration: none;">26206918-021</a></div>
+            <div class="footer-phone">تلفن: <a href="tel:02126206725" style="color: #e2e8f0; text-decoration: none;">26206725-021</a></div>
+            <div class="footer-address">آدرس: تهران،الهیه خ بیدار برج جم پ۴۲</div>
             <div class="footer-bottom">
-                © 1403 تمامی حقوق محفوظ است
+            کلیه حقوق مادی و معنوی این سایت متعلق به سامانه رفاه کالا می باشد.
             </div>
         </div>
     </footer>

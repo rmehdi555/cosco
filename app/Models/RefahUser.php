@@ -4,10 +4,11 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\SoftDeletes;
 
 class RefahUser extends Model
 {
-    use HasFactory;
+    use HasFactory, SoftDeletes;
 
     protected $table = 'refah_users';
 
@@ -23,9 +24,12 @@ class RefahUser extends Model
         'province_id',
         'city_id',
         'postal_code',
+        'address',
+        'code',
         'phone',
         'job',
         'income',
+        'refah_organization_id',
         'refah_cart_id',
         'how_to_receive',
         'payment_method',
@@ -50,6 +54,11 @@ class RefahUser extends Model
     public function city()
     {
         return $this->belongsTo(City::class);
+    }
+
+    public function refahOrganization()
+    {
+        return $this->belongsTo(RefahOrganization::class);
     }
 
     public function refahCart()

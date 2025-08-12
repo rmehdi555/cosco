@@ -4,9 +4,11 @@ namespace App\Http\Controllers;
 
 use App\Models\RefahUser;
 use App\Models\RefahCart;
+use App\Models\RefahOrganization;
 use App\Models\Country;
 use App\Models\Province;
 use App\Models\City;
+use App\Services\SmsService;
 use Illuminate\Http\Request;
 use Illuminate\View\View;
 use Illuminate\Http\RedirectResponse;
@@ -16,8 +18,9 @@ class RefahRegistrationController extends Controller
     public function showForm(): View
     {
         $refahCarts = RefahCart::where('is_active', true)->get();
+        $refahOrganizations = RefahOrganization::where('is_active', true)->get();
         
-        return view('refah.registration', compact('refahCarts'));
+        return view('refah.registration', compact('refahCarts', 'refahOrganizations'));
     }
 
     public function getProvinces(Request $request)
@@ -46,17 +49,55 @@ class RefahRegistrationController extends Controller
             'province_id' => 'required|exists:provinces,id',
             'city_id' => 'required|exists:cities,id',
             'postal_code' => 'required|string|max:20',
+            'address' => 'required|string|max:500',
             'phone' => 'nullable|string|max:20',
             'job' => 'required|string|max:255',
             'income' => 'required|numeric|min:0',
+            'refah_organization_id' => 'required|exists:refah_organizations,id',
             'refah_cart_id' => 'required|exists:refah_cart,id',
             'how_to_receive' => 'required|in:in_person,mail_to_address',
             'payment_method' => 'required|in:cash,card,online,installment',
         ]);
 
-        RefahUser::create($validated);
+        // Generate unique 6-digit code starting with non-zero
+        $code = $this->generateUniqueCode();
+        $validated['code'] = $code;
+
+        $user = RefahUser::create($validated);
+
+        // Send welcome SMS
+        $smsService = app(SmsService::class);
+        $fullName = $validated['first_name'] . ' ' . $validated['last_name'];
+        
+        try {
+            $smsService->sabtNamRefahKala(
+                $validated['cell_phone'],
+                $fullName,
+                $code
+            );
+        } catch (\Exception $e) {
+            // Log SMS error but don't fail the registration
+            \Log::error('Failed to send Refah Kala registration SMS', [
+                'user_id' => $user->id,
+                'phone' => $validated['cell_phone'],
+                'error' => $e->getMessage()
+            ]);
+        }
 
         return redirect()->route('refah.registration')
-            ->with('success', 'ثبت‌نام شما با موفقیت انجام شد.');
+            ->with('success', "ثبت‌نام شما با موفقیت انجام شد. کد پیگیری شما: {$code}");
+    }
+
+    /**
+     * Generate a unique 6-digit code starting with non-zero
+     */
+    private function generateUniqueCode(): string
+    {
+        do {
+            // Generate 6-digit code starting with 1-9, then 5 random digits
+            $code = rand(1, 9) . str_pad(rand(0, 99999), 5, '0', STR_PAD_LEFT);
+        } while (RefahUser::where('code', $code)->exists());
+
+        return $code;
     }
 }
