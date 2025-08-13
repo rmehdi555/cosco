@@ -21,6 +21,11 @@ enum OrderStatus: string
         };
     }
 
+    public function label(): string
+    {
+        return $this->getLabel();
+    }
+
     public function getColor(): string
     {
         return match ($this) {

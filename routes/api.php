@@ -47,6 +47,9 @@ Route::middleware('auth:api')->group(function () {
     Route::get('order-items/{orderItem}', [OrderItemController::class, 'show']);
 
     // Payment routes
+    Route::post('payment/send-to-gateway', [PaymentController::class, 'sendToGateway']);
+    Route::get('payment/status/{order_id}', [PaymentController::class, 'getPaymentStatus']);
+    Route::get('payment/gateways', [PaymentController::class, 'getGateways']);
     Route::get('payments', [PaymentController::class, 'index']);
     Route::get('payments/{payment}', [PaymentController::class, 'show']);
 

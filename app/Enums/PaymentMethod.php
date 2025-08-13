@@ -7,43 +7,31 @@ enum PaymentMethod: string
     case ONLINE = 'online';
     case CASH = 'cash';
     case BANK_TRANSFER = 'bank_transfer';
-    case CHECK = 'check';
-    case WALLET = 'wallet';
-    case CRYPTO = 'crypto';
 
-    public function getLabel(): string
+    public function label(): string
     {
         return match ($this) {
-            self::ONLINE => 'پرداخت آنلاین',
-            self::CASH => 'پرداخت نقدی',
+            self::ONLINE => 'آنلاین',
+            self::CASH => 'نقدی',
             self::BANK_TRANSFER => 'انتقال بانکی',
-            self::CHECK => 'چک',
-            self::WALLET => 'کیف پول',
-            self::CRYPTO => 'ارز دیجیتال',
         };
     }
 
-    public function getColor(): string
+    public function color(): string
     {
         return match ($this) {
-            self::ONLINE => 'primary',
-            self::CASH => 'success',
+            self::ONLINE => 'success',
+            self::CASH => 'warning',
             self::BANK_TRANSFER => 'info',
-            self::CHECK => 'warning',
-            self::WALLET => 'secondary',
-            self::CRYPTO => 'danger',
         };
     }
 
-    public static function getOptions(): array
+    public static function options(): array
     {
         return [
-            self::ONLINE->value => self::ONLINE->getLabel(),
-            self::CASH->value => self::CASH->getLabel(),
-            self::BANK_TRANSFER->value => self::BANK_TRANSFER->getLabel(),
-            self::CHECK->value => self::CHECK->getLabel(),
-            self::WALLET->value => self::WALLET->getLabel(),
-            self::CRYPTO->value => self::CRYPTO->getLabel(),
+            self::ONLINE->value => self::ONLINE->label(),
+            self::CASH->value => self::CASH->label(),
+            self::BANK_TRANSFER->value => self::BANK_TRANSFER->label(),
         ];
     }
 } 

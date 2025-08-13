@@ -1585,8 +1585,8 @@
                 "tags": [
                     "Payments"
                 ],
-                "summary": "Get user's payments",
-                "description": "Returns a list of all payments for the authenticated user",
+                "summary": "Get user payments list",
+                "description": "This API returns a list of all payments for the authenticated user. It supports filtering by status and payment method.",
                 "operationId": "getUserPayments",
                 "parameters": [
                     {
@@ -1676,7 +1676,7 @@
                 "tags": [
                     "Payments"
                 ],
-                "summary": "Get a specific payment",
+                "summary": "Get payment details",
                 "description": "Returns details of a specific payment (only user's own payments)",
                 "operationId": "getPayment",
                 "parameters": [
@@ -1732,6 +1732,494 @@
                             "application/json": {
                                 "schema": {
                                     "$ref": "#/components/schemas/ErrorResponse"
+                                }
+                            }
+                        }
+                    }
+                },
+                "security": [
+                    {
+                        "bearerAuth": []
+                    }
+                ]
+            }
+        },
+        "/api/payment/send-to-gateway": {
+            "post": {
+                "tags": [
+                    "Payments"
+                ],
+                "summary": "Send payment request to gateway",
+                "description": "This API sends a payment request to the payment gateway. On success, it returns the gateway URL and transaction ID.",
+                "operationId": "e64cc8154ae823ca5f64f8721eeccb5b",
+                "requestBody": {
+                    "required": true,
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "required": [
+                                    "order_id"
+                                ],
+                                "properties": {
+                                    "order_id": {
+                                        "description": "Order ID to pay for",
+                                        "type": "integer",
+                                        "example": 1
+                                    },
+                                    "gateway": {
+                                        "description": "Payment gateway (optional)",
+                                        "type": "string",
+                                        "example": "zarinpal_test"
+                                    }
+                                },
+                                "type": "object"
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "200": {
+                        "description": "Payment request sent successfully",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "success": {
+                                            "type": "boolean",
+                                            "example": true
+                                        },
+                                        "payment_id": {
+                                            "type": "integer",
+                                            "example": 1
+                                        },
+                                        "gateway_url": {
+                                            "type": "string",
+                                            "example": "https://sandbox.zarinpal.com/pg/StartPay/A000000000000000000000000000000000000"
+                                        },
+                                        "transaction_id": {
+                                            "type": "string",
+                                            "example": "A000000000000000000000000000000000000"
+                                        },
+                                        "message": {
+                                            "type": "string",
+                                            "example": "Payment request sent successfully"
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    },
+                    "400": {
+                        "description": "Bad request",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "success": {
+                                            "type": "boolean",
+                                            "example": false
+                                        },
+                                        "message": {
+                                            "type": "string",
+                                            "example": "Order not found"
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    },
+                    "500": {
+                        "description": "Server error",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "success": {
+                                            "type": "boolean",
+                                            "example": false
+                                        },
+                                        "message": {
+                                            "type": "string",
+                                            "example": "Error processing payment request"
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    }
+                },
+                "security": [
+                    {
+                        "bearerAuth": []
+                    }
+                ]
+            }
+        },
+        "/payment/callback": {
+            "get": {
+                "tags": [
+                    "Payments"
+                ],
+                "summary": "Payment callback from gateway",
+                "description": "This endpoint receives the response from the payment gateway. After completing the operation, the gateway redirects the user to this address.",
+                "operationId": "c1dcd602b2b053b20b540fe81bf9dcc1",
+                "parameters": [
+                    {
+                        "name": "gateway",
+                        "in": "query",
+                        "description": "Payment gateway name",
+                        "required": false,
+                        "schema": {
+                            "type": "string",
+                            "example": "zarinpal_test"
+                        }
+                    },
+                    {
+                        "name": "authority",
+                        "in": "query",
+                        "description": "Transaction ID from payment gateway",
+                        "required": false,
+                        "schema": {
+                            "type": "string",
+                            "example": "A000000000000000000000000000000000000"
+                        }
+                    },
+                    {
+                        "name": "status",
+                        "in": "query",
+                        "description": "Payment status (OK for success, Cancel for failure)",
+                        "required": false,
+                        "schema": {
+                            "type": "string",
+                            "enum": [
+                                "OK",
+                                "Cancel"
+                            ],
+                            "example": "OK"
+                        }
+                    },
+                    {
+                        "name": "ref_id",
+                        "in": "query",
+                        "description": "Payment reference ID",
+                        "required": false,
+                        "schema": {
+                            "type": "string",
+                            "example": "123456789"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Payment result page",
+                        "content": {
+                            "text/html": {
+                                "schema": {
+                                    "description": "HTML page displaying payment result",
+                                    "type": "string"
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        },
+        "/api/payment/status/{order_id}": {
+            "get": {
+                "tags": [
+                    "Payments"
+                ],
+                "summary": "Get payment status for an order",
+                "description": "This API checks the payment status of a specific order. It returns complete order, user and latest payment information.",
+                "operationId": "3ffc0eb75a8a38ae706b25559bcb2dd1",
+                "parameters": [
+                    {
+                        "name": "order_id",
+                        "in": "path",
+                        "description": "Order ID",
+                        "required": true,
+                        "schema": {
+                            "type": "integer",
+                            "example": 1
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Payment status retrieved successfully",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "success": {
+                                            "type": "boolean",
+                                            "example": true
+                                        },
+                                        "order_id": {
+                                            "description": "Order ID",
+                                            "type": "integer",
+                                            "example": 1
+                                        },
+                                        "payment_status": {
+                                            "description": "Payment status",
+                                            "type": "string",
+                                            "example": "paid"
+                                        },
+                                        "order_status": {
+                                            "description": "Order status",
+                                            "type": "string",
+                                            "example": "processing"
+                                        },
+                                        "total_amount": {
+                                            "description": "Total order amount",
+                                            "type": "number",
+                                            "example": 100000
+                                        },
+                                        "user_info": {
+                                            "description": "User information",
+                                            "properties": {
+                                                "user_id": {
+                                                    "type": "integer",
+                                                    "example": 1
+                                                },
+                                                "name": {
+                                                    "type": "string",
+                                                    "example": "John Doe"
+                                                },
+                                                "cell_phone": {
+                                                    "type": "string",
+                                                    "example": "09123456789"
+                                                },
+                                                "email": {
+                                                    "type": "string",
+                                                    "example": "john@example.com"
+                                                }
+                                            },
+                                            "type": "object"
+                                        },
+                                        "payment_info": {
+                                            "description": "Latest payment information",
+                                            "properties": {
+                                                "payment_id": {
+                                                    "type": "integer",
+                                                    "example": 1
+                                                },
+                                                "method": {
+                                                    "type": "string",
+                                                    "example": "Online"
+                                                },
+                                                "status": {
+                                                    "type": "string",
+                                                    "example": "Completed"
+                                                },
+                                                "amount": {
+                                                    "type": "number",
+                                                    "example": 100000
+                                                },
+                                                "transaction_id": {
+                                                    "type": "string",
+                                                    "example": "A000000000000000000000000000000000000"
+                                                },
+                                                "reference_id": {
+                                                    "type": "string",
+                                                    "example": "123456789"
+                                                },
+                                                "paid_at": {
+                                                    "type": "string",
+                                                    "example": "2024-01-01T12:00:00.000000Z"
+                                                },
+                                                "created_at": {
+                                                    "type": "string",
+                                                    "example": "2024-01-01T11:00:00.000000Z"
+                                                }
+                                            },
+                                            "type": "object"
+                                        },
+                                        "created_at": {
+                                            "description": "Order creation date",
+                                            "type": "string",
+                                            "example": "2024-01-01T10:00:00.000000Z"
+                                        },
+                                        "updated_at": {
+                                            "description": "Order last update date",
+                                            "type": "string",
+                                            "example": "2024-01-01T12:00:00.000000Z"
+                                        },
+                                        "status_summary": {
+                                            "description": "Status summary",
+                                            "properties": {
+                                                "is_paid": {
+                                                    "type": "boolean",
+                                                    "example": true
+                                                },
+                                                "is_pending": {
+                                                    "type": "boolean",
+                                                    "example": false
+                                                },
+                                                "is_failed": {
+                                                    "type": "boolean",
+                                                    "example": false
+                                                },
+                                                "can_retry_payment": {
+                                                    "type": "boolean",
+                                                    "example": false
+                                                }
+                                            },
+                                            "type": "object"
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    },
+                    "404": {
+                        "description": "Order not found",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "success": {
+                                            "type": "boolean",
+                                            "example": false
+                                        },
+                                        "message": {
+                                            "type": "string",
+                                            "example": "Order not found"
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    },
+                    "500": {
+                        "description": "Server error",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "success": {
+                                            "type": "boolean",
+                                            "example": false
+                                        },
+                                        "message": {
+                                            "type": "string",
+                                            "example": "Error retrieving information"
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    }
+                },
+                "security": [
+                    {
+                        "bearerAuth": []
+                    }
+                ]
+            }
+        },
+        "/api/payment/gateways": {
+            "get": {
+                "tags": [
+                    "Payments"
+                ],
+                "summary": "Get active payment gateways",
+                "description": "This API returns a list of all active payment gateways and their configurations.",
+                "operationId": "fc5c81a8bc8862f3957128cb34eb4c59",
+                "responses": {
+                    "200": {
+                        "description": "Active gateways retrieved successfully",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "success": {
+                                            "type": "boolean",
+                                            "example": true
+                                        },
+                                        "gateways": {
+                                            "description": "Active payment gateways",
+                                            "properties": {
+                                                "zarinpal_test": {
+                                                    "description": "Zarinpal test gateway",
+                                                    "properties": {
+                                                        "name": {
+                                                            "type": "string",
+                                                            "example": "Zarinpal Test"
+                                                        },
+                                                        "type": {
+                                                            "type": "string",
+                                                            "example": "zarinpal_test"
+                                                        },
+                                                        "enabled": {
+                                                            "type": "boolean",
+                                                            "example": true
+                                                        },
+                                                        "merchant_id": {
+                                                            "type": "string",
+                                                            "example": "xxxxxxxx-xxxx-xxxx-xxxx-xxxxxxxxxxxx"
+                                                        }
+                                                    },
+                                                    "type": "object"
+                                                },
+                                                "zarinpal": {
+                                                    "description": "Zarinpal main gateway",
+                                                    "properties": {
+                                                        "name": {
+                                                            "type": "string",
+                                                            "example": "Zarinpal"
+                                                        },
+                                                        "type": {
+                                                            "type": "string",
+                                                            "example": "zarinpal"
+                                                        },
+                                                        "enabled": {
+                                                            "type": "boolean",
+                                                            "example": false
+                                                        },
+                                                        "merchant_id": {
+                                                            "type": "string",
+                                                            "example": "xxxxxxxx-xxxx-xxxx-xxxx-xxxxxxxxxxxx"
+                                                        }
+                                                    },
+                                                    "type": "object"
+                                                }
+                                            },
+                                            "type": "object"
+                                        },
+                                        "default_gateway": {
+                                            "description": "Default gateway",
+                                            "type": "string",
+                                            "example": "zarinpal_test"
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    },
+                    "500": {
+                        "description": "Server error",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "success": {
+                                            "type": "boolean",
+                                            "example": false
+                                        },
+                                        "message": {
+                                            "type": "string",
+                                            "example": "Error retrieving gateway list"
+                                        }
+                                    },
+                                    "type": "object"
                                 }
                             }
                         }
@@ -3499,45 +3987,100 @@
             },
             "PaymentResource": {
                 "title": "Payment Resource",
-                "description": "Payment resource schema",
+                "description": "Payment resource schema with all payment details",
                 "properties": {
                     "id": {
+                        "description": "Payment ID",
                         "type": "integer",
                         "example": 1
                     },
                     "order_id": {
+                        "description": "Order ID",
+                        "type": "integer",
+                        "example": 1
+                    },
+                    "user_id": {
+                        "description": "User ID",
                         "type": "integer",
                         "example": 1
                     },
                     "method": {
+                        "description": "Payment method",
                         "type": "string",
                         "example": "online"
                     },
                     "method_label": {
+                        "description": "Payment method label",
                         "type": "string",
-                        "example": "آنلاین"
+                        "example": "Online"
                     },
                     "status": {
+                        "description": "Payment status",
                         "type": "string",
                         "example": "completed"
                     },
                     "status_label": {
+                        "description": "Payment status label",
                         "type": "string",
-                        "example": "تکمیل شده"
+                        "example": "Completed"
                     },
                     "paid_at": {
+                        "description": "Payment completion date",
                         "type": "string",
                         "format": "date-time",
                         "example": "2024-01-15T10:30:00Z"
                     },
                     "amount": {
+                        "description": "Payment amount",
                         "type": "number",
                         "format": "decimal",
                         "example": 150000
                     },
                     "formatted_amount": {
+                        "description": "Formatted payment amount",
                         "type": "string",
-                        "example": "150,000 ریال"
+                        "example": "150,000 Rials"
+                    },
+                    "merchant_id": {
+                        "description": "Merchant ID from gateway",
+                        "type": "string",
+                        "example": "xxxxxxxx-xxxx-xxxx-xxxx-xxxxxxxxxxxx"
+                    },
+                    "bank_transaction_id": {
+                        "description": "Bank transaction ID",
+                        "type": "string",
+                        "example": "A000000000000000000000000000000000000"
+                    },
+                    "bank_reference_id": {
+                        "description": "Bank reference ID",
+                        "type": "string",
+                        "example": "123456789"
+                    },
+                    "description": {
+                        "description": "Payment description",
+                        "type": "string",
+                        "example": "Payment for order #123"
+                    },
+                    "callback_url": {
+                        "description": "Callback URL",
+                        "type": "string",
+                        "example": "https://example.com/payment/callback"
+                    },
+                    "gateway_response": {
+                        "description": "Gateway response data",
+                        "type": "object"
+                    },
+                    "created_at": {
+                        "description": "Payment creation date",
+                        "type": "string",
+                        "format": "date-time",
+                        "example": "2024-01-15T10:00:00Z"
+                    },
+                    "updated_at": {
+                        "description": "Payment last update date",
+                        "type": "string",
+                        "format": "date-time",
+                        "example": "2024-01-15T10:30:00Z"
                     },
                     "order": {
                         "$ref": "#/components/schemas/OrderResource"
@@ -3987,10 +4530,6 @@
             "description": "API endpoints for order items"
         },
         {
-            "name": "Payments",
-            "description": "API endpoints for user payments"
-        },
-        {
             "name": "Address",
             "description": "Address"
         },
@@ -4021,6 +4560,10 @@
         {
             "name": "Home",
             "description": "Home"
+        },
+        {
+            "name": "Payments",
+            "description": "Payments"
         },
         {
             "name": "ProductCategory",

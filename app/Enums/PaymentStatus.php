@@ -8,7 +8,7 @@ enum PaymentStatus: string
     case COMPLETED = 'completed';
     case FAILED = 'failed';
 
-    public function getLabel(): string
+    public function label(): string
     {
         return match ($this) {
             self::PENDING => 'در انتظار',
@@ -17,7 +17,7 @@ enum PaymentStatus: string
         };
     }
 
-    public function getColor(): string
+    public function color(): string
     {
         return match ($this) {
             self::PENDING => 'warning',
@@ -26,12 +26,21 @@ enum PaymentStatus: string
         };
     }
 
-    public static function getOptions(): array
+    public function icon(): string
+    {
+        return match ($this) {
+            self::PENDING => 'heroicon-o-clock',
+            self::COMPLETED => 'heroicon-o-check-circle',
+            self::FAILED => 'heroicon-o-x-circle',
+        };
+    }
+
+    public static function options(): array
     {
         return [
-            self::PENDING->value => self::PENDING->getLabel(),
-            self::COMPLETED->value => self::COMPLETED->getLabel(),
-            self::FAILED->value => self::FAILED->getLabel(),
+            self::PENDING->value => self::PENDING->label(),
+            self::COMPLETED->value => self::COMPLETED->label(),
+            self::FAILED->value => self::FAILED->label(),
         ];
     }
 } 

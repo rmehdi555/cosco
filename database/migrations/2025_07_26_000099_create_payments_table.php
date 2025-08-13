@@ -14,10 +14,17 @@ return new class extends Migration
         Schema::create('payments', function (Blueprint $table) {
             $table->id();
             $table->foreignId('order_id')->constrained('orders')->onDelete('cascade');
-            $table->string('method');
+            $table->foreignId('user_id')->constrained('users')->onDelete('cascade');
+            $table->enum('method', ['online', 'cash', 'bank_transfer']);
             $table->enum('status', ['pending', 'completed', 'failed']);
             $table->dateTime('paid_at')->nullable();
-            $table->decimal('amount', 10, 2);
+            $table->decimal('amount', 20, 2);
+            $table->string('merchant_id')->nullable();
+            $table->string('bank_transaction_id')->nullable();
+            $table->string('bank_reference_id')->nullable();
+            $table->string('description')->nullable();
+            $table->string('callback_url')->nullable();
+            $table->text('gateway_response')->nullable();
             $table->timestamps();
             $table->softDeletes();
         });

@@ -16,3 +16,6 @@ Route::get('/refah/provinces/{country_id}', [RefahRegistrationController::class,
 Route::get('/refah/cities/{province_id}', [RefahRegistrationController::class, 'getCities']);
 Route::post('/refah/check-mobile', [RefahRegistrationController::class, 'checkMobileAvailability']);
 Route::post('/refah/convert-date', [RefahRegistrationController::class, 'convertPersianDate']);
+
+// Payment Callback Route
+Route::get('/payment/callback', [\App\Http\Controllers\PaymentController::class, 'callback'])->name('payment.callback');
