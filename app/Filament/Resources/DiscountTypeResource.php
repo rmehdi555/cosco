@@ -83,6 +83,12 @@ class DiscountTypeResource extends Resource
                             ->label('پاورقی تبلیغات')
                             ->maxLength(255),
 
+                        Forms\Components\ColorPicker::make('ads_background_color_up')
+                            ->label('رنگ پس‌زمینه تبلیغات بالا'),
+
+                        Forms\Components\ColorPicker::make('ads_background_color_down')
+                            ->label('رنگ پس‌زمینه تبلیغات پایین'),
+
                         Forms\Components\FileUpload::make('ads_image_url')
                             ->label('تصویر تبلیغات')
                             ->image()
@@ -135,6 +141,16 @@ class DiscountTypeResource extends Resource
                     ->label('نمایش')
                     ->boolean()
                     ->sortable(),
+
+                Tables\Columns\TextColumn::make('ads_background_color_up')
+                    ->label('رنگ پس‌زمینه تبلیغات بالا')
+                    ->color(fn (string $state): string => $state)
+                    ->toggleable(isToggledHiddenByDefault: true),
+
+                Tables\Columns\TextColumn::make('ads_background_color_down')
+                    ->label('رنگ پس‌زمینه تبلیغات پایین')
+                    ->color(fn (string $state): string => $state)
+                    ->toggleable(isToggledHiddenByDefault: true),
 
                 Tables\Columns\TextColumn::make('created_at')
                     ->label('تاریخ ایجاد')
