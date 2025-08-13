@@ -13,7 +13,6 @@ class DiscountTyeSeeder extends Seeder
      */
     public function run(): void
     {
-        $product = ProductImage::find(5);
         DB::table('discount_types')->insert([
             [
                 'title' => 'لوازم خانگی تخفیف دار ماه مرداد1404/05/20',
@@ -21,8 +20,8 @@ class DiscountTyeSeeder extends Seeder
                 'background_color_down' => '#00FF00',
                 'ads_background_color_up' => '#FF0000',
                 'ads_background_color_down' => '#00FF00',
-                'ads_image_url' => 'http://localhost:8072/storage/product-images/01K1ZVJ3P079NZDQH8TP4N5692.jpg',
-                'image_url' => asset('storage/' . $product->image_url),
+                'ads_image_url' => 'product-images/01K29NKBWHNPB5E48HW6V0Y1PV.jpg',
+                'image_url' => 'product-images/01K29NKBWHNPB5E48HW6V0Y1PV.jpg',
                 'footer' => 'خرید آنلاین | معتبر تا 1404/6/10 | آخرین تخفیف سال',
                 'is_show' => 1,
                 'ads_title' => 'بیشترین تخفیف ها | تعداد محدود | اتمام تا تاریخ 1404/05/20',
