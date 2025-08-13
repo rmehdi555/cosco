@@ -47,6 +47,8 @@ class ProductResource extends JsonResource
             'body' => $this->body ?? '',
             'price' => (int)$this->price,
             'stock' => $this->stock,
+            'count' => 10,
+            'count_for_user' => 3,
             'is_active' => $this->is_active,
             'is_featured' => $this->is_featured,
             'is_online_only' => $this->is_online_only,
