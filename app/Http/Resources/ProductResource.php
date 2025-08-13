@@ -64,8 +64,7 @@ class ProductResource extends JsonResource
                 'description' => 'توضیحات محصول اول',
                 'price' => 10000,
                 'image_url' => [
-                    "http://localhost:8072/storage/product-images/01K29NKBWHNPB5E48HW6V0Y1PV.jpg"
-                ],
+                    'https://api.rdst.ca/storage/product-images/01K29NKBWHNPB5E48HW6V0Y1PV.jpg'],
                 'rate' => 2,
                 'number_rate' => 741,
                 'discount_price' => 0,
@@ -81,8 +80,7 @@ class ProductResource extends JsonResource
                 'description' => 'توضیحات محصول اول',
                 'price' => 10000,
                 'image_url' => [
-                    "http://localhost:8072/storage/product-images/01K29NKBWHNPB5E48HW6V0Y1PV.jpg"
-                ],
+                    'https://api.rdst.ca/storage/product-images/01K29NKBWHNPB5E48HW6V0Y1PV.jpg'],
                 'rate' => 2,
                 'number_rate' => 741,
                 'discount_price' => 0,
