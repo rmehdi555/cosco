@@ -18,7 +18,7 @@ class SliderSeeder extends Seeder
             [
                 'title' => 'جدیدترین ها',
                 'link' => 'https://rdst.ca/categorys/all',
-                'image_url' => 'product-categories/01K2EG1P20F8FHXAESYTDN6ZS4.webp',
+                'image_url' => 'product-categories/01K2H0KDVEHME53XH0GM2MPJE0.webp',
                 'type' => 'first_picture',
                 'is_show' => 1,
                 'target' => 1,

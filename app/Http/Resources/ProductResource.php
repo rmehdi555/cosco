@@ -32,6 +32,11 @@ class ProductResource extends JsonResource
 {
     public function toArray($request)
     {
+        $images = [];
+        foreach ($this->images as $image) {
+            $images[] = asset('storage/' . $image->image_url);
+        }
+
         return [
             'id' => $this->id,
             'product_category_id' => $this->product_category_id,
@@ -39,20 +44,62 @@ class ProductResource extends JsonResource
             'name' => $this->name,
             'slug' => $this->slug,
             'description' => $this->description,
-            'body' => $this->body,
-            'price' => $this->price,
+            'body' => $this->body ?? '',
+            'price' => (int)$this->price,
             'stock' => $this->stock,
+            'count' => 10,
+            'count_for_user' => 3,
             'is_active' => $this->is_active,
             'is_featured' => $this->is_featured,
             'is_online_only' => $this->is_online_only,
-            'images' => $this->whenLoaded('images', function () {
-                return $this->images->map(function ($img) {
-                    return $img->image_url ? asset('storage/' . $img->image_url) : null;
-                })->filter()->values();
-            }, []),
+            'image_url' => $images,
+            'type_buy' => [[
+                'text' => $this->is_online_only == true ? 'خرید انلاین' : 'خرید حضوری',
+                'bg_color' => $this->is_online_only == true ? '#005dab' : '#008000',
+            ]],
+            'similar_products' => [[
+                'id' => 1,
+                'name' => "محصول اول",
+                'slug' => 'mhsol-aol',
+                'description' => 'توضیحات محصول اول',
+                'price' => 10000,
+                'image_url' => [
+                    'https://api.rdst.ca/storage/product-images/01K29NKBWHNPB5E48HW6V0Y1PV.jpg'],
+                'rate' => 2,
+                'number_rate' => 741,
+                'discount_price' => 0,
+                'type_buy' => [[
+                    'text' => 'خرید حضوری',
+                    'bg_color' => '#008000',
+                ]]
+            ]],
+            'recent_products' => [[
+                'id' => 1,
+                'name' => "محصول اول",
+                'slug' => 'mhsol-aol',
+                'description' => 'توضیحات محصول اول',
+                'price' => 10000,
+                'image_url' => [
+                    'https://api.rdst.ca/storage/product-images/01K29NKBWHNPB5E48HW6V0Y1PV.jpg'],
+                'rate' => 2,
+                'number_rate' => 741,
+                'discount_price' => 0,
+                'type_buy' => [[
+                    'text' => 'خرید حضوری',
+                    'bg_color' => '#008000',
+                ]]
+            ]],
+            'rate' => 2,
+            'number_rate' => 741,
+            'breadcrumb' => $this->category->getBreadcrumb(),
             'brand' => new BrandResource($this->whenLoaded('brand')),
             'category' => new ProductCategoryResource($this->whenLoaded('category')),
             'reviews' => ProductReviewResource::collection($this->whenLoaded('reviews')),
+            //            'images' => $this->whenLoaded('images', function () {
+//                return $this->images->map(function ($img) {
+//                    return $img->image_url ? asset('storage/' . $img->image_url) : null;
+//                })->filter()->values();
+//            }, []),
         ];
     }
-} 
+}

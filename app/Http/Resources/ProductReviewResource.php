@@ -26,11 +26,16 @@ class ProductReviewResource extends JsonResource
         return [
             'id' => $this->id,
             'user_id' => $this->user_id,
+            'user_name' => $this->user->first_name . ' ' . $this->user->last_name,
             'product_id' => $this->product_id,
             'rating' => $this->rating,
             'comment' => $this->comment,
             'approved' => $this->approved,
             'parent_id' => $this->parent_id,
+            'created_at' => $this->created_at->format('Y-m-d H:i'),
+            'files' => [
+                'https://api.rdst.ca/storage/product-images/01K29NKBWHNPB5E48HW6V0Y1PV.jpg'
+            ]
         ];
     }
-} 
+}
