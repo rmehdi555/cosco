@@ -2659,7 +2659,7 @@
                                         "description": "Rating from 0 to 5",
                                         "type": "integer",
                                         "maximum": 5,
-                                        "minimum": 0,
+                                        "minimum": 1,
                                         "example": 4
                                     },
                                     "description": {
@@ -2674,19 +2674,19 @@
                                         "example": "iphone-14-pro-max"
                                     },
                                     "comment[0][file]": {
-                                        "description": "First image file (jpeg, png, jpg, webp, max 5MB) - optional",
+                                        "description": "First image file (jpeg, png, jpg, max 5MB) - optional",
                                         "type": "string",
                                         "format": "binary",
                                         "nullable": true
                                     },
                                     "comment[1][file]": {
-                                        "description": "Second image file (jpeg, png, jpg, webp, max 5MB) - optional",
+                                        "description": "Second image file (jpeg, png, jpg, max 5MB) - optional",
                                         "type": "string",
                                         "format": "binary",
                                         "nullable": true
                                     },
                                     "comment[2][file]": {
-                                        "description": "Third image file (jpeg, png, jpg, webp, max 5MB) - optional",
+                                        "description": "Third image file (jpeg, png, jpg, max 5MB) - optional",
                                         "type": "string",
                                         "format": "binary",
                                         "nullable": true
