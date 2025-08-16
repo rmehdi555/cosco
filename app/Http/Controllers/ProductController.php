@@ -10,6 +10,7 @@ use App\Models\ProductReviewFile;
 use Illuminate\Http\Request;
 use App\Http\Responses\ApiResponse;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\DB;
 
 class ProductController extends Controller
 {
@@ -83,48 +84,33 @@ class ProductController extends Controller
      *           description="Review description/comment text",
      *           example="This product is excellent quality and I highly recommend it!"
      *         ),
-              *         @OA\Property(
-         *           property="product_slug",
-         *           type="string",
-         *           description="Product slug identifier",
-         *           example="iphone-14-pro-max"
-         *         ),
-         *         @OA\Property(
-         *           property="comment",
-         *           type="array",
-         *           nullable=true,
-         *           description="Array of image files (optional, maximum 3 files)",
-         *           @OA\Items(
-         *             type="object",
-         *             @OA\Property(
-         *               property="file",
-         *               type="string",
-         *               format="binary",
-         *               description="Image file (jpeg, png, jpg, webp, max 5MB)"
-         *             )
-         *           )
-         *         ),
-              *         @OA\Property(
-         *           property="comment[0][file]",
-         *           type="string",
-         *           format="binary",
-         *           nullable=true,
-         *           description="First image file (jpeg, png, jpg, webp, max 5MB) - optional"
-         *         ),
-         *         @OA\Property(
-         *           property="comment[1][file]",
-         *           type="string",
-         *           format="binary",
-         *           nullable=true,
-         *           description="Second image file (jpeg, png, jpg, webp, max 5MB) - optional"
-         *         ),
-         *         @OA\Property(
-         *           property="comment[2][file]",
-         *           type="string",
-         *           format="binary",
-         *           nullable=true,
-         *           description="Third image file (jpeg, png, jpg, webp, max 5MB) - optional"
-         *         )
+     *         @OA\Property(
+     *           property="product_slug",
+     *           type="string",
+     *           description="Product slug identifier",
+     *           example="iphone-14-pro-max"
+     *         ),
+     *         @OA\Property(
+     *           property="comment[0][file]",
+     *           type="string",
+     *           format="binary",
+     *           nullable=true,
+     *           description="First image file (jpeg, png, jpg, webp, max 5MB) - optional"
+     *         ),
+     *         @OA\Property(
+     *           property="comment[1][file]",
+     *           type="string",
+     *           format="binary",
+     *           nullable=true,
+     *           description="Second image file (jpeg, png, jpg, webp, max 5MB) - optional"
+     *         ),
+     *         @OA\Property(
+     *           property="comment[2][file]",
+     *           type="string",
+     *           format="binary",
+     *           nullable=true,
+     *           description="Third image file (jpeg, png, jpg, webp, max 5MB) - optional"
+     *         )
      *       )
      *     )
      *   ),
@@ -173,23 +159,36 @@ class ProductController extends Controller
      */
     public function comment(ProductCommentRequest $request)
     {
-        $product = Product::whereSlug($request->product_slug)->firstOrFail();
-        $productReview = ProductReview::create([
-            'product_id' => $product->id,
-            'description' => $request->description,
-            'user_id' => Auth::id(),
-            'rating' => $request->rate,
-        ]);
-        if ($request->has('comment')) {
-            foreach ($request->comment as $comment) {
-                $path = $comment['file']->store('product-comments', 'public');
-                ProductReviewFile::create([
-                    'product_review_id' => $productReview->id,
-                    'image_url' => $path,
-                ]);
-            }
-        }
+        try {
+            DB::beginTransaction();
+            $product = Product::whereSlug($request->product_slug)->firstOrFail();
+            $productReview = ProductReview::create([
+                'product_id' => $product->id,
+                'description' => $request->description,
+                'user_id' => Auth::id(),
+                'rating' => $request->rate,
+            ]);
 
-        return ApiResponse::success(true, __('messages.comment_saved'));
+            $now = now();
+            if ($request->has('comment')) {
+                $files = [];
+                foreach ($request->comment as $comment) {
+                    $path = $comment['file']->store('product-comments', 'public');
+                    $files[] = [
+                        'product_review_id' => $productReview->id,
+                        'image_url' => $path,
+                        'created_at' => $now,
+                        'updated_at' => $now,
+                    ];
+                }
+                ProductReviewFile::insert($files);
+            }
+
+            return ApiResponse::success(true, __('messages.comment_saved'));
+        } catch (\Exception $e) {
+            DB::rollBack();
+
+            return ApiResponse::serverError(__('messages.error_comment'), $e->getMessage());
+        }
     }
 }

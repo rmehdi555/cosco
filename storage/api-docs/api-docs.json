@@ -10,7 +10,7 @@
     },
     "servers": [
         {
-            "url": "http://localhost:8000",
+            "url": "http://localhost:8072",
             "description": "API Server"
         }
     ],
@@ -2672,21 +2672,6 @@
                                         "description": "Product slug identifier",
                                         "type": "string",
                                         "example": "iphone-14-pro-max"
-                                    },
-                                    "comment": {
-                                        "description": "Array of image files (optional, maximum 3 files)",
-                                        "type": "array",
-                                        "items": {
-                                            "properties": {
-                                                "file": {
-                                                    "description": "Image file (jpeg, png, jpg, webp, max 5MB)",
-                                                    "type": "string",
-                                                    "format": "binary"
-                                                }
-                                            },
-                                            "type": "object"
-                                        },
-                                        "nullable": true
                                     },
                                     "comment[0][file]": {
                                         "description": "First image file (jpeg, png, jpg, webp, max 5MB) - optional",

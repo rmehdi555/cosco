@@ -28,4 +28,4 @@ return [
     'cell_phone_already_registered' => 'این شماره موبایل قبلاً ثبت شده است.',
     'profile_updated_success' => 'پروفایل با موفقیت به‌روزرسانی شد.',
     'account_not_verified' => 'حساب کاربری شما تایید نشده است. لطفاً ابتدا حساب خود را تایید کنید.',
-]; 
+];
