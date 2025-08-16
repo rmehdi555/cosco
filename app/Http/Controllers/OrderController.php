@@ -48,13 +48,7 @@ class OrderController extends Controller
      *         required=false,
      *         @OA\Schema(type="string", enum={"unpaid", "paid", "refunded"})
      *     ),
-     *     @OA\Parameter(
-     *         name="per_page",
-     *         in="query",
-     *         description="Number of items per page",
-     *         required=false,
-     *         @OA\Schema(type="integer", default=15)
-     *     ),
+
      *     @OA\Response(
      *         response=200,
      *         description="Successful operation",
@@ -64,9 +58,7 @@ class OrderController extends Controller
      *                 property="data",
      *                 type="array",
      *                 @OA\Items(ref="#/components/schemas/OrderResource")
-     *             ),
-     *             @OA\Property(property="links", type="object"),
-     *             @OA\Property(property="meta", type="object")
+     *             )
      *         )
      *     )
      * )
@@ -89,8 +81,7 @@ class OrderController extends Controller
             $query->where('payment_status', $request->payment_status);
         }
 
-        $perPage = $request->get('per_page', 15);
-        $orders = $query->paginate($perPage);
+        $orders = $query->get();
 
         return OrderResource::collection($orders);
     }
@@ -186,6 +177,7 @@ class OrderController extends Controller
         $user = $request->user();
         $items = $request->validated('items');
         $shippingAddressId = $request->validated('shipping_address_id');
+        $description = $request->validated('description');
 
         // Check if shipping address belongs to the user
         $shippingAddress = Address::where('id', $shippingAddressId)
@@ -206,17 +198,18 @@ class OrderController extends Controller
                 'total_amount' => 0, // Will be calculated after adding items
                 'payment_status' => OrderPaymentStatus::UNPAID,
                 'shipping_address_id' => $shippingAddressId,
+                'description' => $description,
             ]);
 
             $totalAmount = 0;
 
             // Create order items
             foreach ($items as $item) {
-                $product = Product::findOrFail($item['product_id']);
+                $product = Product::where('slug', $item['product_slug'])->firstOrFail();
                 
                 $orderItem = OrderItem::create([
                     'order_id' => $order->id,
-                    'product_id' => $item['product_id'],
+                    'product_id' => $product->id,
                     'quantity' => $item['quantity'],
                     'price' => $product->price,
                 ]);

@@ -7,6 +7,7 @@ return [
     // Success Messages
     'orders_retrieved' => 'لیست سفارشات با موفقیت دریافت شد',
     'order_retrieved' => 'جزئیات سفارش با موفقیت دریافت شد',
+    'created_successfully' => 'سفارش با موفقیت ایجاد شد',
     
     // Error Messages
     'order_not_found' => 'سفارش یافت نشد',
@@ -18,8 +19,8 @@ return [
     'items_required' => 'آیتم‌های سفارش الزامی است',
     'items_must_be_array' => 'آیتم‌ها باید آرایه باشند',
     'items_min_one' => 'حداقل یک آیتم باید در سفارش باشد',
-    'product_id_required' => 'شناسه محصول الزامی است',
-    'product_id_must_be_integer' => 'شناسه محصول باید عدد صحیح باشد',
+    'product_slug_required' => 'شناسه محصول الزامی است',
+    'product_slug_must_be_string' => 'شناسه محصول باید رشته متنی باشد',
     'product_not_found' => 'محصول یافت نشد',
     'quantity_required' => 'تعداد الزامی است',
     'quantity_must_be_integer' => 'تعداد باید عدد صحیح باشد',
@@ -28,4 +29,6 @@ return [
     'shipping_address_required' => 'آدرس ارسال الزامی است',
     'shipping_address_must_be_integer' => 'شناسه آدرس ارسال باید عدد صحیح باشد',
     'shipping_address_not_found' => 'آدرس ارسال یافت نشد',
+    'description_must_be_string' => 'توضیحات باید رشته متنی باشد',
+    'description_max_length' => 'توضیحات نمی‌تواند بیشتر از 1000 کاراکتر باشد',
 ]; 

@@ -53,6 +53,7 @@ Route::middleware('auth:api')->group(function () {
     Route::get('payments/{payment}', [PaymentController::class, 'show']);
 
     // Cart routes
+    Route::get('carts', [CartController::class, 'index']);
     Route::post('carts', [CartController::class, 'store']);
 });
 

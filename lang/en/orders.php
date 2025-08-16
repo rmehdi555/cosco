@@ -7,6 +7,7 @@ return [
     // Success Messages
     'orders_retrieved' => 'Orders list retrieved successfully',
     'order_retrieved' => 'Order details retrieved successfully',
+    'created_successfully' => 'Order created successfully',
     
     // Error Messages
     'order_not_found' => 'Order not found',
@@ -18,8 +19,8 @@ return [
     'items_required' => 'Order items are required',
     'items_must_be_array' => 'Items must be an array',
     'items_min_one' => 'At least one item must be in the order',
-    'product_id_required' => 'Product ID is required',
-    'product_id_must_be_integer' => 'Product ID must be an integer',
+    'product_slug_required' => 'Product slug is required',
+    'product_slug_must_be_string' => 'Product slug must be a string',
     'product_not_found' => 'Product not found',
     'quantity_required' => 'Quantity is required',
     'quantity_must_be_integer' => 'Quantity must be an integer',
@@ -28,4 +29,6 @@ return [
     'shipping_address_required' => 'Shipping address is required',
     'shipping_address_must_be_integer' => 'Shipping address ID must be an integer',
     'shipping_address_not_found' => 'Shipping address not found',
+    'description_must_be_string' => 'Description must be a string',
+    'description_max_length' => 'Description cannot be more than 1000 characters',
 ]; 

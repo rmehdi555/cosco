@@ -10,20 +10,13 @@ use Illuminate\Http\Resources\Json\JsonResource;
  *     schema="CartItemResource",
  *     title="Cart Item Resource",
  *     description="Cart item resource schema",
- *     @OA\Property(property="id", type="integer", example=1),
- *     @OA\Property(property="cart_id", type="integer", example=1),
- *     @OA\Property(property="product_id", type="integer", example=1),
- *     @OA\Property(property="quantity", type="integer", example=2),
- *     @OA\Property(property="price", type="number", format="decimal", example=75000),
- *     @OA\Property(property="formatted_price", type="string", example="75,000 ریال"),
- *     @OA\Property(property="total_price", type="number", format="decimal", example=150000),
- *     @OA\Property(property="formatted_total_price", type="string", example="150,000 ریال"),
- *     @OA\Property(
- *         property="product",
- *         ref="#/components/schemas/ProductResource"
- *     ),
- *     @OA\Property(property="created_at", type="string", format="date-time"),
- *     @OA\Property(property="updated_at", type="string", format="date-time")
+ *     @OA\Property(property="quantity", type="integer", example=2, description="Quantity of the product in cart"),
+ *     @OA\Property(property="price", type="number", format="decimal", example=75000, description="Current price of the product"),
+ *     @OA\Property(property="old_price", type="number", format="decimal", example=70000, description="Price when item was added to cart"),
+ *     @OA\Property(property="total_price", type="number", format="decimal", example=150000, description="Total price (quantity × current price)"),
+ *     @OA\Property(property="product_name", type="string", example="محصول نمونه", description="Product name"),
+ *     @OA\Property(property="product_image", type="string", example="https://example.com/image.jpg", description="Product image URL"),
+ *     @OA\Property(property="product_slug", type="string", example="sample-product", description="Product slug for URL")
  * )
  */
 class CartItemResource extends JsonResource
@@ -36,17 +29,12 @@ class CartItemResource extends JsonResource
     public function toArray(Request $request): array
     {
         return [
-            'id' => $this->id,
-            'cart_id' => $this->cart_id,
-            'product_id' => $this->product_id,
             'quantity' => $this->quantity,
-            'price' => $this->price,
-            'formatted_price' => number_format($this->price) . ' ریال',
-            'total_price' => $this->total_price,
-            'formatted_total_price' => number_format($this->total_price) . ' ریال',
-            'product' => new ProductResource($this->whenLoaded('product')),
-            'created_at' => $this->created_at?->toISOString(),
-            'updated_at' => $this->updated_at?->toISOString(),
+            'price' => config('general.show_price')($this->price),
+            'total_price' => config('general.show_price')($this->total_price),
+            'product_name' => $this->product->name,
+            'product_image' => asset('storage/' . $this->product->images->first()->image_url),
+            'product_slug' => $this->product->slug,
         ];
     }
 } 

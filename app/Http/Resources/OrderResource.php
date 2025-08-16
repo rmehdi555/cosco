@@ -10,26 +10,24 @@ use Illuminate\Http\Resources\Json\JsonResource;
  *     schema="OrderResource",
  *     title="Order Resource",
  *     description="Order resource schema",
- *     @OA\Property(property="id", type="integer", example=1),
- *     @OA\Property(property="user_id", type="integer", example=1),
- *     @OA\Property(property="status", type="string", example="pending"),
- *     @OA\Property(property="status_label", type="string", example="در انتظار"),
- *     @OA\Property(property="total_amount", type="number", format="decimal", example=150000),
- *     @OA\Property(property="formatted_total_amount", type="string", example="150,000 ریال"),
- *     @OA\Property(property="payment_status", type="string", example="unpaid"),
- *     @OA\Property(property="payment_status_label", type="string", example="پرداخت نشده"),
+ *     @OA\Property(property="status", type="string", example="در انتظار", description="Order status label in Persian"),
+ *     @OA\Property(property="total_amount", type="number", format="decimal", example=15000, description="Total amount in Toman"),
+ *     @OA\Property(property="formatted_total_amount", type="string", example="15,000 تومان", description="Formatted total amount with currency"),
+ *     @OA\Property(property="payment_status", type="string", example="پرداخت نشده", description="Payment status label in Persian"),
+ *     @OA\Property(property="description", type="string", nullable=true, example="توضیحات مربوط به سفارش", description="Order description"),
  *     @OA\Property(
  *         property="shipping_address",
- *         ref="#/components/schemas/AddressResource"
+ *         ref="#/components/schemas/AddressResource",
+ *         description="Shipping address details"
  *     ),
  *     @OA\Property(
  *         property="order_items",
  *         type="array",
+ *         description="Array of order items",
  *         @OA\Items(ref="#/components/schemas/OrderItemResource")
  *     ),
- *     @OA\Property(property="received_at", type="string", format="date-time", nullable=true, example="2024-01-15T10:30:00Z"),
- *     @OA\Property(property="created_at", type="string", format="date-time"),
- *     @OA\Property(property="updated_at", type="string", format="date-time")
+ *     @OA\Property(property="received_at", type="string", nullable=true, example="1402-10-25", description="Order received date in Persian calendar"),
+ *     @OA\Property(property="created_at", type="string", example="1402-10-25", description="Order creation date in Persian calendar")
  * )
  */
 class OrderResource extends JsonResource
@@ -42,19 +40,15 @@ class OrderResource extends JsonResource
     public function toArray(Request $request): array
     {
         return [
-            'id' => $this->id,
-            'user_id' => $this->user_id,
-            'status' => $this->status?->value,
-            'status_label' => $this->status?->label(),
-            'total_amount' => $this->total_amount,
-            'formatted_total_amount' => number_format($this->total_amount) . ' ریال',
-            'payment_status' => $this->payment_status?->value,
-            'payment_status_label' => $this->payment_status?->label(),
+            'status' => $this->status?->getLabel(),
+            'total_amount' => config('general.show_price')($this->total_amount),
+            'formatted_total_amount' => config('general.format_price')($this->total_amount),
+            'payment_status' => $this->payment_status?->getLabel(),
+            'description' => $this->description,
             'shipping_address' => new AddressResource($this->shippingAddress),
             'order_items' => OrderItemResource::collection($this->whenLoaded('orderItems')),
-            'received_at' => $this->received_at?->toISOString(),
-            'created_at' => $this->created_at?->toISOString(),
-            'updated_at' => $this->updated_at?->toISOString(),
+            'received_at' => config('general.show_date')($this->received_at),
+            'created_at' => config('general.show_date')($this->created_at),
         ];
     }
 } 

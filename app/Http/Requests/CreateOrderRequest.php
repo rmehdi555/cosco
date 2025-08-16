@@ -16,12 +16,12 @@ use Illuminate\Foundation\Http\FormRequest;
  *         description="Array of order items",
  *         @OA\Items(
  *             type="object",
- *             required={"product_id", "quantity"},
+ *             required={"product_slug", "quantity"},
  *             @OA\Property(
- *                 property="product_id",
- *                 type="integer",
- *                 description="Product ID",
- *                 example=1
+ *                 property="product_slug",
+ *                 type="string",
+ *                 description="Product slug",
+ *                 example="mhsol-aol"
  *             ),
  *             @OA\Property(
  *                 property="quantity",
@@ -38,6 +38,13 @@ use Illuminate\Foundation\Http\FormRequest;
  *         type="integer",
  *         description="Shipping address ID",
  *         example=1
+ *     ),
+ *     @OA\Property(
+ *         property="description",
+ *         type="string",
+ *         description="Order description",
+ *         nullable=true,
+ *         example="توضیحات سفارش"
  *     )
  * )
  */
@@ -60,9 +67,10 @@ class CreateOrderRequest extends FormRequest
     {
         return [
             'items' => 'required|array|min:1',
-            'items.*.product_id' => 'required|integer|exists:products,id',
+            'items.*.product_slug' => 'required|string|exists:products,slug',
             'items.*.quantity' => 'required|integer|min:1|max:100000',
             'shipping_address_id' => 'required|integer|exists:addresses,id',
+            'description' => 'nullable|string|max:1000',
         ];
     }
 
@@ -77,9 +85,9 @@ class CreateOrderRequest extends FormRequest
             'items.required' => __('orders.items_required'),
             'items.array' => __('orders.items_must_be_array'),
             'items.min' => __('orders.items_min_one'),
-            'items.*.product_id.required' => __('orders.product_id_required'),
-            'items.*.product_id.integer' => __('orders.product_id_must_be_integer'),
-            'items.*.product_id.exists' => __('orders.product_not_found'),
+            'items.*.product_slug.required' => __('orders.product_slug_required'),
+            'items.*.product_slug.string' => __('orders.product_slug_must_be_string'),
+            'items.*.product_slug.exists' => __('orders.product_not_found'),
             'items.*.quantity.required' => __('orders.quantity_required'),
             'items.*.quantity.integer' => __('orders.quantity_must_be_integer'),
             'items.*.quantity.min' => __('orders.quantity_min_one'),
@@ -87,6 +95,8 @@ class CreateOrderRequest extends FormRequest
             'shipping_address_id.required' => __('orders.shipping_address_required'),
             'shipping_address_id.integer' => __('orders.shipping_address_must_be_integer'),
             'shipping_address_id.exists' => __('orders.shipping_address_not_found'),
+            'description.string' => __('orders.description_must_be_string'),
+            'description.max' => __('orders.description_max_length'),
         ];
     }
 } 

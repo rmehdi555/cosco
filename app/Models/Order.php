@@ -20,6 +20,7 @@ class Order extends Model
         'total_amount',
         'payment_status',
         'shipping_address_id',
+        'description',
         'received_at',
     ];
 

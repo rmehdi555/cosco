@@ -903,13 +903,92 @@
             }
         },
         "/api/carts": {
+            "get": {
+                "tags": [
+                    "Carts"
+                ],
+                "summary": "Get user's cart",
+                "description": "Returns the authenticated user's current cart with all items",
+                "operationId": "getUserCart",
+                "responses": {
+                    "200": {
+                        "description": "Cart retrieved successfully",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "success": {
+                                            "type": "boolean",
+                                            "example": true
+                                        },
+                                        "message": {
+                                            "type": "string",
+                                            "example": "سبد خرید با موفقیت دریافت شد"
+                                        },
+                                        "data": {
+                                            "properties": {
+                                                "cart": {
+                                                    "$ref": "#/components/schemas/CartResource"
+                                                },
+                                                "items": {
+                                                    "type": "array",
+                                                    "items": {
+                                                        "$ref": "#/components/schemas/CartItemResource"
+                                                    }
+                                                }
+                                            },
+                                            "type": "object"
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    },
+                    "404": {
+                        "description": "Cart not found",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "success": {
+                                            "type": "boolean",
+                                            "example": false
+                                        },
+                                        "message": {
+                                            "type": "string",
+                                            "example": "سبد خرید یافت نشد"
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    },
+                    "401": {
+                        "description": "Unauthenticated",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/ErrorResponse"
+                                }
+                            }
+                        }
+                    }
+                },
+                "security": [
+                    {
+                        "bearerAuth": []
+                    }
+                ]
+            },
             "post": {
                 "tags": [
                     "Carts"
                 ],
-                "summary": "Create a new cart",
-                "description": "Creates a new cart with items for the authenticated user",
-                "operationId": "createCart",
+                "summary": "Update user's cart",
+                "description": "Updates the user's cart with new items, replacing all existing items. Creates a new cart if user doesn't have one.",
+                "operationId": "updateCart",
                 "requestBody": {
                     "required": true,
                     "content": {
@@ -921,6 +1000,29 @@
                     }
                 },
                 "responses": {
+                    "200": {
+                        "description": "Cart updated successfully",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "success": {
+                                            "type": "boolean",
+                                            "example": true
+                                        },
+                                        "message": {
+                                            "type": "string",
+                                            "example": "سبد خرید با موفقیت بروزرسانی شد"
+                                        },
+                                        "data": {
+                                            "$ref": "#/components/schemas/CartResource"
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    },
                     "201": {
                         "description": "Cart created successfully",
                         "content": {
@@ -1341,16 +1443,6 @@
                                 "refunded"
                             ]
                         }
-                    },
-                    {
-                        "name": "per_page",
-                        "in": "query",
-                        "description": "Number of items per page",
-                        "required": false,
-                        "schema": {
-                            "type": "integer",
-                            "default": 15
-                        }
                     }
                 ],
                 "responses": {
@@ -1365,12 +1457,6 @@
                                             "items": {
                                                 "$ref": "#/components/schemas/OrderResource"
                                             }
-                                        },
-                                        "links": {
-                                            "type": "object"
-                                        },
-                                        "meta": {
-                                            "type": "object"
                                         }
                                     },
                                     "type": "object"
@@ -3015,14 +3101,14 @@
                         "type": "array",
                         "items": {
                             "required": [
-                                "product_id",
+                                "product_slug",
                                 "quantity"
                             ],
                             "properties": {
-                                "product_id": {
-                                    "description": "Product ID",
-                                    "type": "integer",
-                                    "example": 1
+                                "product_slug": {
+                                    "description": "Product slug",
+                                    "type": "string",
+                                    "example": "mhsol-aol"
                                 },
                                 "quantity": {
                                     "description": "Quantity of the product",
@@ -3051,14 +3137,14 @@
                         "type": "array",
                         "items": {
                             "required": [
-                                "product_id",
+                                "product_slug",
                                 "quantity"
                             ],
                             "properties": {
-                                "product_id": {
-                                    "description": "Product ID",
-                                    "type": "integer",
-                                    "example": 1
+                                "product_slug": {
+                                    "description": "Product slug",
+                                    "type": "string",
+                                    "example": "mhsol-aol"
                                 },
                                 "quantity": {
                                     "description": "Quantity of the product",
@@ -3075,6 +3161,12 @@
                         "description": "Shipping address ID",
                         "type": "integer",
                         "example": 1
+                    },
+                    "description": {
+                        "description": "Order description",
+                        "type": "string",
+                        "example": "توضیحات سفارش",
+                        "nullable": true
                     }
                 },
                 "type": "object"
@@ -3385,68 +3477,50 @@
                 "title": "Address Resource",
                 "description": "User address resource representation",
                 "properties": {
-                    "id": {
-                        "type": "integer",
-                        "example": 1
-                    },
-                    "user_id": {
-                        "type": "integer",
-                        "example": 2
-                    },
-                    "country_id": {
-                        "type": "integer",
-                        "example": 1
-                    },
-                    "province_id": {
-                        "type": "integer",
-                        "example": 10
-                    },
-                    "city_id": {
-                        "type": "integer",
-                        "example": 100
-                    },
                     "postal_code": {
+                        "description": "Postal code",
                         "type": "string",
                         "example": "1234567890"
                     },
                     "plaque": {
+                        "description": "Building plaque number",
                         "type": "string",
                         "example": "12"
                     },
                     "address": {
+                        "description": "Full address",
                         "type": "string",
                         "example": "خیابان انقلاب، پلاک 12"
                     },
                     "phone": {
+                        "description": "Phone number",
                         "type": "string",
                         "example": "02112345678"
                     },
                     "is_default": {
+                        "description": "Is default address",
                         "type": "boolean",
                         "example": true
                     },
-                    "is_active": {
-                        "type": "boolean",
-                        "example": true
-                    },
-                    "country": {
-                        "$ref": "#/components/schemas/CountryResource"
-                    },
-                    "province": {
-                        "$ref": "#/components/schemas/ProvinceResource"
-                    },
-                    "city": {
-                        "$ref": "#/components/schemas/CityResource"
-                    },
-                    "created_at": {
+                    "province_title": {
+                        "description": "Province name in Persian",
                         "type": "string",
-                        "format": "date-time",
-                        "example": "2024-07-27T12:34:56Z"
+                        "example": "تهران"
                     },
-                    "updated_at": {
+                    "province_id": {
+                        "description": "Province ID",
+                        "type": "integer",
+                        "example": 10
+                    },
+                    "city_title": {
+                        "description": "City name in Persian",
                         "type": "string",
-                        "format": "date-time",
-                        "example": "2024-07-27T12:34:56Z"
+                        "example": "تهران"
+                    },
+                    "city_id": {
+                        "description": "City ID",
+                        "type": "integer",
+                        "example": 100
                     }
                 },
                 "type": "object"
@@ -3636,50 +3710,43 @@
                 "title": "Cart Item Resource",
                 "description": "Cart item resource schema",
                 "properties": {
-                    "id": {
-                        "type": "integer",
-                        "example": 1
-                    },
-                    "cart_id": {
-                        "type": "integer",
-                        "example": 1
-                    },
-                    "product_id": {
-                        "type": "integer",
-                        "example": 1
-                    },
                     "quantity": {
+                        "description": "Quantity of the product in cart",
                         "type": "integer",
                         "example": 2
                     },
                     "price": {
+                        "description": "Current price of the product",
                         "type": "number",
                         "format": "decimal",
                         "example": 75000
                     },
-                    "formatted_price": {
-                        "type": "string",
-                        "example": "75,000 ریال"
+                    "old_price": {
+                        "description": "Price when item was added to cart",
+                        "type": "number",
+                        "format": "decimal",
+                        "example": 70000
                     },
                     "total_price": {
+                        "description": "Total price (quantity × current price)",
                         "type": "number",
                         "format": "decimal",
                         "example": 150000
                     },
-                    "formatted_total_price": {
+                    "product_name": {
+                        "description": "Product name",
                         "type": "string",
-                        "example": "150,000 ریال"
+                        "example": "محصول نمونه"
                     },
-                    "product": {
-                        "$ref": "#/components/schemas/ProductResource"
-                    },
-                    "created_at": {
+                    "product_image": {
+                        "description": "Product image URL",
                         "type": "string",
-                        "format": "date-time"
+                        "example": "https://example.com/image.jpg"
                     },
-                    "updated_at": {
+                    "product_slug": {
+                        "description": "Product slug for URL",
                         "type": "string",
-                        "format": "date-time"
+                        "example": "sample-product"
                     }
                 },
                 "type": "object"
@@ -3688,36 +3755,16 @@
                 "title": "Cart Resource",
                 "description": "Cart resource schema",
                 "properties": {
-                    "id": {
-                        "type": "integer",
-                        "example": 1
-                    },
-                    "user_id": {
-                        "type": "integer",
-                        "example": 1
-                    },
                     "status": {
-                        "type": "string",
-                        "example": "pending"
-                    },
-                    "status_label": {
+                        "description": "Cart status label in Persian",
                         "type": "string",
                         "example": "در انتظار"
                     },
                     "total_amount": {
+                        "description": "Total amount of cart in Toman",
                         "type": "number",
                         "format": "decimal",
-                        "example": 150000
-                    },
-                    "formatted_total_amount": {
-                        "type": "string",
-                        "example": "150,000 ریال"
-                    },
-                    "cart_items": {
-                        "type": "array",
-                        "items": {
-                            "$ref": "#/components/schemas/CartItemResource"
-                        }
+                        "example": 15000
                     }
                 },
                 "type": "object"
@@ -3938,42 +3985,37 @@
                 "title": "Order Item Resource",
                 "description": "Order item resource schema",
                 "properties": {
-                    "id": {
-                        "type": "integer",
-                        "example": 1
-                    },
-                    "order_id": {
-                        "type": "integer",
-                        "example": 1
-                    },
-                    "product_id": {
-                        "type": "integer",
-                        "example": 1
-                    },
                     "quantity": {
+                        "description": "Quantity of the product in order",
                         "type": "integer",
                         "example": 2
                     },
                     "price": {
+                        "description": "Product price in Toman",
                         "type": "number",
                         "format": "decimal",
-                        "example": 75000
-                    },
-                    "formatted_price": {
-                        "type": "string",
-                        "example": "75,000 ریال"
+                        "example": 7500
                     },
                     "total_price": {
+                        "description": "Total price (quantity × price) in Toman",
                         "type": "number",
                         "format": "decimal",
-                        "example": 150000
+                        "example": 15000
                     },
-                    "formatted_total_price": {
+                    "product_name": {
+                        "description": "Product name",
                         "type": "string",
-                        "example": "150,000 ریال"
+                        "example": "محصول نمونه"
                     },
-                    "product": {
-                        "$ref": "#/components/schemas/ProductResource"
+                    "product_image": {
+                        "description": "Product image URL",
+                        "type": "string",
+                        "example": "https://example.com/storage/products/image.jpg"
+                    },
+                    "product_slug": {
+                        "description": "Product slug for URL",
+                        "type": "string",
+                        "example": "mhsol-aol"
                     }
                 },
                 "type": "object"
@@ -3982,61 +4024,53 @@
                 "title": "Order Resource",
                 "description": "Order resource schema",
                 "properties": {
-                    "id": {
-                        "type": "integer",
-                        "example": 1
-                    },
-                    "user_id": {
-                        "type": "integer",
-                        "example": 1
-                    },
                     "status": {
-                        "type": "string",
-                        "example": "pending"
-                    },
-                    "status_label": {
+                        "description": "Order status label in Persian",
                         "type": "string",
                         "example": "در انتظار"
                     },
                     "total_amount": {
+                        "description": "Total amount in Toman",
                         "type": "number",
                         "format": "decimal",
-                        "example": 150000
+                        "example": 15000
                     },
                     "formatted_total_amount": {
+                        "description": "Formatted total amount with currency",
                         "type": "string",
-                        "example": "150,000 ریال"
+                        "example": "15,000 تومان"
                     },
                     "payment_status": {
-                        "type": "string",
-                        "example": "unpaid"
-                    },
-                    "payment_status_label": {
+                        "description": "Payment status label in Persian",
                         "type": "string",
                         "example": "پرداخت نشده"
+                    },
+                    "description": {
+                        "description": "Order description",
+                        "type": "string",
+                        "example": "توضیحات مربوط به سفارش",
+                        "nullable": true
                     },
                     "shipping_address": {
                         "$ref": "#/components/schemas/AddressResource"
                     },
                     "order_items": {
+                        "description": "Array of order items",
                         "type": "array",
                         "items": {
                             "$ref": "#/components/schemas/OrderItemResource"
                         }
                     },
                     "received_at": {
+                        "description": "Order received date in Persian calendar",
                         "type": "string",
-                        "format": "date-time",
-                        "example": "2024-01-15T10:30:00Z",
+                        "example": "1402-10-25",
                         "nullable": true
                     },
                     "created_at": {
+                        "description": "Order creation date in Persian calendar",
                         "type": "string",
-                        "format": "date-time"
-                    },
-                    "updated_at": {
-                        "type": "string",
-                        "format": "date-time"
+                        "example": "1402-10-25"
                     }
                 },
                 "type": "object"
@@ -4360,30 +4394,10 @@
                 "title": "Province Resource",
                 "description": "Province resource representation",
                 "properties": {
-                    "id": {
-                        "type": "integer",
-                        "example": 1
-                    },
-                    "country_id": {
-                        "type": "integer",
-                        "example": 1
-                    },
-                    "title_fa": {
+                    "title": {
+                        "description": "Province name in Persian",
                         "type": "string",
                         "example": "تهران"
-                    },
-                    "title_en": {
-                        "type": "string",
-                        "example": "Tehran"
-                    },
-                    "country": {
-                        "$ref": "#/components/schemas/CountryResource"
-                    },
-                    "cities": {
-                        "type": "array",
-                        "items": {
-                            "$ref": "#/components/schemas/CityResource"
-                        }
                     }
                 },
                 "type": "object"

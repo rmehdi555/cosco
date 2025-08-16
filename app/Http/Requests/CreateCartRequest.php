@@ -16,12 +16,12 @@ use Illuminate\Foundation\Http\FormRequest;
  *         description="Array of cart items",
  *         @OA\Items(
  *             type="object",
- *             required={"product_id", "quantity"},
+ *             required={"product_slug", "quantity"},
  *             @OA\Property(
- *                 property="product_id",
- *                 type="integer",
- *                 description="Product ID",
- *                 example=1
+ *                 property="product_slug",
+ *                 type="string",
+ *                 description="Product slug",
+ *                 example="mhsol-aol"
  *             ),
  *             @OA\Property(
  *                 property="quantity",
@@ -55,7 +55,7 @@ class CreateCartRequest extends FormRequest
     {
         return [
             'items' => 'required|array|min:1',
-            'items.*.product_id' => 'required|integer|exists:products,id',
+            'items.*.product_slug' => 'required|string|exists:products,slug',
             'items.*.quantity' => 'required|integer|min:1|max:100000',
         ];
     }
@@ -71,9 +71,9 @@ class CreateCartRequest extends FormRequest
             'items.required' => __('cart.items_required'),
             'items.array' => __('cart.items_must_be_array'),
             'items.min' => __('cart.items_min_one'),
-            'items.*.product_id.required' => __('cart.product_id_required'),
-            'items.*.product_id.integer' => __('cart.product_id_must_be_integer'),
-            'items.*.product_id.exists' => __('cart.product_not_found'),
+            'items.*.product_slug.required' => __('cart.product_slug_required'),
+            'items.*.product_slug.string' => __('cart.product_slug_must_be_string'),
+            'items.*.product_slug.exists' => __('cart.product_not_found'),
             'items.*.quantity.required' => __('cart.quantity_required'),
             'items.*.quantity.integer' => __('cart.quantity_must_be_integer'),
             'items.*.quantity.min' => __('cart.quantity_min_one'),
