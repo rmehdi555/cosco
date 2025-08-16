@@ -10,7 +10,7 @@
     },
     "servers": [
         {
-            "url": "http://localhost:8072",
+            "url": "http://localhost:8000",
             "description": "API Server"
         }
     ],
@@ -4930,16 +4930,25 @@
                         "type": "integer",
                         "example": 1
                     },
-                    "wishlist_id": {
-                        "type": "integer",
-                        "example": 2
-                    },
                     "product_id": {
                         "type": "integer",
                         "example": 3
                     },
-                    "product": {
-                        "$ref": "#/components/schemas/ProductResource"
+                    "product_slug": {
+                        "type": "string",
+                        "example": "product-slug"
+                    },
+                    "product_name": {
+                        "type": "string",
+                        "example": "Product Name"
+                    },
+                    "product_image_url": {
+                        "type": "string",
+                        "example": "https://example.com/product.jpg"
+                    },
+                    "product_price": {
+                        "type": "string",
+                        "example": "100,000 تومان"
                     }
                 },
                 "type": "object"
@@ -4955,10 +4964,6 @@
                     "name": {
                         "type": "string",
                         "example": "لیست علاقه‌مندی‌ها"
-                    },
-                    "user_id": {
-                        "type": "integer",
-                        "example": 2
                     },
                     "items": {
                         "type": "array",

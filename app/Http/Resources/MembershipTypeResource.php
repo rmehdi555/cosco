@@ -32,8 +32,7 @@ class MembershipTypeResource extends JsonResource
             'id' => $this->id,
             'name' => $this->name,
             'description' => $this->description,
-            'price' => $this->price,
-            'formatted_price' => $this->formatted_price,
+            'price' => config('general.show_price')($this->price),
             'day_cycle' => $this->day_cycle,
             'is_active' => $this->is_active,
         ];
