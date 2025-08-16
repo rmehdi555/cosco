@@ -72,7 +72,7 @@ class ProductController extends Controller
      *         @OA\Property(
      *           property="rate",
      *           type="integer",
-     *           minimum=0,
+     *           minimum=1,
      *           maximum=5,
      *           description="Rating from 0 to 5",
      *           example=4
@@ -95,21 +95,21 @@ class ProductController extends Controller
      *           type="string",
      *           format="binary",
      *           nullable=true,
-     *           description="First image file (jpeg, png, jpg, webp, max 5MB) - optional"
+     *           description="First image file (jpeg, png, jpg, max 5MB) - optional"
      *         ),
      *         @OA\Property(
      *           property="comment[1][file]",
      *           type="string",
      *           format="binary",
      *           nullable=true,
-     *           description="Second image file (jpeg, png, jpg, webp, max 5MB) - optional"
+     *           description="Second image file (jpeg, png, jpg, max 5MB) - optional"
      *         ),
      *         @OA\Property(
      *           property="comment[2][file]",
      *           type="string",
      *           format="binary",
      *           nullable=true,
-     *           description="Third image file (jpeg, png, jpg, webp, max 5MB) - optional"
+     *           description="Third image file (jpeg, png, jpg, max 5MB) - optional"
      *         )
      *       )
      *     )

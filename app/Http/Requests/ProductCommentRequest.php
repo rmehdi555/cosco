@@ -22,11 +22,11 @@ class ProductCommentRequest extends FormRequest
     public function rules(): array
     {
         return [
-            'rate' => 'required|integer|between:0,5',
+            'rate' => 'required|integer|between:1,5',
             'description' => 'nullable|string',
             'product_slug' => 'required|string',
-            'comment' => 'nullable|array|max:3',
-            'comment.*.file' => 'nullable|file|mimes:jpeg,png,jpg,webp|max:5000',
+            'comment' => 'nullable|array',
+            'comment.*.file' => 'nullable|file|mimes:jpeg,png,jpg|max:5000',
         ];
     }
 }

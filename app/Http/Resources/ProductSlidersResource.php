@@ -48,20 +48,41 @@ class ProductSlidersResource extends JsonResource
             $images[] = asset('storage/' . $image->image_url);
         }
 
+        if ($this->is_online_only == true) {
+            $type_buy = [[
+                'text' => 'خرید انلاین',
+                'bg_color' => '#005dab',
+            ]];
+        } else {
+            $type_buy = [
+                [
+                    'text' => 'خرید انلاین',
+                    'bg_color' => '#005dab',
+                ],
+                [
+                    'text' => 'خرید حضوری',
+                    'bg_color' => '#008000',
+                ]
+            ];
+        }
+
+        $all_rates = $this->reviews->sum('rating');
+        $count_rate = $this->reviews->count();
+        if ($count_rate == 0)
+            $count_rate = 1;
+        $average_rate = round($all_rates / $count_rate, 1);
+
         return [
             'id' => $this->id,
             'name' => $this->name,
             'slug' => $this->slug,
             'description' => $this->description,
-            'price' => (int)$this->price,
+            'price' => config('general.show_price')($this->price),
             'image_url' => [$images[0]],
-            'rate' => 2,
-            'number_rate' => 741,
+            'rate' => $average_rate,
+            'number_rate' => $count_rate,
             'discount_price' => 0,
-            'type_buy' => [[
-                'text' => $this->is_online_only == true ? 'خرید انلاین' : 'خرید حضوری',
-                'bg_color' => $this->is_online_only == true ? '#005dab' : '#008000',
-            ]]
+            'type_buy' => $type_buy,
         ];
     }
 }
