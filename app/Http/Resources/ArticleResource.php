@@ -10,9 +10,7 @@ use Illuminate\Http\Resources\Json\JsonResource;
  *   type="object",
  *   title="Article Resource",
  *   description="Article resource representation",
- *   @OA\Property(property="id", type="integer", example=1),
  *   @OA\Property(property="category_id", type="integer", example=2),
- *   @OA\Property(property="user_id", type="integer", example=1),
  *   @OA\Property(property="title", type="string", example="عنوان مقاله"),
  *   @OA\Property(property="slug", type="string", example="article-title"),
  *   @OA\Property(property="excerpt", type="string", example="خلاصه مقاله"),
@@ -35,9 +33,7 @@ class ArticleResource extends JsonResource
     public function toArray($request)
     {
         return [
-            'id' => $this->id,
             'category_id' => $this->category_id,
-            'user_id' => $this->user_id,
             'title' => $this->title,
             'slug' => $this->slug,
             'excerpt' => $this->excerpt,
@@ -51,8 +47,8 @@ class ArticleResource extends JsonResource
             'seo_follow' => $this->seo_follow,
             'seo_index' => $this->seo_index,
             'seo_canonical' => $this->seo_canonical,
-            'created_at' => $this->created_at,
-            'updated_at' => $this->updated_at,
+            'created_at' => config('general.show_date')($this->created_at),
+            'updated_at' => config('general.show_date')($this->updated_at),
         ];
     }
 } 

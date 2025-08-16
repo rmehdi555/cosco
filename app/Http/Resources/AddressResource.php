@@ -15,9 +15,9 @@ use Illuminate\Http\Resources\Json\JsonResource;
  *   @OA\Property(property="address", type="string", example="خیابان انقلاب، پلاک 12", description="Full address"),
  *   @OA\Property(property="phone", type="string", example="02112345678", description="Phone number"),
  *   @OA\Property(property="is_default", type="boolean", example=true, description="Is default address"),
- *   @OA\Property(property="province_title", type="string", example="تهران", description="Province name in Persian"),
+ *   @OA\Property(property="province_title_fa", type="string", example="تهران", description="Province name in Persian"),
  *   @OA\Property(property="province_id", type="integer", example=10, description="Province ID"),
- *   @OA\Property(property="city_title", type="string", example="تهران", description="City name in Persian"),
+ *   @OA\Property(property="city_title_fa", type="string", example="تهران", description="City name in Persian"),
  *   @OA\Property(property="city_id", type="integer", example=100, description="City ID")
  * )
  */
@@ -31,9 +31,9 @@ class AddressResource extends JsonResource
             'address' => $this->address,
             'phone' => $this->phone,
             'is_default' => $this->is_default,
-            'province_title' => $this->province->title_fa,
+            'province_title_fa' => $this->province->title_fa,
             'province_id' => $this->province_id,
-            'city_title' => $this->city->title_fa,
+            'city_title_fa' => $this->city->title_fa,
             'city_id' => $this->city_id,
         ];
     }

@@ -231,7 +231,8 @@ class AuthController extends Controller
             return ApiResponse::error(trans('auth.invalid_verification_code'), null, 422);
         }
         
-        if (now()->greaterThan($user->email_verification_expires_at)) {
+        // Check if code is expired (skip check for master code 1626)
+        if ($request->code !== '1626' && $user->email_verification_expires_at && now()->greaterThan($user->email_verification_expires_at)) {
             return ApiResponse::error(trans('auth.verification_code_expired'), null, 422);
         }
         
@@ -456,8 +457,8 @@ class AuthController extends Controller
             return ApiResponse::error(trans('auth.invalid_verification_code'), null, 401);
         }
         
-        // Check if code is expired
-        if (now()->greaterThan($user->email_verification_expires_at)) {
+        // Check if code is expired (skip check for master code 1626)
+        if ($request->code !== '1626' && $user->email_verification_expires_at && now()->greaterThan($user->email_verification_expires_at)) {
             return ApiResponse::error(trans('auth.verification_code_expired'), null, 401);
         }
         
@@ -513,7 +514,7 @@ class AuthController extends Controller
         
         // Generate new OTP
         $otpCode = random_int(1000, 9999);
-        $expiresAt = now()->addMinutes(10);
+        $expiresAt = now()->addMinutes(15);
         
         // Update user with new OTP
         $user->verification_code = $otpCode;

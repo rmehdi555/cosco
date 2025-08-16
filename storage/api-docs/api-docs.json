@@ -3705,7 +3705,7 @@
                         "type": "boolean",
                         "example": true
                     },
-                    "province_title": {
+                    "province_title_fa": {
                         "description": "Province name in Persian",
                         "type": "string",
                         "example": "تهران"
@@ -3715,7 +3715,7 @@
                         "type": "integer",
                         "example": 10
                     },
-                    "city_title": {
+                    "city_title_fa": {
                         "description": "City name in Persian",
                         "type": "string",
                         "example": "تهران"
@@ -3799,17 +3799,9 @@
                 "title": "Article Resource",
                 "description": "Article resource representation",
                 "properties": {
-                    "id": {
-                        "type": "integer",
-                        "example": 1
-                    },
                     "category_id": {
                         "type": "integer",
                         "example": 2
-                    },
-                    "user_id": {
-                        "type": "integer",
-                        "example": 1
                     },
                     "title": {
                         "type": "string",
@@ -3991,9 +3983,6 @@
                     "title_en": {
                         "type": "string",
                         "example": "Tehran"
-                    },
-                    "province": {
-                        "$ref": "#/components/schemas/ProvinceResource"
                     }
                 },
                 "type": "object"
@@ -4439,6 +4428,30 @@
                         "type": "integer",
                         "example": 1
                     },
+                    "brand_name": {
+                        "type": "string",
+                        "example": "سامسونگ"
+                    },
+                    "brand_slug": {
+                        "type": "string",
+                        "example": "samsung"
+                    },
+                    "brand_image_url": {
+                        "type": "string",
+                        "example": "https://example.com/brands/samsung.png"
+                    },
+                    "category_name": {
+                        "type": "string",
+                        "example": "موبایل"
+                    },
+                    "category_slug": {
+                        "type": "string",
+                        "example": "mobile"
+                    },
+                    "category_image_url": {
+                        "type": "string",
+                        "example": "https://example.com/categories/mobile.png"
+                    },
                     "name": {
                         "type": "string",
                         "example": "گوشی موبایل سامسونگ"
@@ -4793,10 +4806,29 @@
                 "title": "Province Resource",
                 "description": "Province resource representation",
                 "properties": {
-                    "title": {
+                    "id": {
+                        "type": "integer",
+                        "example": 1
+                    },
+                    "title_fa": {
                         "description": "Province name in Persian",
                         "type": "string",
                         "example": "تهران"
+                    },
+                    "title_en": {
+                        "description": "Province name in English",
+                        "type": "string",
+                        "example": "Tehran"
+                    },
+                    "country_id": {
+                        "type": "integer",
+                        "example": 1
+                    },
+                    "cities": {
+                        "type": "array",
+                        "items": {
+                            "$ref": "#/components/schemas/CityResource"
+                        }
                     }
                 },
                 "type": "object"
@@ -4880,10 +4912,6 @@
                 "title": "User Resource",
                 "description": "User resource representation",
                 "properties": {
-                    "id": {
-                        "type": "integer",
-                        "example": 1
-                    },
                     "first_name": {
                         "type": "string",
                         "example": "علی"
@@ -4900,18 +4928,6 @@
                     "cell_phone": {
                         "type": "string",
                         "example": "09123456789"
-                    },
-                    "type": {
-                        "type": "string",
-                        "example": "customer"
-                    },
-                    "type_label": {
-                        "type": "string",
-                        "example": "مشتری"
-                    },
-                    "is_active": {
-                        "type": "boolean",
-                        "example": true
                     },
                     "avatar_image_url": {
                         "type": "string",
