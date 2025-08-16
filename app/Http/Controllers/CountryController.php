@@ -6,6 +6,7 @@ use App\Models\Country;
 use App\Http\Resources\CountryResource;
 use App\Http\Resources\ProvinceResource;
 use App\Http\Resources\CityResource;
+use App\Http\Responses\ApiResponse;
 
 class CountryController extends Controller
 {
@@ -24,6 +25,6 @@ class CountryController extends Controller
     public function tree()
     {
         $countries = Country::with(['provinces.cities'])->get();
-        return CountryResource::collection($countries);
+        return ApiResponse::success(CountryResource::collection($countries));
     }
 } 

@@ -28,7 +28,7 @@ class ProductCategoryController extends Controller
     public function tree()
     {
         $categories = ProductCategory::whereNull('parent_id')->with('allChildren')->get();
-        return ProductCategoryResource::collection($categories);
+        return ApiResponse::success(ProductCategoryResource::collection($categories));
     }
 
     /**

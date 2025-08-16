@@ -46,7 +46,7 @@ class MembershipController extends Controller
      *     )
      * )
      */
-    public function index(Request $request): AnonymousResourceCollection
+    public function index(Request $request)
     {
         $user = $request->user();
         
@@ -55,7 +55,7 @@ class MembershipController extends Controller
             ->orderBy('created_at', 'desc')
             ->get();
 
-        return MembershipResource::collection($memberships);
+        return ApiResponse::success(MembershipResource::collection($memberships));
     }
 
     /**
@@ -109,7 +109,7 @@ class MembershipController extends Controller
      *     )
      * )
      */
-    public function status(Request $request): JsonResponse
+    public function status(Request $request)
     {
         $user = $request->user();
         
@@ -186,13 +186,13 @@ class MembershipController extends Controller
      *     )
      * )
      */
-    public function show(Request $request, Membership $membership): MembershipResource
+    public function show(Request $request, Membership $membership)
     {
         // Check if the membership belongs to the authenticated user
         if ($membership->user_id !== $request->user()->id) {
             abort(403, __('membership.not_authorized_to_view'));
         }
 
-        return new MembershipResource($membership);
+        return ApiResponse::success(new MembershipResource($membership));
     }
 } 

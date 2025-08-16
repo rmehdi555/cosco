@@ -107,6 +107,6 @@ class ArticleController extends Controller
     public function show($slug)
     {
         $article = Article::where('slug', $slug)->firstOrFail();
-        return new ArticleResource($article);
+        return ApiResponse::success(new ArticleResource($article));
     }
 }

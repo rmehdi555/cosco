@@ -63,7 +63,7 @@ class OrderController extends Controller
      *     )
      * )
      */
-    public function index(Request $request): AnonymousResourceCollection
+    public function index(Request $request)
     {
         $user = $request->user();
         
@@ -83,7 +83,7 @@ class OrderController extends Controller
 
         $orders = $query->get();
 
-        return OrderResource::collection($orders);
+        return ApiResponse::success(OrderResource::collection($orders));
     }
 
     /**
@@ -116,7 +116,7 @@ class OrderController extends Controller
      *     )
      * )
      */
-    public function show(Request $request, Order $order): OrderResource
+    public function show(Request $request, Order $order)
     {
         // Check if the order belongs to the authenticated user
         if ($order->user_id !== $request->user()->id) {
@@ -125,7 +125,7 @@ class OrderController extends Controller
 
         $order->load(['shippingAddress.country', 'shippingAddress.province', 'shippingAddress.city', 'orderItems.product']);
 
-        return new OrderResource($order);
+        return ApiResponse::success(new OrderResource($order));
     }
 
     /**

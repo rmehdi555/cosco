@@ -11,4 +11,6 @@ return [
     // Error Messages
     'payment_not_found' => 'Payment not found',
     'no_payments_found' => 'No payments found',
+    'order_already_paid' => 'This order has already been paid',
+    'error_retrieving_information' => 'Error retrieving information',
 ]; 

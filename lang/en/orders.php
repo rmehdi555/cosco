@@ -10,6 +10,7 @@ return [
     'created_successfully' => 'Order created successfully',
     
     // Error Messages
+    'not_found' => 'Order not found',
     'order_not_found' => 'Order not found',
     'no_orders_found' => 'No orders found',
     'creation_failed' => 'Failed to create order',

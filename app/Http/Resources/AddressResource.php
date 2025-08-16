@@ -10,6 +10,7 @@ use Illuminate\Http\Resources\Json\JsonResource;
  *   type="object",
  *   title="Address Resource",
  *   description="User address resource representation",
+ *   @OA\Property(property="id", type="integer", example=1),
  *   @OA\Property(property="postal_code", type="string", example="1234567890", description="Postal code"),
  *   @OA\Property(property="plaque", type="string", example="12", description="Building plaque number"),
  *   @OA\Property(property="address", type="string", example="خیابان انقلاب، پلاک 12", description="Full address"),
@@ -26,6 +27,7 @@ class AddressResource extends JsonResource
     public function toArray($request)
     {
         return [
+            'id' => $this->id,
             'postal_code' => $this->postal_code,
             'plaque' => $this->plaque,
             'address' => $this->address,

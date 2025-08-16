@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Models\ArticleCategory;
 use App\Http\Resources\ArticleCategoryResource;
+use App\Http\Responses\ApiResponse;
 
 class ArticleCategoryController extends Controller
 {
@@ -22,7 +23,7 @@ class ArticleCategoryController extends Controller
     public function index()
     {
         $categories = ArticleCategory::with('articles')->get();
-        return ArticleCategoryResource::collection($categories);
+        return ApiResponse::success(ArticleCategoryResource::collection($categories));
     }
 
     /**
@@ -47,6 +48,6 @@ class ArticleCategoryController extends Controller
     public function show($slug)
     {
         $category = ArticleCategory::with('articles')->where('slug', $slug)->firstOrFail();
-        return new ArticleCategoryResource($category);
+        return ApiResponse::success(new ArticleCategoryResource($category));
     }
 } 

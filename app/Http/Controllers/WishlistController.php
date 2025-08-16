@@ -8,6 +8,7 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use App\Http\Requests\StoreWishlistRequest;
 use App\Http\Requests\UpdateWishlistRequest;
+use App\Http\Responses\ApiResponse;
 
 class WishlistController extends Controller
 {
@@ -28,7 +29,7 @@ class WishlistController extends Controller
     {
         $user = Auth::user();
         $wishlists = Wishlist::where('user_id', $user->id)->with(['items.product'])->get();
-        return WishlistResource::collection($wishlists);
+        return ApiResponse::success(WishlistResource::collection($wishlists));
     }
 
     /**
@@ -54,7 +55,7 @@ class WishlistController extends Controller
         $data = $request->validated();
         $data['user_id'] = $user->id;
         $wishlist = Wishlist::create($data);
-        return new WishlistResource($wishlist);
+        return ApiResponse::success(new WishlistResource($wishlist));
     }
 
     /**
@@ -87,7 +88,7 @@ class WishlistController extends Controller
         $wishlist = Wishlist::where('user_id', $user->id)->findOrFail($id);
         $data = $request->validated();
         $wishlist->update($data);
-        return new WishlistResource($wishlist);
+        return ApiResponse::success(new WishlistResource($wishlist));
     }
 
     /**
@@ -114,6 +115,6 @@ class WishlistController extends Controller
     {
         $user = Auth::user();
         $wishlist = Wishlist::where('user_id', $user->id)->with(['items.product'])->findOrFail($id);
-        return new WishlistResource($wishlist);
+        return ApiResponse::success(new WishlistResource($wishlist));
     }
 } 

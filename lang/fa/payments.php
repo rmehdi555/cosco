@@ -11,4 +11,6 @@ return [
     // Error Messages
     'payment_not_found' => 'پرداخت یافت نشد',
     'no_payments_found' => 'هیچ پرداختی یافت نشد',
+    'order_already_paid' => 'این سفارش قبلاً پرداخت شده است',
+    'error_retrieving_information' => 'خطا در دریافت اطلاعات',
 ]; 

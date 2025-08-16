@@ -10,6 +10,7 @@ return [
     'created_successfully' => 'سفارش با موفقیت ایجاد شد',
     
     // Error Messages
+    'not_found' => 'سفارش یافت نشد',
     'order_not_found' => 'سفارش یافت نشد',
     'no_orders_found' => 'هیچ سفارشی یافت نشد',
     'creation_failed' => 'خطا در ایجاد سفارش',

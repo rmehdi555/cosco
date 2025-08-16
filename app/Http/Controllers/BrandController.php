@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use App\Models\Brand;
 use App\Http\Resources\BrandResource;
 use Illuminate\Http\Request;
+use App\Http\Responses\ApiResponse;
 
 class BrandController extends Controller
 {
@@ -23,7 +24,7 @@ class BrandController extends Controller
     public function index()
     {
         $brands = Brand::where('is_active', true)->get();
-        return BrandResource::collection($brands);
+        return ApiResponse::success(BrandResource::collection($brands));
     }
 
     /**
@@ -58,6 +59,6 @@ class BrandController extends Controller
             $query->where('is_active', true);
         }]);
 
-        return new BrandResource($brand);
+        return ApiResponse::success(new BrandResource($brand));
     }
 } 

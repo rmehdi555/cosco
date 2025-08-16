@@ -29,7 +29,7 @@ class AddressController extends Controller
     {
         $user = Auth::user();
         $addresses = Address::where('user_id', $user->id)->get();
-        return AddressResource::collection($addresses);
+        return ApiResponse::success(AddressResource::collection($addresses));
     }
 
     /**
@@ -55,7 +55,7 @@ class AddressController extends Controller
         $data = $request->validated();
         $data['user_id'] = $user->id;
         $address = Address::create($data);
-        return new AddressResource($address);
+        return ApiResponse::success(new AddressResource($address));
     }
 
     /**
@@ -91,6 +91,6 @@ class AddressController extends Controller
         }
         $data = $request->validated();
         $address->update($data);
-        return new AddressResource($address);
+        return ApiResponse::success(new AddressResource($address));
     }
 } 

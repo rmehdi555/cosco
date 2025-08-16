@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Http\Resources\MembershipTypeResource;
 use App\Models\MembershipType;
+use App\Http\Responses\ApiResponse;
 use Illuminate\Http\Request;
 use Illuminate\Http\Resources\Json\AnonymousResourceCollection;
 
@@ -38,13 +39,13 @@ class MembershipTypeController extends Controller
      *     )
      * )
      */
-    public function index(): AnonymousResourceCollection
+    public function index()
     {
         $membershipTypes = MembershipType::where('is_active', true)
             ->orderBy('price', 'asc')
             ->get();
 
-        return MembershipTypeResource::collection($membershipTypes);
+        return ApiResponse::success(MembershipTypeResource::collection($membershipTypes));
     }
 
     /**
@@ -80,8 +81,8 @@ class MembershipTypeController extends Controller
      *     )
      * )
      */
-    public function show(MembershipType $membershipType): MembershipTypeResource
+    public function show(MembershipType $membershipType)
     {
-        return new MembershipTypeResource($membershipType);
+        return ApiResponse::success(new MembershipTypeResource($membershipType));
     }
 } 

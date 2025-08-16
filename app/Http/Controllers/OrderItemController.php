@@ -7,6 +7,7 @@ use App\Models\Order;
 use App\Models\OrderItem;
 use Illuminate\Http\Request;
 use Illuminate\Http\Resources\Json\AnonymousResourceCollection;
+use App\Http\Responses\ApiResponse;
 
 /**
  * @OA\Tag(
@@ -61,7 +62,7 @@ class OrderItemController extends Controller
      *     )
      * )
      */
-    public function show(Request $request, OrderItem $orderItem): OrderItemResource
+    public function show(Request $request, OrderItem $orderItem)
     {
         $user = $request->user();
         
@@ -72,6 +73,6 @@ class OrderItemController extends Controller
 
         $orderItem->load(['product']);
 
-        return new OrderItemResource($orderItem);
+        return ApiResponse::success(new OrderItemResource($orderItem));
     }
 } 

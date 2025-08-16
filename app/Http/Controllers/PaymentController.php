@@ -12,6 +12,7 @@ use App\Http\Resources\PaymentResource;
 use App\Models\Payment;
 use Illuminate\Http\Resources\Json\AnonymousResourceCollection;
 use Illuminate\Support\Facades\Log;
+use App\Http\Responses\ApiResponse;
 
 /**
  * @OA\Tag(
@@ -216,26 +217,20 @@ class PaymentController extends Controller
         $order = Order::with('user')->find($request->order_id);
 
         if (!$order) {
-            return response()->json([
-                'success' => false,
-                'message' => 'سفارش یافت نشد'
-            ], 400);
+            return ApiResponse::error(__('orders.not_found'), null, 400);
         }
 
         // بررسی وضعیت پرداخت
         if ($order->payment_status === 'paid') {
-            return response()->json([
-                'success' => false,
-                'message' => 'این سفارش قبلاً پرداخت شده است'
-            ], 400);
+            return ApiResponse::error(__('payments.order_already_paid'), null, 400);
         }
 
         $result = $this->paymentService->sendToGateway($order, $request->gateway);
 
         if ($result['success']) {
-            return response()->json($result, 200);
+            return ApiResponse::success($result, 200);
         } else {
-            return response()->json($result, 500);
+            return ApiResponse::error($result, 500);
         }
     }
 
@@ -406,10 +401,7 @@ class PaymentController extends Controller
             }])->find($orderId);
 
             if (!$order) {
-                return response()->json([
-                    'success' => false,
-                    'message' => 'سفارش یافت نشد'
-                ], 404);
+                return ApiResponse::notFound(__('orders.not_found'));
             }
 
             // دریافت آخرین پرداخت
@@ -441,8 +433,7 @@ class PaymentController extends Controller
                 ];
             }
 
-            return response()->json([
-                'success' => true,
+            return ApiResponse::success([
                 'order_id' => $order->id,
                 'payment_status' => $order->payment_status,
                 'order_status' => $order->status,
@@ -465,10 +456,7 @@ class PaymentController extends Controller
                 'trace' => $e->getTraceAsString()
             ]);
 
-            return response()->json([
-                'success' => false,
-                'message' => 'Error retrieving information'
-            ], 500);
+            return ApiResponse::serverError(__('payments.error_retrieving_information'));
         }
     }
 
@@ -534,10 +522,7 @@ class PaymentController extends Controller
     {
         $gateways = $this->paymentService->getActiveGateways();
 
-        return response()->json([
-            'success' => true,
-            'gateways' => $gateways
-        ]);
+        return ApiResponse::success($gateways);
     }
 
 
