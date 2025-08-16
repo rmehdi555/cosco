@@ -134,7 +134,7 @@ class OrderController extends Controller
      * @OA\Post(
      *     path="/api/orders",
      *     operationId="createOrder",
-     *     tags={"Orders"},
+     *     tags={"Carts"},
      *     summary="Create a new order",
      *     description="Creates a new order with items for the authenticated user",
      *     security={{"bearerAuth":{}}},

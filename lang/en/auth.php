@@ -20,4 +20,8 @@ return [
     'verification_email_subject' => 'Email Verification Code',
     'reset_password_email_subject' => 'Password Reset Code',
     'profile_retrieved' => 'Profile information retrieved successfully.',
+    'cell_phone_not_verified' => 'This cell phone number is already registered but not verified. Please verify your account first.',
+    'cell_phone_already_registered' => 'This cell phone number is already registered.',
+    'profile_updated_success' => 'Profile updated successfully.',
+    'account_not_verified' => 'Your account is not verified. Please verify your account first.',
 ]; 

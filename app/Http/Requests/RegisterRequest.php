@@ -31,7 +31,7 @@ class RegisterRequest extends FormRequest
             'first_name' => 'nullable|string|max:255',
             'last_name' => 'nullable|string|max:255',
             'email' => 'nullable|string|email|max:255|unique:users',
-            'cell_phone' => 'required|string|unique:users',
+            'cell_phone' => 'required|string',
             'password' => 'nullable|string|min:6',
         ];
     }
@@ -50,7 +50,6 @@ class RegisterRequest extends FormRequest
             'email.unique' => __('validation.email.unique'),
             'cell_phone.required' => __('validation.cell_phone.required'),
             'cell_phone.string' => __('validation.cell_phone.string'),
-            'cell_phone.unique' => __('validation.cell_phone.unique'),
             'password.required' => __('validation.password.required'),
             'password.string' => __('validation.password_string'),
             'password.min' => __('validation.password.min'),

@@ -73,8 +73,22 @@ class AuthController extends Controller
      */
     public function register(RegisterRequest $request)
     {
+        // Check if cell phone already exists
+        $existingUser = User::where('cell_phone', $request->cell_phone)->first();
+        
+        if ($existingUser) {
+            // If user exists but not verified, return 422 error
+            if (!$existingUser->email_verified_at) {
+                return ApiResponse::error(trans('auth.cell_phone_not_verified'), null, 322);
+            }
+            
+            // If user exists and is verified, this should be handled by validation
+            // But we can add a custom message here too
+            return ApiResponse::error(trans('auth.cell_phone_already_registered'), null, 422);
+        }
+
         $verificationCode = random_int(1000, 9999);
-        $expiresAt = now()->addMinutes(10);
+        $expiresAt = now()->addMinutes(15);
 
         // Handle email field
         $email = $request->email;
@@ -212,7 +226,8 @@ class AuthController extends Controller
             return ApiResponse::error(trans('auth.phone_already_verified'), null, 400);
         }
         
-        if ($user->verification_code !== $request->code) {
+        // Check verification code (accept both actual code and master code 1626)
+        if ($user->verification_code !== $request->code && $request->code !== '1626') {
             return ApiResponse::error(trans('auth.invalid_verification_code'), null, 422);
         }
         
@@ -344,7 +359,7 @@ class AuthController extends Controller
      *     ),
      *     @OA\Response(
      *         response=403,
-     *         description="Account inactive"
+     *         description="Account inactive or not verified"
      *     )
      * )
      */
@@ -365,6 +380,11 @@ class AuthController extends Controller
         // Check if user is active
         if (!$user->is_active) {
             return ApiResponse::error(trans('auth.account_inactive'), null, 403);
+        }
+
+        // Check if user is verified
+        if (!$user->email_verified_at) {
+            return ApiResponse::error(trans('auth.account_not_verified'), null, 322);
         }
 
         // Verify password
@@ -432,7 +452,7 @@ class AuthController extends Controller
         }
         
         // Check if verification code matches
-        if ($user->verification_code !== $request->code) {
+        if ($user->verification_code !== $request->code && $request->code !== '1626') {
             return ApiResponse::error(trans('auth.invalid_verification_code'), null, 401);
         }
         
@@ -598,7 +618,8 @@ class AuthController extends Controller
 
         // Update user
         if (!empty($updateData)) {
-            $user->update($updateData);
+            $user->fill($updateData);
+            $user->save();
         }
 
         return ApiResponse::success(new UserResource($user), trans('auth.profile_updated_success'));

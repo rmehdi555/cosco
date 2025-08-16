@@ -24,4 +24,8 @@ return [
     'verification_email_subject' => 'کد تایید ایمیل',
     'reset_password_email_subject' => 'کد بازیابی رمز عبور',
     'profile_retrieved' => 'اطلاعات پروفایل با موفقیت دریافت شد.',
+    'cell_phone_not_verified' => 'این شماره موبایل قبلاً ثبت شده ولی تایید نشده است. لطفاً ابتدا حساب خود را تایید کنید.',
+    'cell_phone_already_registered' => 'این شماره موبایل قبلاً ثبت شده است.',
+    'profile_updated_success' => 'پروفایل با موفقیت به‌روزرسانی شد.',
+    'account_not_verified' => 'حساب کاربری شما تایید نشده است. لطفاً ابتدا حساب خود را تایید کنید.',
 ]; 

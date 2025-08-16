@@ -35,9 +35,9 @@ class LoginRequest extends FormRequest
     public function messages()
     {
         return [
-            'email.email' => 'فرمت ایمیل نامعتبر است.',
-            'password.required' => 'رمز عبور الزامی است.',
-            'password.string' => 'رمز عبور باید متن باشد.',
+            'email.email' => __('validation.email_format'),
+            'password.required' => __('validation.password_required'),
+            'password.string' => __('validation.password_string'),
         ];
     }
 
@@ -45,7 +45,7 @@ class LoginRequest extends FormRequest
     {
         $validator->after(function ($validator) {
             if (!$this->email && !$this->cell_phone) {
-                $validator->errors()->add('identifier', 'لطفاً ایمیل یا شماره موبایل را وارد کنید.');
+                $validator->errors()->add('identifier', __('validation.identifier_required'));
             }
         });
     }

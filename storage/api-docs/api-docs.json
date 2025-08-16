@@ -623,7 +623,7 @@
                         "description": "Invalid credentials"
                     },
                     "403": {
-                        "description": "Account inactive"
+                        "description": "Account inactive or not verified"
                     }
                 }
             }
@@ -1473,7 +1473,7 @@
             },
             "post": {
                 "tags": [
-                    "Orders"
+                    "Carts"
                 ],
                 "summary": "Create a new order",
                 "description": "Creates a new order with items for the authenticated user",

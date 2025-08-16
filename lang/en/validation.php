@@ -26,4 +26,10 @@ return [
     'cell_phone.unique' => 'The cell phone has already been taken.',
     'password.required' => 'The password field is required.',
     'password.min' => 'The password must be at least 6 characters.',
+    
+    // LoginRequest validation messages
+    'email_format' => 'The email format is invalid.',
+    'password_required' => 'The password is required.',
+    'password_string' => 'The password must be a string.',
+    'identifier_required' => 'Please enter your email or cell phone number.',
 ]; 

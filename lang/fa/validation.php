@@ -29,4 +29,10 @@ return [
     'cell_phone.unique' => 'این شماره موبایل قبلاً ثبت شده است.',
     'password.required' => 'رمز عبور الزامی است.',
     'password.min' => 'رمز عبور باید حداقل 6 کاراکتر باشد.',
+    
+    // LoginRequest validation messages
+    'email_format' => 'فرمت ایمیل نامعتبر است.',
+    'password_required' => 'رمز عبور الزامی است.',
+    'password_string' => 'رمز عبور باید متن باشد.',
+    'identifier_required' => 'لطفاً ایمیل یا شماره موبایل را وارد کنید.',
 ]; 
