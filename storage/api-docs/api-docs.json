@@ -1769,7 +1769,7 @@
                                     "gateway": {
                                         "description": "Payment gateway (optional)",
                                         "type": "string",
-                                        "example": "zarinpal_test"
+                                        "example": "melli_test"
                                     }
                                 },
                                 "type": "object"
@@ -1874,13 +1874,43 @@
                         "required": false,
                         "schema": {
                             "type": "string",
-                            "example": "zarinpal_test"
+                            "example": "melli_test"
+                        }
+                    },
+                    {
+                        "name": "Token",
+                        "in": "query",
+                        "description": "Transaction token from Melli bank gateway",
+                        "required": false,
+                        "schema": {
+                            "type": "string",
+                            "example": "123456789"
+                        }
+                    },
+                    {
+                        "name": "ResCod",
+                        "in": "query",
+                        "description": "Response code from gateway (0 for success)",
+                        "required": false,
+                        "schema": {
+                            "type": "string",
+                            "example": "0"
+                        }
+                    },
+                    {
+                        "name": "RefNum",
+                        "in": "query",
+                        "description": "Payment reference number",
+                        "required": false,
+                        "schema": {
+                            "type": "string",
+                            "example": "123456789"
                         }
                     },
                     {
                         "name": "authority",
                         "in": "query",
-                        "description": "Transaction ID from payment gateway",
+                        "description": "Transaction ID from Zarinpal gateway",
                         "required": false,
                         "schema": {
                             "type": "string",
@@ -1890,7 +1920,7 @@
                     {
                         "name": "status",
                         "in": "query",
-                        "description": "Payment status (OK for success, Cancel for failure)",
+                        "description": "Payment status (OK for success, Cancel for failure) - Zarinpal only",
                         "required": false,
                         "schema": {
                             "type": "string",
@@ -1904,7 +1934,7 @@
                     {
                         "name": "ref_id",
                         "in": "query",
-                        "description": "Payment reference ID",
+                        "description": "Payment reference ID - Zarinpal only",
                         "required": false,
                         "schema": {
                             "type": "string",
@@ -2146,6 +2176,32 @@
                                         "gateways": {
                                             "description": "Active payment gateways",
                                             "properties": {
+                                                "melli_test": {
+                                                    "description": "Melli bank test gateway",
+                                                    "properties": {
+                                                        "name": {
+                                                            "type": "string",
+                                                            "example": "Melli Bank Test"
+                                                        },
+                                                        "type": {
+                                                            "type": "string",
+                                                            "example": "melli_test"
+                                                        },
+                                                        "enabled": {
+                                                            "type": "boolean",
+                                                            "example": true
+                                                        },
+                                                        "merchant_id": {
+                                                            "type": "string",
+                                                            "example": "46645"
+                                                        },
+                                                        "terminal_id": {
+                                                            "type": "string",
+                                                            "example": "GBHDTY98"
+                                                        }
+                                                    },
+                                                    "type": "object"
+                                                },
                                                 "zarinpal_test": {
                                                     "description": "Zarinpal test gateway",
                                                     "properties": {
@@ -2196,7 +2252,7 @@
                                         "default_gateway": {
                                             "description": "Default gateway",
                                             "type": "string",
-                                            "example": "zarinpal_test"
+                                            "example": "melli_test"
                                         }
                                     },
                                     "type": "object"
