@@ -1,5 +1,6 @@
 <?php
 
+use App\Http\Controllers\ProductController;
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\AuthController;
 use App\Http\Controllers\MembershipTypeController;
@@ -55,6 +56,9 @@ Route::middleware('auth:api')->group(function () {
     // Cart routes
     Route::get('carts', [CartController::class, 'index']);
     Route::post('carts', [CartController::class, 'store']);
+
+    // Comment routes
+    Route::post('product-comment', [ProductController::class, 'comment']);
 });
 
 // Public routes

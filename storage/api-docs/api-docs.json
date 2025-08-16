@@ -2601,12 +2601,215 @@
                         "content": {
                             "application/json": {
                                 "schema": {
-                                    "$ref": "#/components/schemas/ProductResource"
+                                    "properties": {
+                                        "status": {
+                                            "type": "integer",
+                                            "example": 200
+                                        },
+                                        "message": {
+                                            "type": "string",
+                                            "example": "عملیات با موفقیت انجام شد"
+                                        },
+                                        "data": {
+                                            "$ref": "#/components/schemas/ProductResource"
+                                        },
+                                        "errors": {
+                                            "type": "object",
+                                            "example": null,
+                                            "nullable": true
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    },
+                    "404": {
+                        "description": "Product not found",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/ErrorResponse"
                                 }
                             }
                         }
                     }
                 }
+            }
+        },
+        "/api/product-comment": {
+            "post": {
+                "tags": [
+                    "Product"
+                ],
+                "summary": "Add a comment/review to a product",
+                "description": "Add a product review with rating, description, and optional image files",
+                "operationId": "72c3e4f6b546dcdcdcebf142d0a0aa5f",
+                "requestBody": {
+                    "required": true,
+                    "content": {
+                        "multipart/form-data": {
+                            "schema": {
+                                "required": [
+                                    "rate",
+                                    "product_slug"
+                                ],
+                                "properties": {
+                                    "rate": {
+                                        "description": "Rating from 0 to 5",
+                                        "type": "integer",
+                                        "maximum": 5,
+                                        "minimum": 0,
+                                        "example": 4
+                                    },
+                                    "description": {
+                                        "description": "Review description/comment text",
+                                        "type": "string",
+                                        "example": "This product is excellent quality and I highly recommend it!",
+                                        "nullable": true
+                                    },
+                                    "product_slug": {
+                                        "description": "Product slug identifier",
+                                        "type": "string",
+                                        "example": "iphone-14-pro-max"
+                                    },
+                                    "comment": {
+                                        "description": "Array of image files (optional, maximum 3 files)",
+                                        "type": "array",
+                                        "items": {
+                                            "properties": {
+                                                "file": {
+                                                    "description": "Image file (jpeg, png, jpg, webp, max 5MB)",
+                                                    "type": "string",
+                                                    "format": "binary"
+                                                }
+                                            },
+                                            "type": "object"
+                                        },
+                                        "nullable": true
+                                    },
+                                    "comment[0][file]": {
+                                        "description": "First image file (jpeg, png, jpg, webp, max 5MB) - optional",
+                                        "type": "string",
+                                        "format": "binary",
+                                        "nullable": true
+                                    },
+                                    "comment[1][file]": {
+                                        "description": "Second image file (jpeg, png, jpg, webp, max 5MB) - optional",
+                                        "type": "string",
+                                        "format": "binary",
+                                        "nullable": true
+                                    },
+                                    "comment[2][file]": {
+                                        "description": "Third image file (jpeg, png, jpg, webp, max 5MB) - optional",
+                                        "type": "string",
+                                        "format": "binary",
+                                        "nullable": true
+                                    }
+                                },
+                                "type": "object"
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "200": {
+                        "description": "Comment saved successfully",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "status": {
+                                            "type": "integer",
+                                            "example": 200
+                                        },
+                                        "message": {
+                                            "type": "string",
+                                            "example": "نظر شما با موفقیت ثبت شد"
+                                        },
+                                        "data": {
+                                            "type": "boolean",
+                                            "example": true
+                                        },
+                                        "errors": {
+                                            "type": "object",
+                                            "example": null,
+                                            "nullable": true
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    },
+                    "401": {
+                        "description": "Unauthorized - User not authenticated",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/ErrorResponse"
+                                }
+                            }
+                        }
+                    },
+                    "404": {
+                        "description": "Product not found",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/ErrorResponse"
+                                }
+                            }
+                        }
+                    },
+                    "422": {
+                        "description": "Validation error",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "status": {
+                                            "type": "integer",
+                                            "example": 422
+                                        },
+                                        "message": {
+                                            "type": "string",
+                                            "example": "Validation failed"
+                                        },
+                                        "data": {
+                                            "type": "object",
+                                            "example": null,
+                                            "nullable": true
+                                        },
+                                        "errors": {
+                                            "type": "object",
+                                            "example": {
+                                                "rate": [
+                                                    "The rate field is required."
+                                                ],
+                                                "product_slug": [
+                                                    "The product slug field is required."
+                                                ],
+                                                "comment": [
+                                                    "The comment field is required."
+                                                ],
+                                                "comment.0.file": [
+                                                    "The comment.0.file must be a file."
+                                                ]
+                                            }
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    }
+                },
+                "security": [
+                    {
+                        "bearerAuth": []
+                    }
+                ]
             }
         },
         "/api/search": {
@@ -4253,13 +4456,20 @@
                         "example": "توضیحات کامل محصول"
                     },
                     "price": {
-                        "type": "number",
-                        "format": "float",
+                        "type": "integer",
                         "example": 12990000
                     },
                     "stock": {
                         "type": "integer",
                         "example": 10
+                    },
+                    "count": {
+                        "type": "integer",
+                        "example": 10
+                    },
+                    "count_for_user": {
+                        "type": "integer",
+                        "example": 3
                     },
                     "is_active": {
                         "type": "boolean",
@@ -4273,12 +4483,180 @@
                         "type": "boolean",
                         "example": false
                     },
-                    "images": {
+                    "image_url": {
                         "type": "array",
                         "items": {
                             "type": "string",
                             "format": "url",
                             "example": "http://localhost:8000/storage/products/image1.jpg"
+                        }
+                    },
+                    "type_buy": {
+                        "type": "array",
+                        "items": {
+                            "properties": {
+                                "text": {
+                                    "type": "string",
+                                    "example": "خرید انلاین"
+                                },
+                                "bg_color": {
+                                    "type": "string",
+                                    "example": "#005dab"
+                                }
+                            },
+                            "type": "object"
+                        }
+                    },
+                    "similar_products": {
+                        "type": "array",
+                        "items": {
+                            "properties": {
+                                "id": {
+                                    "type": "integer",
+                                    "example": 1
+                                },
+                                "name": {
+                                    "type": "string",
+                                    "example": "محصول اول"
+                                },
+                                "slug": {
+                                    "type": "string",
+                                    "example": "mhsol-aol"
+                                },
+                                "description": {
+                                    "type": "string",
+                                    "example": "توضیحات محصول اول"
+                                },
+                                "price": {
+                                    "type": "integer",
+                                    "example": 10000
+                                },
+                                "image_url": {
+                                    "type": "array",
+                                    "items": {
+                                        "type": "string",
+                                        "format": "url",
+                                        "example": "https://api.rdst.ca/storage/product-images/01K29NKBWHNPB5E48HW6V0Y1PV.jpg"
+                                    }
+                                },
+                                "rate": {
+                                    "type": "integer",
+                                    "example": 2
+                                },
+                                "number_rate": {
+                                    "type": "integer",
+                                    "example": 741
+                                },
+                                "discount_price": {
+                                    "type": "integer",
+                                    "example": 0
+                                },
+                                "type_buy": {
+                                    "type": "array",
+                                    "items": {
+                                        "properties": {
+                                            "text": {
+                                                "type": "string",
+                                                "example": "خرید حضوری"
+                                            },
+                                            "bg_color": {
+                                                "type": "string",
+                                                "example": "#008000"
+                                            }
+                                        },
+                                        "type": "object"
+                                    }
+                                }
+                            },
+                            "type": "object"
+                        }
+                    },
+                    "recent_products": {
+                        "type": "array",
+                        "items": {
+                            "properties": {
+                                "id": {
+                                    "type": "integer",
+                                    "example": 1
+                                },
+                                "name": {
+                                    "type": "string",
+                                    "example": "محصول اول"
+                                },
+                                "slug": {
+                                    "type": "string",
+                                    "example": "mhsol-aol"
+                                },
+                                "description": {
+                                    "type": "string",
+                                    "example": "توضیحات محصول اول"
+                                },
+                                "price": {
+                                    "type": "integer",
+                                    "example": 10000
+                                },
+                                "image_url": {
+                                    "type": "array",
+                                    "items": {
+                                        "type": "string",
+                                        "format": "url",
+                                        "example": "https://api.rdst.ca/storage/product-images/01K29NKBWHNPB5E48HW6V0Y1PV.jpg"
+                                    }
+                                },
+                                "rate": {
+                                    "type": "integer",
+                                    "example": 2
+                                },
+                                "number_rate": {
+                                    "type": "integer",
+                                    "example": 741
+                                },
+                                "discount_price": {
+                                    "type": "integer",
+                                    "example": 0
+                                },
+                                "type_buy": {
+                                    "type": "array",
+                                    "items": {
+                                        "properties": {
+                                            "text": {
+                                                "type": "string",
+                                                "example": "خرید حضوری"
+                                            },
+                                            "bg_color": {
+                                                "type": "string",
+                                                "example": "#008000"
+                                            }
+                                        },
+                                        "type": "object"
+                                    }
+                                }
+                            },
+                            "type": "object"
+                        }
+                    },
+                    "rate": {
+                        "type": "integer",
+                        "example": 2
+                    },
+                    "number_rate": {
+                        "type": "integer",
+                        "example": 741
+                    },
+                    "breadcrumb": {
+                        "type": "array",
+                        "items": {
+                            "properties": {
+                                "name": {
+                                    "type": "string",
+                                    "example": "کالای دیجیتال"
+                                },
+                                "slug": {
+                                    "type": "string",
+                                    "example": "digital-goods"
+                                }
+                            },
+                            "type": "object"
                         }
                     },
                     "brand": {
@@ -4308,6 +4686,10 @@
                         "type": "integer",
                         "example": 2
                     },
+                    "user_name": {
+                        "type": "string",
+                        "example": "علی رضایی"
+                    },
                     "product_id": {
                         "type": "integer",
                         "example": 3
@@ -4328,6 +4710,23 @@
                         "type": "integer",
                         "example": null,
                         "nullable": true
+                    },
+                    "created_at": {
+                        "type": "string",
+                        "example": "2024-07-27 12:34"
+                    },
+                    "files": {
+                        "type": "array",
+                        "items": {
+                            "properties": {
+                                "original": {
+                                    "type": "string",
+                                    "format": "url",
+                                    "example": "https://api.rdst.ca/storage/product-images/01K29NKBWHNPB5E48HW6V0Y1PV.jpg"
+                                }
+                            },
+                            "type": "object"
+                        }
                     }
                 },
                 "type": "object"

@@ -16,7 +16,7 @@ return new class extends Migration
             $table->foreignId('user_id')->constrained('users')->onDelete('cascade');
             $table->foreignId('product_id')->constrained('products')->onDelete('cascade');
             $table->integer('rating');
-            $table->text('comment');
+            $table->text('comment')->nullable();
             $table->boolean('approved')->default(false);
             $table->foreignId('parent_id')->nullable()->constrained('product_reviews')->onDelete('cascade');
             $table->timestamps();
@@ -31,4 +31,4 @@ return new class extends Migration
     {
         Schema::dropIfExists('product_reviews');
     }
-}; 
+};

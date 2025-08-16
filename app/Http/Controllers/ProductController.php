@@ -2,10 +2,14 @@
 
 namespace App\Http\Controllers;
 
+use App\Http\Requests\ProductCommentRequest;
 use App\Models\Product;
 use App\Http\Resources\ProductResource;
+use App\Models\ProductReview;
+use App\Models\ProductReviewFile;
 use Illuminate\Http\Request;
 use App\Http\Responses\ApiResponse;
+use Illuminate\Support\Facades\Auth;
 
 class ProductController extends Controller
 {
@@ -24,17 +28,168 @@ class ProductController extends Controller
      *   @OA\Response(
      *     response=200,
      *     description="Product details",
-     *     @OA\JsonContent(ref="#/components/schemas/ProductResource")
+     *     @OA\JsonContent(
+     *       type="object",
+     *       @OA\Property(property="status", type="integer", example=200),
+     *       @OA\Property(property="message", type="string", example="عملیات با موفقیت انجام شد"),
+     *       @OA\Property(property="data", ref="#/components/schemas/ProductResource"),
+     *       @OA\Property(property="errors", type="object", nullable=true, example=null)
+     *     )
+     *   ),
+     *   @OA\Response(
+     *     response=404,
+     *     description="Product not found",
+     *     @OA\JsonContent(ref="#/components/schemas/ErrorResponse")
      *   )
      * )
      */
     public function show($slug)
     {
         try {
-            $product = Product::with(['category', 'brand', 'reviews' => function($q) { $q->where('approved', true); }])->where('slug', $slug)->firstOrFail();
+            $product = Product::with(['category', 'brand', 'reviews' => function ($q) {
+                $q->where('approved', true);
+            }])->where('slug', $slug)->firstOrFail();
             return ApiResponse::success(new ProductResource($product));
         } catch (\Illuminate\Database\Eloquent\ModelNotFoundException $e) {
             return ApiResponse::notFound(__('errors.product_not_found'));
         }
     }
-} 
+
+    /**
+     * @OA\Post(
+     *   path="/api/product-comment",
+     *   summary="Add a comment/review to a product",
+     *   description="Add a product review with rating, description, and optional image files",
+     *   tags={"Product"},
+     *   security={{"bearerAuth":{}}},
+     *   @OA\RequestBody(
+     *     required=true,
+     *     @OA\MediaType(
+     *       mediaType="multipart/form-data",
+     *       @OA\Schema(
+     *         required={"rate", "product_slug"},
+     *         @OA\Property(
+     *           property="rate",
+     *           type="integer",
+     *           minimum=0,
+     *           maximum=5,
+     *           description="Rating from 0 to 5",
+     *           example=4
+     *         ),
+     *         @OA\Property(
+     *           property="description",
+     *           type="string",
+     *           nullable=true,
+     *           description="Review description/comment text",
+     *           example="This product is excellent quality and I highly recommend it!"
+     *         ),
+              *         @OA\Property(
+         *           property="product_slug",
+         *           type="string",
+         *           description="Product slug identifier",
+         *           example="iphone-14-pro-max"
+         *         ),
+         *         @OA\Property(
+         *           property="comment",
+         *           type="array",
+         *           nullable=true,
+         *           description="Array of image files (optional, maximum 3 files)",
+         *           @OA\Items(
+         *             type="object",
+         *             @OA\Property(
+         *               property="file",
+         *               type="string",
+         *               format="binary",
+         *               description="Image file (jpeg, png, jpg, webp, max 5MB)"
+         *             )
+         *           )
+         *         ),
+              *         @OA\Property(
+         *           property="comment[0][file]",
+         *           type="string",
+         *           format="binary",
+         *           nullable=true,
+         *           description="First image file (jpeg, png, jpg, webp, max 5MB) - optional"
+         *         ),
+         *         @OA\Property(
+         *           property="comment[1][file]",
+         *           type="string",
+         *           format="binary",
+         *           nullable=true,
+         *           description="Second image file (jpeg, png, jpg, webp, max 5MB) - optional"
+         *         ),
+         *         @OA\Property(
+         *           property="comment[2][file]",
+         *           type="string",
+         *           format="binary",
+         *           nullable=true,
+         *           description="Third image file (jpeg, png, jpg, webp, max 5MB) - optional"
+         *         )
+     *       )
+     *     )
+     *   ),
+     *   @OA\Response(
+     *     response=200,
+     *     description="Comment saved successfully",
+     *     @OA\JsonContent(
+     *       type="object",
+     *       @OA\Property(property="status", type="integer", example=200),
+     *       @OA\Property(property="message", type="string", example="نظر شما با موفقیت ثبت شد"),
+     *       @OA\Property(property="data", type="boolean", example=true),
+     *       @OA\Property(property="errors", type="object", nullable=true, example=null)
+     *     )
+     *   ),
+     *   @OA\Response(
+     *     response=401,
+     *     description="Unauthorized - User not authenticated",
+     *     @OA\JsonContent(ref="#/components/schemas/ErrorResponse")
+     *   ),
+     *   @OA\Response(
+     *     response=404,
+     *     description="Product not found",
+     *     @OA\JsonContent(ref="#/components/schemas/ErrorResponse")
+     *   ),
+     *   @OA\Response(
+     *     response=422,
+     *     description="Validation error",
+     *     @OA\JsonContent(
+     *       type="object",
+     *       @OA\Property(property="status", type="integer", example=422),
+     *       @OA\Property(property="message", type="string", example="Validation failed"),
+     *       @OA\Property(property="data", type="object", nullable=true, example=null),
+     *       @OA\Property(
+     *         property="errors",
+     *         type="object",
+     *         example={
+     *           "rate": {"The rate field is required."},
+     *           "product_slug": {"The product slug field is required."},
+     *           "comment": {"The comment field is required."},
+     *           "comment.0.file": {"The comment.0.file must be a file."}
+     *         }
+     *       )
+     *     )
+     *   )
+     * )
+     */
+    public function comment(ProductCommentRequest $request)
+    {
+        $product = Product::whereSlug($request->product_slug)->firstOrFail();
+        $productReview = ProductReview::create([
+            'product_id' => $product->id,
+            'description' => $request->description,
+            'user_id' => Auth::id(),
+            'rating' => $request->rate,
+        ]);
+        if ($request->has('comment')) {
+            foreach ($request->comment as $comment) {
+                $path = $comment['file']->store('product-comments', 'public');
+                ProductReviewFile::create([
+                    'product_review_id' => $productReview->id,
+                    'image_url' => $path,
+                ]);
+            }
+        }
+
+        return ApiResponse::success(true, __('messages.comment_saved'));
+    }
+}
