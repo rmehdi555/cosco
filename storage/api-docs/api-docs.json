@@ -2593,7 +2593,7 @@
                 ],
                 "responses": {
                     "200": {
-                        "description": "Product details",
+                        "description": "Product details with recent products",
                         "content": {
                             "application/json": {
                                 "schema": {
@@ -2607,7 +2607,19 @@
                                             "example": "عملیات با موفقیت انجام شد"
                                         },
                                         "data": {
-                                            "$ref": "#/components/schemas/ProductResource"
+                                            "properties": {
+                                                "product": {
+                                                    "$ref": "#/components/schemas/ProductResource"
+                                                },
+                                                "recent_products": {
+                                                    "description": "Recent products viewed by the user (database-based)",
+                                                    "type": "array",
+                                                    "items": {
+                                                        "$ref": "#/components/schemas/ProductResource"
+                                                    }
+                                                }
+                                            },
+                                            "type": "object"
                                         },
                                         "errors": {
                                             "type": "object",
@@ -4595,67 +4607,10 @@
                         }
                     },
                     "recent_products": {
+                        "description": "محصولات اخیراً مشاهده شده توسط کاربر (فقط در خروجی متد show کنترلر محصول، از دیتابیس)",
                         "type": "array",
                         "items": {
-                            "properties": {
-                                "id": {
-                                    "type": "integer",
-                                    "example": 1
-                                },
-                                "name": {
-                                    "type": "string",
-                                    "example": "محصول اول"
-                                },
-                                "slug": {
-                                    "type": "string",
-                                    "example": "mhsol-aol"
-                                },
-                                "description": {
-                                    "type": "string",
-                                    "example": "توضیحات محصول اول"
-                                },
-                                "price": {
-                                    "type": "integer",
-                                    "example": 10000
-                                },
-                                "image_url": {
-                                    "type": "array",
-                                    "items": {
-                                        "type": "string",
-                                        "format": "url",
-                                        "example": "https://api.rdst.ca/storage/product-images/01K29NKBWHNPB5E48HW6V0Y1PV.jpg"
-                                    }
-                                },
-                                "rate": {
-                                    "type": "integer",
-                                    "example": 2
-                                },
-                                "number_rate": {
-                                    "type": "integer",
-                                    "example": 741
-                                },
-                                "discount_price": {
-                                    "type": "integer",
-                                    "example": 0
-                                },
-                                "type_buy": {
-                                    "type": "array",
-                                    "items": {
-                                        "properties": {
-                                            "text": {
-                                                "type": "string",
-                                                "example": "خرید حضوری"
-                                            },
-                                            "bg_color": {
-                                                "type": "string",
-                                                "example": "#008000"
-                                            }
-                                        },
-                                        "type": "object"
-                                    }
-                                }
-                            },
-                            "type": "object"
+                            "$ref": "#/components/schemas/ProductResource"
                         }
                     },
                     "rate": {

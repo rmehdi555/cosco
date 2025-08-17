@@ -3,10 +3,12 @@
 namespace App\Http\Controllers;
 
 use App\Http\Requests\ProductCommentRequest;
+use App\Http\Resources\ProductSlidersResource;
 use App\Models\Product;
 use App\Http\Resources\ProductResource;
 use App\Models\ProductReview;
 use App\Models\ProductReviewFile;
+use App\Services\ProductViewService;
 use Illuminate\Http\Request;
 use App\Http\Responses\ApiResponse;
 use Illuminate\Support\Facades\Auth;
@@ -28,12 +30,22 @@ class ProductController extends Controller
      *   ),
      *   @OA\Response(
      *     response=200,
-     *     description="Product details",
+     *     description="Product details with recent products",
      *     @OA\JsonContent(
      *       type="object",
      *       @OA\Property(property="status", type="integer", example=200),
      *       @OA\Property(property="message", type="string", example="عملیات با موفقیت انجام شد"),
-     *       @OA\Property(property="data", ref="#/components/schemas/ProductResource"),
+     *       @OA\Property(
+     *         property="data",
+     *         type="object",
+     *         @OA\Property(property="product", ref="#/components/schemas/ProductResource"),
+     *         @OA\Property(
+     *           property="recent_products",
+     *           type="array",
+     *           description="Recent products viewed by the user (database-based)",
+     *           @OA\Items(ref="#/components/schemas/ProductResource")
+     *         )
+     *       ),
      *       @OA\Property(property="errors", type="object", nullable=true, example=null)
      *     )
      *   ),
@@ -44,18 +56,40 @@ class ProductController extends Controller
      *   )
      * )
      */
-    public function show($slug)
+    public function show($slug, Request $request, ProductViewService $viewService)
     {
         try {
             $product = Product::with(['category', 'brand', 'reviews' => function ($q) {
                 $q->where('approved', true);
             }])->where('slug', $slug)->firstOrFail();
-            return ApiResponse::success(new ProductResource($product));
+
+            // Track the product view
+            $trackView = $viewService->trackView($product, $request);
+
+            // Get recent products
+            $recentProducts = $viewService->getRecentProducts(20, $product, $trackView['browser_id']);
+
+            $similarProducts = $viewService->getRelatedProducts($product, 20);
+
+            $response = [
+                'product' => new ProductResource($product),
+                'recent_products' => ProductSlidersResource::collection($recentProducts),
+                'similar_products' => ProductSlidersResource::collection($similarProducts)
+            ];
+
+            if ($trackView['status'])
+                return ApiResponse::success($response);
+            else
+                return ApiResponse::success($response)->cookie('browser_id', $trackView['browser_id'], 60 * 24 * 30); // 30 days
+
         } catch (\Illuminate\Database\Eloquent\ModelNotFoundException $e) {
             return ApiResponse::notFound(__('errors.product_not_found'));
         }
     }
 
+///        $recentSlugs = request()->cookie('browser_id');
+//
+//        return response()->json($recentSlugs);
     /**
      * @OA\Post(
      *   path="/api/product-comment",

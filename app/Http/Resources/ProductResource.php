@@ -76,31 +76,8 @@ use Illuminate\Http\Resources\Json\JsonResource;
  *   @OA\Property(
  *     property="recent_products",
  *     type="array",
- *     @OA\Items(
- *       type="object",
- *       @OA\Property(property="id", type="integer", example=1),
- *       @OA\Property(property="name", type="string", example="محصول اول"),
- *       @OA\Property(property="slug", type="string", example="mhsol-aol"),
- *       @OA\Property(property="description", type="string", example="توضیحات محصول اول"),
- *       @OA\Property(property="price", type="integer", example=10000),
- *       @OA\Property(
- *         property="image_url",
- *         type="array",
- *         @OA\Items(type="string", format="url", example="https://api.rdst.ca/storage/product-images/01K29NKBWHNPB5E48HW6V0Y1PV.jpg")
- *       ),
- *       @OA\Property(property="rate", type="integer", example=2),
- *       @OA\Property(property="number_rate", type="integer", example=741),
- *       @OA\Property(property="discount_price", type="integer", example=0),
- *       @OA\Property(
- *         property="type_buy",
- *         type="array",
- *         @OA\Items(
- *           type="object",
- *           @OA\Property(property="text", type="string", example="خرید حضوری"),
- *           @OA\Property(property="bg_color", type="string", example="#008000")
- *         )
- *       )
- *     )
+ *     description="محصولات اخیراً مشاهده شده توسط کاربر (فقط در خروجی متد show کنترلر محصول، از دیتابیس)",
+ *     @OA\Items(ref="#/components/schemas/ProductResource")
  *   ),
  *   @OA\Property(property="rate", type="integer", example=2),
  *   @OA\Property(property="number_rate", type="integer", example=741),
@@ -174,38 +151,6 @@ class ProductResource extends JsonResource
             'is_online_only' => $this->is_online_only,
             'image_url' => $images,
             'type_buy' => $type_buy,
-            'similar_products' => [[
-                'id' => 1,
-                'name' => "محصول اول",
-                'slug' => 'mhsol-aol',
-                'description' => 'توضیحات محصول اول',
-                'price' => 10000,
-                'image_url' => [
-                    'https://api.rdst.ca/storage/product-images/01K29NKBWHNPB5E48HW6V0Y1PV.jpg'],
-                'rate' => 2,
-                'number_rate' => 741,
-                'discount_price' => 0,
-                'type_buy' => [[
-                    'text' => 'خرید حضوری',
-                    'bg_color' => '#008000',
-                ]]
-            ]],
-            'recent_products' => [[
-                'id' => 1,
-                'name' => "محصول اول",
-                'slug' => 'mhsol-aol',
-                'description' => 'توضیحات محصول اول',
-                'price' => 10000,
-                'image_url' => [
-                    'https://api.rdst.ca/storage/product-images/01K29NKBWHNPB5E48HW6V0Y1PV.jpg'],
-                'rate' => 2,
-                'number_rate' => 741,
-                'discount_price' => 0,
-                'type_buy' => [[
-                    'text' => 'خرید حضوری',
-                    'bg_color' => '#008000',
-                ]]
-            ]],
             'rate' => $average_rate,
             'number_rate' => $count_rate,
             'discount_price' => 0,

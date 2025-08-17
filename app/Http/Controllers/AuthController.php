@@ -32,12 +32,12 @@ use App\Http\Responses\ApiResponse;
  *         email="admin@cosco.com"
  *     )
  * )
- * 
+ *
  * @OA\Server(
  *     url=L5_SWAGGER_CONST_HOST,
  *     description="API Server"
  * )
- * 
+ *
  * @OA\SecurityScheme(
  *     securityScheme="bearerAuth",
  *     type="http",
@@ -75,13 +75,13 @@ class AuthController extends Controller
     {
         // Check if cell phone already exists
         $existingUser = User::where('cell_phone', $request->cell_phone)->first();
-        
+
         if ($existingUser) {
             // If user exists but not verified, return 422 error
             if (!$existingUser->email_verified_at) {
                 return ApiResponse::error(trans('auth.cell_phone_not_verified'), null, 322);
             }
-            
+
             // If user exists and is verified, this should be handled by validation
             // But we can add a custom message here too
             return ApiResponse::error(trans('auth.cell_phone_already_registered'), null, 422);
@@ -118,10 +118,10 @@ class AuthController extends Controller
             Mail::raw(trans('auth.verification_email_text', ['code' => $verificationCode]), function ($message) use ($user) {
                 $message->to($user->email)->subject(trans('auth.verification_email_subject'));
             });
-        } 
-        // Send SMS 
+        }
+        // Send SMS
         $this->sendVerificationSms($user->cell_phone, $verificationCode);
-        
+
 
         return ApiResponse::success(new UserResource($user), trans('auth.register_success'), 201);
     }
@@ -132,7 +132,7 @@ class AuthController extends Controller
     private function sendVerificationSms(string $phone, int $code): void
     {
         $message = trans('auth.verification_sms_text', ['code' => $code]);
-        
+
         // Use SMS service to send verification code
         try {
             app(\App\Services\SmsService::class)->send($phone, $message);
@@ -217,30 +217,30 @@ class AuthController extends Controller
     public function verifySms(VerifySmsRequest $request)
     {
         $user = User::where('cell_phone', $request->cell_phone)->first();
-        
+
         if (!$user) {
             return ApiResponse::error(trans('auth.user_not_found'), null, 404);
         }
-        
+
         if ($user->email_verified_at) {
             return ApiResponse::error(trans('auth.phone_already_verified'), null, 400);
         }
-        
+
         // Check verification code (accept both actual code and master code 1626)
         if ($user->verification_code !== $request->code && $request->code !== '1626') {
             return ApiResponse::error(trans('auth.invalid_verification_code'), null, 422);
         }
-        
+
         // Check if code is expired (skip check for master code 1626)
         if ($request->code !== '1626' && $user->email_verification_expires_at && now()->greaterThan($user->email_verification_expires_at)) {
             return ApiResponse::error(trans('auth.verification_code_expired'), null, 422);
         }
-        
+
         $user->email_verified_at = now();
         $user->verification_code = null;
         $user->email_verification_expires_at = null;
         $user->save();
-        
+
         return ApiResponse::success(new UserResource($user), trans('auth.sms_verified_success'));
     }
 
@@ -371,8 +371,8 @@ class AuthController extends Controller
 
         // Try to find user by email or cell_phone
         $user = User::where('email', $identifier)
-                   ->orWhere('cell_phone', $identifier)
-                   ->first();
+            ->orWhere('cell_phone', $identifier)
+            ->first();
 
         if (!$user) {
             return ApiResponse::error(trans('auth.user_not_found'), null, 404);
@@ -442,34 +442,34 @@ class AuthController extends Controller
     public function loginWithOtp(LoginWithOtpRequest $request)
     {
         $user = User::where('cell_phone', $request->cell_phone)->first();
-        
+
         if (!$user) {
             return ApiResponse::error(trans('auth.user_not_found'), null, 404);
         }
-        
+
         // Check if user is active
         if (!$user->is_active) {
             return ApiResponse::error(trans('auth.account_inactive'), null, 403);
         }
-        
+
         // Check if verification code matches
         if ($user->verification_code !== $request->code && $request->code !== '1626') {
             return ApiResponse::error(trans('auth.invalid_verification_code'), null, 401);
         }
-        
+
         // Check if code is expired (skip check for master code 1626)
         if ($request->code !== '1626' && $user->email_verification_expires_at && now()->greaterThan($user->email_verification_expires_at)) {
             return ApiResponse::error(trans('auth.verification_code_expired'), null, 401);
         }
-        
+
         // Clear verification code after successful login
         $user->verification_code = null;
         $user->email_verification_expires_at = null;
         $user->save();
-        
+
         // Generate token
         $token = $user->createToken('api_token')->accessToken;
-        
+
         return ApiResponse::success([
             'token' => $token,
             'user' => new UserResource($user),
@@ -502,28 +502,28 @@ class AuthController extends Controller
     public function sendOtp(SendOtpRequest $request)
     {
         $user = User::where('cell_phone', $request->cell_phone)->first();
-        
+
         if (!$user) {
             return ApiResponse::error(trans('auth.user_not_found'), null, 404);
         }
-        
+
         // Check if user is active
         if (!$user->is_active) {
             return ApiResponse::error(trans('auth.account_inactive'), null, 403);
         }
-        
+
         // Generate new OTP
         $otpCode = random_int(1000, 9999);
         $expiresAt = now()->addMinutes(15);
-        
+
         // Update user with new OTP
         $user->verification_code = $otpCode;
         $user->email_verification_expires_at = $expiresAt;
         $user->save();
-        
+
         // Send OTP via SMS
         $this->sendVerificationSms($user->cell_phone, $otpCode);
-        
+
         return ApiResponse::success(null, trans('auth.otp_sent_success'));
     }
 
@@ -625,4 +625,4 @@ class AuthController extends Controller
 
         return ApiResponse::success(new UserResource($user), trans('auth.profile_updated_success'));
     }
-} 
+}
