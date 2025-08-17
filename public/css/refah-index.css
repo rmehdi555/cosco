@@ -1,3 +1,11 @@
+/* Font definitions */
+@font-face {
+    font-family: 'IRANSansBold';
+    src: url('../fonts/iransansbold.ttf') format('truetype');
+    font-weight: bold;
+    font-style: normal;
+}
+
 /* Index page specific styles */
 body {
     background: linear-gradient(135deg, #1e3c72 0%, #2a5298 50%, #d74033 100%);
@@ -33,6 +41,7 @@ body {
 
 .intro-title {
     font-size: 3rem;
+    font-family: 'IRANSansBold', 'IRANSans', sans-serif;
     font-weight: bold;
     margin-bottom: 30px;
     text-shadow: 3px 3px 6px rgba(0,0,0,0.0);
@@ -123,6 +132,7 @@ body {
 
 .registration-box-title {
     font-size: 2.2rem;
+    font-family: 'IRANSansBold', 'IRANSans', sans-serif;
     font-weight: bold;
     background: linear-gradient(135deg, #1e3c72, #d74033);
     -webkit-background-clip: text;
@@ -146,6 +156,7 @@ body {
     padding: 18px 45px;
     border-radius: 50px;
     font-size: 1.2rem;
+    font-family: 'IRANSansBold', 'IRANSans', sans-serif;
     font-weight: bold;
     cursor: pointer;
     transition: all 0.3s ease;
@@ -170,6 +181,7 @@ body {
 .faq-title {
     text-align: center;
     font-size: 2.5rem;
+    font-family: 'IRANSansBold', 'IRANSans', sans-serif;
     font-weight: bold;
     background: linear-gradient(135deg, #1e3c72, #d74033);
     -webkit-background-clip: text;
@@ -214,6 +226,7 @@ body {
     padding: 25px;
     background: linear-gradient(135deg, rgba(30, 60, 114, 0.03), rgba(215, 64, 51, 0.03));
     cursor: pointer;
+    font-family: 'IRANSansBold', 'IRANSans', sans-serif;
     font-weight: bold;
     font-size: 1.2rem;
     color: #1e3c72;
@@ -235,6 +248,7 @@ body {
     font-size: 1.4rem;
     transition: all 0.3s ease;
     color: #d74033;
+    font-family: 'IRANSansBold', 'IRANSans', sans-serif;
     font-weight: bold;
 }
 
