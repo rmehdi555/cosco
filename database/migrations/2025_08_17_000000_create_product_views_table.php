@@ -18,6 +18,9 @@ return new class extends Migration
             $table->index(['user_id', 'created_at']);
             $table->softDeletes();
             $table->timestamps();
+
+            $table->unique(['product_id', 'user_id'], 'unique_product_view');
+
         });
     }
 

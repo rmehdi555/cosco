@@ -4,30 +4,13 @@ namespace App\Services;
 
 use App\Models\Product;
 use App\Models\ProductView;
+use App\Models\User;
 use Illuminate\Http\Request;
-
-use Illuminate\Support\Str;
-use Laravel\Passport\Token;
+use Lcobucci\JWT\Encoding\JoseEncoder;
+use Lcobucci\JWT\Token\Parser;
 
 class ProductViewService
 {
-
-    public function getBrowserId()
-    {
-        $browserId = request()->cookie('browser_id');
-
-        if (!$browserId) {
-            $browserId = Str::uuid()->toString();
-        }
-
-        BrowserSession::updateOrCreate(
-            ['browser_id' => $browserId],
-            ['last_activity' => now()]
-        );
-
-        return $browserId;
-    }
-
     /**
      * Track a product view
      */
@@ -39,13 +22,17 @@ class ProductViewService
         $result['user_id'] = 0;
 
         if ($token) {
-            $user = Token::where('id', $token)->first();
-            if ($result['user_id']) {
+            $token = (new Parser(new JoseEncoder()))->parse($token);
+            $tokenId = $token->claims()->get('jti');
+
+            $tokenModel = \DB::table('oauth_access_tokens')->where('id', $tokenId)->first();
+            if ($tokenModel) {
+                $user = User::find($tokenModel->user_id);
                 $result['status'] = true;
                 $result['user_id'] = $user->id;
             }
         }
-//        dd($result['user_id']);
+
         if ($result['status']) {
             // Try to insert the view, ignore if duplicate
             try {
@@ -71,7 +58,7 @@ class ProductViewService
     {
         $query = ProductView::with(['product.category', 'product.brand', 'product.mainImage'])
             ->whereHas('product', function ($q) {
-                $q->where('is_active', true);
+//                $q->where('is_active', true);
             })
             ->orderBy('created_at', 'desc');
 
@@ -113,7 +100,7 @@ class ProductViewService
     public function getRelatedProducts(Product $product, int $limit = 20)
     {
         return Product::with(['category', 'brand', 'mainImage'])
-            ->where('is_active', true)
+//            ->where('is_active', true)
             ->where('id', '!=', $product->id)
             ->where(function ($query) use ($product) {
                 $query->where('product_category_id', $product->product_category_id)

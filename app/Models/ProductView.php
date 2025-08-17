@@ -11,7 +11,7 @@ class ProductView extends Model
 
     protected $fillable = [
         'product_id',
-        'browser_id',
+        'user_id',
     ];
 
     protected $casts = [
