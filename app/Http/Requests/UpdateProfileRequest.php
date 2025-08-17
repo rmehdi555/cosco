@@ -46,4 +46,4 @@ class UpdateProfileRequest extends FormRequest
             'avatar_image.max' => trans('validation.avatar_image_max'),
         ];
     }
-} 
+}

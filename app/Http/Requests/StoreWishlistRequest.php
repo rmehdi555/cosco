@@ -24,4 +24,4 @@ class StoreWishlistRequest extends FormRequest
             'name' => 'required|string',
         ];
     }
-} 
+}

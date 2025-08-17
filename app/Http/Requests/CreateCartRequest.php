@@ -80,4 +80,4 @@ class CreateCartRequest extends FormRequest
             'items.*.quantity.max' => __('cart.quantity_max_limit'),
         ];
     }
-} 
+}

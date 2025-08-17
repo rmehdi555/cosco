@@ -60,4 +60,4 @@ class UpdateAddressRequest extends FormRequest
             }
         });
     }
-} 
+}

@@ -23,4 +23,4 @@ class UpdateWishlistRequest extends FormRequest
             'name' => 'string',
         ];
     }
-} 
+}

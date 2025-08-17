@@ -74,7 +74,7 @@ class ProductController extends Controller
      *           type="integer",
      *           minimum=1,
      *           maximum=5,
-     *           description="Rating from 0 to 5",
+     *           description="Rating from 1 to 5",
      *           example=4
      *         ),
      *         @OA\Property(

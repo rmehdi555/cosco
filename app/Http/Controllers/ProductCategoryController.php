@@ -48,14 +48,14 @@ class ProductCategoryController extends Controller
      *     in="query",
      *     required=false,
      *     description="Minimum product price filter",
-     *     @OA\Schema(type="integer", example=100000)
+     *     @OA\Schema(type="integer")
      *   ),
      *   @OA\Parameter(
      *     name="max_price",
      *     in="query",
      *     required=false,
      *     description="Maximum product price filter",
-     *     @OA\Schema(type="integer", example=5000000)
+     *     @OA\Schema(type="integer")
      *   ),
      *   @OA\Parameter(
      *     name="sort_by",
@@ -69,14 +69,14 @@ class ProductCategoryController extends Controller
      *     in="query",
      *     required=false,
      *     description="Results page number",
-     *     @OA\Schema(type="integer", example=1)
+     *     @OA\Schema(type="integer")
      *   ),
      *   @OA\Parameter(
      *     name="count",
      *     in="query",
      *     required=false,
      *     description="Results per page",
-     *     @OA\Schema(type="integer", example=12)
+     *     @OA\Schema(type="integer")
      *   ),
      *   @OA\Parameter(
      *     name="category",

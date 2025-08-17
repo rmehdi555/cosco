@@ -11,6 +11,8 @@ return [
     'processed' => 'پردازش شد',
     'completed' => 'تکمیل شد',
     'cancelled' => 'لغو شد',
+
+    //comments
     'comment_saved' => 'کاربر گرامی پیام شما دریافت شد و پس از بررسی توسط ادمین نمایش داده میشود',
     'error_comment' => 'خطا در ثبت پیام'
 ];

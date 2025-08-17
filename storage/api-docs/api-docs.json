@@ -10,7 +10,7 @@
     },
     "servers": [
         {
-            "url": "http://localhost:8000",
+            "url": "http://localhost:8072",
             "description": "API Server"
         }
     ],
@@ -2421,8 +2421,7 @@
                         "description": "Minimum product price filter",
                         "required": false,
                         "schema": {
-                            "type": "integer",
-                            "example": 100000
+                            "type": "integer"
                         }
                     },
                     {
@@ -2431,8 +2430,7 @@
                         "description": "Maximum product price filter",
                         "required": false,
                         "schema": {
-                            "type": "integer",
-                            "example": 5000000
+                            "type": "integer"
                         }
                     },
                     {
@@ -2455,8 +2453,7 @@
                         "description": "Results page number",
                         "required": false,
                         "schema": {
-                            "type": "integer",
-                            "example": 1
+                            "type": "integer"
                         }
                     },
                     {
@@ -2465,8 +2462,7 @@
                         "description": "Results per page",
                         "required": false,
                         "schema": {
-                            "type": "integer",
-                            "example": 12
+                            "type": "integer"
                         }
                     },
                     {
@@ -2656,7 +2652,7 @@
                                 ],
                                 "properties": {
                                     "rate": {
-                                        "description": "Rating from 0 to 5",
+                                        "description": "Rating from 1 to 5",
                                         "type": "integer",
                                         "maximum": 5,
                                         "minimum": 1,

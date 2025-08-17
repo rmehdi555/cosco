@@ -99,4 +99,4 @@ class CreateOrderRequest extends FormRequest
             'description.max' => __('orders.description_max_length'),
         ];
     }
-} 
+}

@@ -55,4 +55,4 @@ class RegisterRequest extends FormRequest
             'password.min' => __('validation.password.min'),
         ];
     }
-} 
+}

@@ -56,7 +56,7 @@ class RefahRegistrationRequest extends FormRequest
             // Unique validation messages
             'cell_phone.unique' => 'این شماره موبایل قبلاً ثبت شده است.',
             'national_code.unique' => 'این کد ملی قبلاً ثبت شده است.',
-            
+
             // Required field messages
             'first_name.required' => 'نام الزامی است.',
             'last_name.required' => 'نام خانوادگی الزامی است.',
@@ -76,7 +76,7 @@ class RefahRegistrationRequest extends FormRequest
             'refah_cart_id.required' => 'انتخاب بسته رفاهی الزامی است.',
             'how_to_receive.required' => 'نحوه دریافت الزامی است.',
             'payment_method.required' => 'روش پرداخت الزامی است.',
-            
+
             // String validation messages
             'first_name.string' => 'نام باید متن باشد.',
             'last_name.string' => 'نام خانوادگی باید متن باشد.',
@@ -86,7 +86,7 @@ class RefahRegistrationRequest extends FormRequest
             'address.string' => 'آدرس باید متن باشد.',
             'phone.string' => 'تلفن ثابت باید متن باشد.',
             'job.string' => 'شغل باید متن باشد.',
-            
+
             // Max length validation messages
             'first_name.max' => 'نام نمی‌تواند بیشتر از 255 کاراکتر باشد.',
             'last_name.max' => 'نام خانوادگی نمی‌تواند بیشتر از 255 کاراکتر باشد.',
@@ -96,7 +96,7 @@ class RefahRegistrationRequest extends FormRequest
             'address.max' => 'آدرس نمی‌تواند بیشتر از 500 کاراکتر باشد.',
             'phone.max' => 'تلفن ثابت نمی‌تواند بیشتر از 20 کاراکتر باشد.',
             'job.max' => 'شغل نمی‌تواند بیشتر از 255 کاراکتر باشد.',
-            
+
             // Other validation messages
             'birth_date.date' => 'فرمت تاریخ تولد معتبر نیست.',
             'gender.in' => 'جنسیت انتخاب شده معتبر نیست.',

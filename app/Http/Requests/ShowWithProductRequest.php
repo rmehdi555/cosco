@@ -32,4 +32,20 @@ class ShowWithProductRequest extends FormRequest
 
         ];
     }
+
+    /**
+     * Get custom messages for validator errors.
+     *
+     * @return array<string, string>
+     */
+    public function messages(): array
+    {
+        return [
+            'slug.string' => 'شناسه دسته‌بندی باید متن باشد.',
+            'min_price.integer' => 'حداقل قیمت باید عدد صحیح باشد.',
+            'max_price.integer' => 'حداکثر قیمت باید عدد صحیح باشد.',
+            'sort_by.string' => 'نوع مرتب‌سازی باید متن باشد.',
+            'category.string' => 'دسته‌بندی باید متن باشد.',
+        ];
+    }
 }

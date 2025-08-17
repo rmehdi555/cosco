@@ -29,4 +29,4 @@ class VerifyEmailRequest extends FormRequest
             'code' => 'required',
         ];
     }
-} 
+}

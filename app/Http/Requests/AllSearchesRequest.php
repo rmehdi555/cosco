@@ -28,4 +28,18 @@ class AllSearchesRequest extends FormRequest
             'sort_by' => 'nullable|string',
         ];
     }
+
+    /**
+     * Get custom messages for validator errors.
+     *
+     * @return array<string, string>
+     */
+    public function messages(): array
+    {
+        return [
+            'q.required' => 'عبارت جستجو الزامی است.',
+            'q.string' => 'عبارت جستجو باید متن باشد.',
+            'sort_by.string' => 'نوع مرتب‌سازی باید متن باشد.',
+        ];
+    }
 }
