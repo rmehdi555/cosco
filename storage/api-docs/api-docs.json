@@ -3300,6 +3300,11 @@
                                     "maximum": 100000,
                                     "minimum": 1,
                                     "example": 2
+                                },
+                                "description": {
+                                    "description": "Additional description for cart item",
+                                    "type": "string",
+                                    "example": "توضیحات اضافی برای این آیتم"
                                 }
                             },
                             "type": "object"
@@ -3895,6 +3900,11 @@
                         "type": "integer",
                         "example": 2
                     },
+                    "description": {
+                        "description": "Additional description for cart item",
+                        "type": "string",
+                        "example": "توضیحات اضافی"
+                    },
                     "price": {
                         "description": "Current price of the product",
                         "type": "number",
@@ -3917,11 +3927,6 @@
                         "description": "Product name",
                         "type": "string",
                         "example": "محصول نمونه"
-                    },
-                    "product_description": {
-                        "description": "Product description",
-                        "type": "string",
-                        "example": "توضیحات محصول"
                     },
                     "product_id": {
                         "description": "Product ID",
@@ -4181,6 +4186,11 @@
                         "description": "Quantity of the product in order",
                         "type": "integer",
                         "example": 2
+                    },
+                    "description": {
+                        "description": "Additional description for order item",
+                        "type": "string",
+                        "example": "توضیحات اضافی"
                     },
                     "price": {
                         "description": "Product price in Toman",

@@ -30,6 +30,12 @@ use Illuminate\Foundation\Http\FormRequest;
  *                 minimum=1,
  *                 maximum=100000,
  *                 example=2
+ *             ),
+ *             @OA\Property(
+ *                 property="description",
+ *                 type="string",
+ *                 description="Additional description for cart item",
+ *                 example="توضیحات اضافی برای این آیتم"
  *             )
  *         )
  *     )
@@ -54,9 +60,10 @@ class CreateCartRequest extends FormRequest
     public function rules(): array
     {
         return [
-            'items' => 'required|array|min:1',
-            'items.*.product_slug' => 'required|string|exists:products,slug',
-            'items.*.quantity' => 'required|integer|min:1|max:100000',
+            'items' => 'nullable|array',
+            'items.*.product_slug' => 'nullable|string|exists:products,slug',
+            'items.*.quantity' => 'nullable|integer|min:1|max:100000',
+            'items.*.description' => 'nullable|string|max:1000',
         ];
     }
 
@@ -68,16 +75,14 @@ class CreateCartRequest extends FormRequest
     public function messages(): array
     {
         return [
-            'items.required' => __('cart.items_required'),
             'items.array' => __('cart.items_must_be_array'),
-            'items.min' => __('cart.items_min_one'),
             'items.*.product_slug.required' => __('cart.product_slug_required'),
             'items.*.product_slug.string' => __('cart.product_slug_must_be_string'),
             'items.*.product_slug.exists' => __('cart.product_not_found'),
-            'items.*.quantity.required' => __('cart.quantity_required'),
             'items.*.quantity.integer' => __('cart.quantity_must_be_integer'),
-            'items.*.quantity.min' => __('cart.quantity_min_one'),
             'items.*.quantity.max' => __('cart.quantity_max_limit'),
+            'items.*.description.string' => __('cart.description_must_be_string'),
+            'items.*.description.max' => __('cart.description_max_limit'),
         ];
     }
 }

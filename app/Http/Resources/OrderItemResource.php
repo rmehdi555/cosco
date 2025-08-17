@@ -11,6 +11,7 @@ use Illuminate\Http\Resources\Json\JsonResource;
  *     title="Order Item Resource",
  *     description="Order item resource schema",
  *     @OA\Property(property="quantity", type="integer", example=2, description="Quantity of the product in order"),
+ *     @OA\Property(property="description", type="string", example="توضیحات اضافی", description="Additional description for order item"),
  *     @OA\Property(property="price", type="number", format="decimal", example=7500, description="Product price in Toman"),
  *     @OA\Property(property="total_price", type="number", format="decimal", example=15000, description="Total price (quantity × price) in Toman"),
  *     @OA\Property(property="product_name", type="string", example="محصول نمونه", description="Product name"),
@@ -29,6 +30,7 @@ class OrderItemResource extends JsonResource
     {
         return [
             'quantity' => $this->quantity,
+            'description' => $this->description,
             'price' => config('general.show_price')($this->price),
             'total_price' => config('general.show_price')($this->total_price),
             'product_name' => $this->product->name,

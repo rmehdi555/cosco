@@ -9,6 +9,7 @@ use App\Models\Product;
 use Filament\Forms\Components\Grid;
 use Filament\Forms\Components\Section;
 use Filament\Forms\Components\Select;
+use Filament\Forms\Components\Textarea;
 use Filament\Forms\Components\TextInput;
 use Filament\Forms\Form;
 use Filament\Resources\Resource;
@@ -63,6 +64,13 @@ class OrderItemResource extends Resource
                                     }
                                 }
                             }),
+
+                        Textarea::make('description')
+                            ->label('توضیحات')
+                            ->placeholder('توضیحات اضافی برای این آیتم...')
+                            ->rows(3)
+                            ->columnSpanFull()
+                            ->helperText('توضیحات اختیاری برای آیتم سفارش'),
                     ])->columnSpan(1),
 
                     Section::make('قیمت و تعداد')->schema([
@@ -146,6 +154,18 @@ class OrderItemResource extends Resource
                     ->label('تعداد')
                     ->sortable()
                     ->badge(),
+
+                TextColumn::make('description')
+                    ->label('توضیحات')
+                    ->limit(50)
+                    ->tooltip(function (TextColumn $column): ?string {
+                        $state = $column->getState();
+                        if (strlen($state) > 50) {
+                            return $state;
+                        }
+                        return null;
+                    })
+                    ->toggleable(isToggledHiddenByDefault: true),
 
                 TextColumn::make('price')
                     ->label('قیمت واحد')

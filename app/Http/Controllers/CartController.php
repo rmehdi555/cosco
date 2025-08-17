@@ -78,7 +78,7 @@ class CartController extends Controller
     public function store(CreateCartRequest $request): JsonResponse
     {
         $user = $request->user();
-        $items = $request->validated('items');
+        $items = $request->validated('items') ?? [];
 
         try {
             DB::beginTransaction();
@@ -111,7 +111,7 @@ class CartController extends Controller
                 $cartItem = CartItem::create([
                     'cart_id' => $cart->id,
                     'product_id' => $product->id,
-                    'quantity' => $item['quantity'],
+                    'quantity' => $item['quantity'] ?? 1,
                     'price' => $product->price,
                 ]);
 
