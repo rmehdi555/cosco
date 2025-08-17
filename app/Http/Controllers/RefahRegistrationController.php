@@ -18,6 +18,11 @@ use Hekmatinasser\Verta\Verta;
 
 class RefahRegistrationController extends Controller
 {
+    public function index(): View
+    {
+        return view('refah.index');
+    }
+
     public function showForm(): View
     {
         $refahCarts = RefahCart::where('is_active', true)->get();
@@ -130,7 +135,7 @@ class RefahRegistrationController extends Controller
             ]);
         }
 
-        return redirect()->route('refah.registration')
+        return redirect()->route('refah.registration.form')
             ->with('success', "ثبت‌نام شما با موفقیت انجام شد. کد پیگیری شما: {$code}");
     }
 

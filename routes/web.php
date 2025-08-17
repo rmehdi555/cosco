@@ -7,8 +7,11 @@ use App\Http\Controllers\RefahRegistrationController;
 //     return view('refah.loading');
 // });
 
+// Main Index Route
+Route::get('/', [RefahRegistrationController::class, 'index'])->name('refah.index');
+
 // Refah Registration Routes
-Route::get('/', [RefahRegistrationController::class, 'showForm'])->name('refah.registration');
+Route::get('/register', [RefahRegistrationController::class, 'showForm'])->name('refah.registration.form');
 Route::post('/refah/registration', [RefahRegistrationController::class, 'store'])->name('refah.registration.store');
 
 // AJAX Routes for dynamic dropdowns

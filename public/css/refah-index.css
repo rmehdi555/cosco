@@ -1,0 +1,375 @@
+/* Index page specific styles */
+body {
+    background: linear-gradient(135deg, #1e3c72 0%, #2a5298 50%, #d74033 100%);
+    min-height: 100vh;
+    font-family: 'IRANSans', sans-serif;
+}
+
+.intro-section {
+    background: linear-gradient(135deg, #1e3c72 0%, #2a5298 50%, #d74033 100%);
+    color: white;
+    padding: 80px 20px;
+    text-align: center;
+    margin-bottom: 0;
+    position: relative;
+    overflow: hidden;
+}
+
+.intro-section::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: url('data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100"><circle cx="20" cy="20" r="2" fill="rgba(255,255,255,0.1)"/><circle cx="80" cy="40" r="3" fill="rgba(255,255,255,0.05)"/><circle cx="40" cy="80" r="1" fill="rgba(255,255,255,0.1)"/></svg>');
+    animation: float 20s ease-in-out infinite;
+}
+
+@keyframes float {
+    0%, 100% { transform: translateY(0px); }
+    50% { transform: translateY(-20px); }
+}
+
+.intro-title {
+    font-size: 3rem;
+    font-weight: bold;
+    margin-bottom: 30px;
+    text-shadow: 3px 3px 6px rgba(0,0,0,0.0);
+    position: relative;
+    z-index: 2;
+    background: linear-gradient(45deg, #ffffff, #ffffff);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+}
+
+.intro-text {
+    font-size: 1.3rem;
+    line-height: 2;
+    max-width: 900px;
+    margin: 0 auto;
+    opacity: 0.95;
+    position: relative;
+    z-index: 2;
+    text-shadow: 1px 1px 2px rgba(0,0,0,0.0);
+}
+
+.main-content {
+    background: linear-gradient(to bottom, transparent, rgba(247, 249, 252, 0.8), #f7f9fc);
+    min-height: 100vh;
+}
+
+.registration-box {
+    background: linear-gradient(145deg, #ffffff, #f8fafc);
+    border-radius: 25px;
+    padding: 50px;
+    margin: 60px auto;
+    max-width: 900px;
+    box-shadow: 
+        0 20px 40px rgba(30, 60, 114, 0.15),
+        0 15px 25px rgba(215, 64, 51, 0.1),
+        inset 0 1px 0 rgba(255, 255, 255, 0.8);
+    text-align: center;
+    cursor: pointer;
+    transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+    border: 2px solid transparent;
+    background-clip: padding-box;
+    position: relative;
+    overflow: hidden;
+}
+
+.registration-box::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: linear-gradient(135deg, #1e3c72, #d74033);
+    z-index: -1;
+    border-radius: 25px;
+    padding: 2px;
+    mask: linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0);
+    mask-composite: exclude;
+    opacity: 0;
+    transition: opacity 0.3s ease;
+}
+
+.registration-box:hover::before {
+    opacity: 1;
+}
+
+.registration-box:hover {
+    transform: translateY(-10px) scale(1.02);
+    box-shadow: 
+        0 30px 60px rgba(30, 60, 114, 0.25),
+        0 20px 40px rgba(215, 64, 51, 0.15);
+}
+
+.registration-box img {
+    width: 100%;
+    max-width: 450px;
+    height: auto;
+    border-radius: 20px;
+    margin-bottom: 25px;
+    box-shadow: 0 10px 30px rgba(0,0,0,0.2);
+    transition: transform 0.3s ease;
+}
+
+.registration-box:hover img {
+    transform: scale(1.05);
+}
+
+.registration-box-title {
+    font-size: 2.2rem;
+    font-weight: bold;
+    background: linear-gradient(135deg, #1e3c72, #d74033);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+    margin-bottom: 15px;
+    text-shadow: none;
+}
+
+.registration-box-subtitle {
+    font-size: 1.2rem;
+    color: #64748b;
+    margin-bottom: 30px;
+    line-height: 1.6;
+}
+
+.register-btn {
+    background: linear-gradient(135deg, #1e3c72 0%, #2a5298 50%, #d74033 100%);
+    color: white;
+    border: none;
+    padding: 18px 45px;
+    border-radius: 50px;
+    font-size: 1.2rem;
+    font-weight: bold;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    box-shadow: 0 8px 25px rgba(30, 60, 114, 0.3);
+    text-transform: uppercase;
+    letter-spacing: 1px;
+}
+
+.register-btn:hover {
+    transform: translateY(-3px);
+    box-shadow: 0 12px 35px rgba(30, 60, 114, 0.4);
+    background: linear-gradient(135deg, #2a5298 0%, #d74033 50%, #1e3c72 100%);
+}
+
+.faq-section {
+    max-width: 900px;
+    margin: 80px auto;
+    padding: 0 20px;
+    position: relative;
+}
+
+.faq-title {
+    text-align: center;
+    font-size: 2.5rem;
+    font-weight: bold;
+    background: linear-gradient(135deg, #1e3c72, #d74033);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+    margin-bottom: 50px;
+    position: relative;
+}
+
+.faq-title::after {
+    content: '';
+    position: absolute;
+    bottom: -10px;
+    left: 50%;
+    transform: translateX(-50%);
+    width: 60px;
+    height: 4px;
+    background: linear-gradient(135deg, #1e3c72, #d74033);
+    border-radius: 2px;
+}
+
+.faq-item {
+    background: white;
+    border-radius: 15px;
+    margin-bottom: 25px;
+    box-shadow: 
+        0 8px 25px rgba(30, 60, 114, 0.1),
+        0 4px 10px rgba(215, 64, 51, 0.05);
+    overflow: hidden;
+    transition: all 0.3s ease;
+    border: 1px solid rgba(30, 60, 114, 0.1);
+}
+
+.faq-item:hover {
+    transform: translateY(-2px);
+    box-shadow: 
+        0 15px 35px rgba(30, 60, 114, 0.15),
+        0 8px 20px rgba(215, 64, 51, 0.1);
+}
+
+.faq-question {
+    padding: 25px;
+    background: linear-gradient(135deg, rgba(30, 60, 114, 0.03), rgba(215, 64, 51, 0.03));
+    cursor: pointer;
+    font-weight: bold;
+    font-size: 1.2rem;
+    color: #1e3c72;
+    border: none;
+    width: 100%;
+    text-align: right;
+    transition: all 0.3s ease;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.faq-question:hover {
+    background: linear-gradient(135deg, rgba(30, 60, 114, 0.08), rgba(215, 64, 51, 0.08));
+    color: #d74033;
+}
+
+.faq-question .icon {
+    font-size: 1.4rem;
+    transition: all 0.3s ease;
+    color: #d74033;
+    font-weight: bold;
+}
+
+.faq-question.active {
+    background: linear-gradient(135deg, rgba(30, 60, 114, 0.1), rgba(215, 64, 51, 0.1));
+}
+
+.faq-question.active .icon {
+    transform: rotate(180deg);
+    color: #1e3c72;
+}
+
+.faq-answer {
+    max-height: 0;
+    overflow: hidden;
+    transition: max-height 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+    background: white;
+}
+
+.faq-answer.open {
+    max-height: 400px;
+}
+
+.faq-answer-content {
+    padding: 25px;
+    color: #475569;
+    line-height: 1.8;
+    border-top: 1px solid rgba(30, 60, 114, 0.1);
+    font-size: 1.1rem;
+}
+
+.container {
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 0 20px;
+}
+
+/* Enhanced responsive design */
+@media (max-width: 1024px) {
+    .intro-title {
+        font-size: 2.5rem;
+    }
+    
+    .registration-box {
+        max-width: 600px;
+        padding: 40px;
+    }
+    
+    .faq-section {
+        max-width: 800px;
+    }
+}
+
+@media (max-width: 768px) {
+    .intro-section {
+        padding: 60px 15px;
+    }
+    
+    .intro-title {
+        font-size: 2.2rem;
+        margin-bottom: 20px;
+    }
+    
+    .intro-text {
+        font-size: 1.1rem;
+        line-height: 1.7;
+    }
+    
+    .registration-box {
+        margin: 30px 15px;
+        padding: 30px 20px;
+        border-radius: 20px;
+    }
+    
+    .registration-box-title {
+        font-size: 1.8rem;
+    }
+    
+    .registration-box-subtitle {
+        font-size: 1rem;
+    }
+    
+    .register-btn {
+        padding: 15px 35px;
+        font-size: 1.1rem;
+    }
+    
+    .faq-section {
+        margin: 50px auto;
+        padding: 0 15px;
+    }
+    
+    .faq-title {
+        font-size: 2rem;
+    }
+    
+    .faq-question {
+        padding: 20px;
+        font-size: 1.1rem;
+    }
+    
+    .faq-answer-content {
+        padding: 20px;
+        font-size: 1rem;
+    }
+}
+
+@media (max-width: 480px) {
+    .intro-title {
+        font-size: 1.8rem;
+    }
+    
+    .intro-text {
+        font-size: 1rem;
+    }
+    
+    .registration-box {
+        padding: 25px 15px;
+    }
+    
+    .registration-box-title {
+        font-size: 1.6rem;
+    }
+    
+    .register-btn {
+        padding: 12px 30px;
+        font-size: 1rem;
+    }
+    
+    .faq-question {
+        padding: 15px;
+        font-size: 1rem;
+    }
+    
+    .faq-answer-content {
+        padding: 15px;
+    }
+}

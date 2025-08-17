@@ -1,26 +1,5 @@
-<!DOCTYPE html>
-<html lang="fa" dir="rtl">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>سامانه رفاه کالا - ثبت‌ نام</title>
-    <meta name="csrf-token" content="{{ csrf_token() }}">
-    <link rel="icon" type="image/jpeg" href="{{ asset('images/refah-logo.jpg') }}">
-    <link rel="shortcut icon" type="image/jpeg" href="{{ asset('images/refah-logo.jpg') }}">
-    <link rel="apple-touch-icon" href="{{ asset('images/refah-logo.jpg') }}">
-    <link rel="stylesheet" href="{{ asset('css/refah-registration.css') }}"?v={{ filemtime(public_path('css/refah-registration.css')) }}">
-</head>
-<body>
-    <!-- Header -->
-    <header class="header">
-        <div class="header-content">
-            <div class="logo">
-                <img src="{{ asset('images/refah-logo.jpg') }}" alt="لوگو" onerror="this.style.display='none'">
-            </div>
-            <div class="site-title">سامانه رفاه کالا </div>
-            <a href="tel:02126206918" class="track-order-btn">پیگیری سفارش</a>
-        </div>
-    </header>
+
+    @include('refah.partials.header')
 
     <!-- Main Content -->
     <main class="main-content">
@@ -287,18 +266,7 @@
         </div>
     </main>
 
-    <!-- Footer -->
-    <footer class="footer">
-        <div class="footer-content">
-            <div class="footer-title">   سامانه رفاه کالا</div>
-            <div class="footer-phone">تلفن: <a href="tel:02126206918" style="color: #e2e8f0; text-decoration: none;">26206918-021</a></div>
-            <div class="footer-phone">تلفن: <a href="tel:02126206725" style="color: #e2e8f0; text-decoration: none;">26206725-021</a></div>
-            <div class="footer-address">آدرس: تهران،الهیه خ بیدار برج جم پ۴۲</div>
-            <div class="footer-bottom">
-            کلیه حقوق مادی و معنوی این سایت متعلق به سامانه رفاه کالا می باشد.
-            </div>
-        </div>
-    </footer>
+    @include('refah.partials.footer')
 
     <script>
         // Persian date conversion using backend Verta library
