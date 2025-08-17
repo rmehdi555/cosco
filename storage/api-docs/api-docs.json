@@ -10,7 +10,7 @@
     },
     "servers": [
         {
-            "url": "http://localhost:8072",
+            "url": "http://localhost:8000",
             "description": "API Server"
         }
     ],
@@ -3918,6 +3918,16 @@
                         "type": "string",
                         "example": "محصول نمونه"
                     },
+                    "product_description": {
+                        "description": "Product description",
+                        "type": "string",
+                        "example": "توضیحات محصول"
+                    },
+                    "product_id": {
+                        "description": "Product ID",
+                        "type": "integer",
+                        "example": 1
+                    },
                     "product_image": {
                         "description": "Product image URL",
                         "type": "string",
@@ -3927,6 +3937,11 @@
                         "description": "Product slug for URL",
                         "type": "string",
                         "example": "sample-product"
+                    },
+                    "count_for_user": {
+                        "description": "Count of the product for the user",
+                        "type": "integer",
+                        "example": 10
                     }
                 },
                 "type": "object"

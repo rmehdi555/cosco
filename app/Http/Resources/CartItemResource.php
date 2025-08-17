@@ -15,8 +15,11 @@ use Illuminate\Http\Resources\Json\JsonResource;
  *     @OA\Property(property="old_price", type="number", format="decimal", example=70000, description="Price when item was added to cart"),
  *     @OA\Property(property="total_price", type="number", format="decimal", example=150000, description="Total price (quantity × current price)"),
  *     @OA\Property(property="product_name", type="string", example="محصول نمونه", description="Product name"),
+ *     @OA\Property(property="product_description", type="string", example="توضیحات محصول", description="Product description"),
+ *     @OA\Property(property="product_id", type="integer", example=1, description="Product ID"),
  *     @OA\Property(property="product_image", type="string", example="https://example.com/image.jpg", description="Product image URL"),
- *     @OA\Property(property="product_slug", type="string", example="sample-product", description="Product slug for URL")
+ *     @OA\Property(property="product_slug", type="string", example="sample-product", description="Product slug for URL"),
+ *     @OA\Property(property="count_for_user", type="integer", example=10, description="Count of the product for the user")
  * )
  */
 class CartItemResource extends JsonResource
@@ -32,9 +35,12 @@ class CartItemResource extends JsonResource
             'quantity' => $this->quantity,
             'price' => config('general.show_price')($this->price),
             'total_price' => config('general.show_price')($this->total_price),
-            'product_name' => $this->product->name,
-            'product_image' => asset('storage/' . $this->product->images->first()->image_url),
-            'product_slug' => $this->product->slug,
+            'product_id' => $this->product?->id,
+            'product_name' => $this->product?->name,
+            'product_description' => $this->product?->description,
+            'product_image' => asset('storage/' . $this->product?->images?->first()?->image_url),
+            'product_slug' => $this->product?->slug,
+            'count_for_user' => $this->product?->stock,
         ];
     }
 } 
