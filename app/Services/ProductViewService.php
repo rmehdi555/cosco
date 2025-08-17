@@ -7,6 +7,7 @@ use App\Models\ProductView;
 use Illuminate\Http\Request;
 
 use Illuminate\Support\Str;
+use Laravel\Passport\Token;
 
 class ProductViewService
 {
@@ -33,36 +34,40 @@ class ProductViewService
     public function trackView(Product $product, Request $request)
     {
         $result = [];
-        $result['status'] = true;
-        $result['browser_id'] = $request->cookie('browser_id');
+        $token = $request->cookie('browser_id');
+        $result['status'] = false;
+        $result['user_id'] = 0;
 
-        if (!$result['browser_id']) {
-            $result['browser_id'] = Str::uuid()->toString();
-            $result['status'] = false;
-        }
-//        dd($result['browser_id']);
-
-        // Try to insert the view, ignore if duplicate
-        try {
-            ProductView::create([
-                'product_id' => $product->id,
-                'browser_id' => $result['browser_id'],
-            ]);
-
-        } catch (\Illuminate\Database\QueryException $e) {
-            // Ignore duplicate entry errors
-            if ($e->getCode() !== '23000') {
-                throw $e;
+        if ($token) {
+            $user = Token::where('id', $token)->first();
+            if ($result['user_id']) {
+                $result['status'] = true;
+                $result['user_id'] = $user->id;
             }
         }
+//        dd($result['user_id']);
+        if ($result['status']) {
+            // Try to insert the view, ignore if duplicate
+            try {
+                ProductView::create([
+                    'product_id' => $product->id,
+                    'user_id' => $result['user_id'],
+                ]);
 
+            } catch (\Illuminate\Database\QueryException $e) {
+                // Ignore duplicate entry errors
+                if ($e->getCode() !== '23000') {
+                    throw $e;
+                }
+            }
+        }
         return $result;
     }
 
     /**
      * Get recent products viewed by the current user/visitor
      */
-    public function getRecentProducts(int $limit = 20, ?Product $excludeProduct = null, string $browserId = '')
+    public function getRecentProducts(int $limit = 20, ?Product $excludeProduct = null, $userId = null)
     {
         $query = ProductView::with(['product.category', 'product.brand', 'product.mainImage'])
             ->whereHas('product', function ($q) {
@@ -70,7 +75,7 @@ class ProductViewService
             })
             ->orderBy('created_at', 'desc');
 
-        $query->where('browser_id', $browserId);
+        $query->where('user_id', $userId);
 
         // Exclude current product if provided
         if ($excludeProduct) {

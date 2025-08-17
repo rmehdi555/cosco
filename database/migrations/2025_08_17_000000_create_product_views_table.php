@@ -13,9 +13,9 @@ return new class extends Migration
     {
         Schema::create('product_views', function (Blueprint $table) {
             $table->id();
-            $table->foreignId('product_id')->constrained()->onDelete('cascade');
-            $table->string('browser_id')->unique();
-            $table->index(['browser_id', 'created_at']);
+            $table->foreignId('product_id')->constrained('products')->onDelete('cascade');
+            $table->foreignId('user_id')->constrained('users')->onDelete('cascade');
+            $table->index(['user_id', 'created_at']);
             $table->softDeletes();
             $table->timestamps();
         });

@@ -64,23 +64,24 @@ class ProductController extends Controller
             }])->where('slug', $slug)->firstOrFail();
 
             // Track the product view
-            $trackView = $viewService->trackView($product, $request);
+            $result = $viewService->trackView($product, $request);
 
             // Get recent products
-            $recentProducts = $viewService->getRecentProducts(20, $product, $trackView['browser_id']);
+            if ($result['status']) {
+                $recentProducts = $viewService->getRecentProducts(20, $product, $result['user_id']);
+                $recentProductsCollection = ProductSlidersResource::collection($recentProducts);
+            } else
+                $recentProductsCollection = [];
 
             $similarProducts = $viewService->getRelatedProducts($product, 20);
 
             $response = [
                 'product' => new ProductResource($product),
-                'recent_products' => ProductSlidersResource::collection($recentProducts),
+                'recent_products' => $recentProductsCollection,
                 'similar_products' => ProductSlidersResource::collection($similarProducts)
             ];
 
-            if ($trackView['status'])
-                return ApiResponse::success($response);
-            else
-                return ApiResponse::success($response)->cookie('browser_id', $trackView['browser_id'], 60 * 24 * 30); // 30 days
+            return ApiResponse::success($response);
 
         } catch (\Illuminate\Database\Eloquent\ModelNotFoundException $e) {
             return ApiResponse::notFound(__('errors.product_not_found'));
