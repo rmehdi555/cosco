@@ -63,4 +63,53 @@ class Product extends Model
     {
         return $this->hasMany(\App\Models\ProductView::class);
     }
-} 
+
+    public function typeBuy()
+    {
+        if ($this->is_online_only == true) {
+            $type_buy = [[
+                'text' => 'خرید انلاین',
+                'bg_color' => '#005dab',
+            ]];
+        } else {
+            $type_buy = [
+                [
+                    'text' => 'خرید انلاین',
+                    'bg_color' => '#005dab',
+                ],
+                [
+                    'text' => 'خرید حضوری',
+                    'bg_color' => '#008000',
+                ]
+            ];
+        }
+
+        return $type_buy;
+    }
+
+    public function countRate()
+    {
+        return $this->reviews->count();
+    }
+
+    public function averageRate()
+    {
+        $count_rate = $this->countRate();
+        $all_rates = $this->reviews->sum('rating');
+        if ($count_rate == 0)
+            $count_rate = 1;
+        $average_rate = round($all_rates / $count_rate, 1);
+
+        return $average_rate;
+    }
+
+    public function imagesArray()
+    {
+        $images = [];
+        foreach ($this->images as $image) {
+            $images[] = asset('storage/' . $image->image_url);
+        }
+
+        return $images;
+    }
+}

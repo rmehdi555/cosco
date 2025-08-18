@@ -99,35 +99,6 @@ class ProductResource extends JsonResource
 {
     public function toArray($request)
     {
-        $images = [];
-        foreach ($this->images as $image) {
-            $images[] = asset('storage/' . $image->image_url);
-        }
-
-        if ($this->is_online_only == true) {
-            $type_buy = [[
-                'text' => 'خرید انلاین',
-                'bg_color' => '#005dab',
-            ]];
-        } else {
-            $type_buy = [
-                [
-                    'text' => 'خرید انلاین',
-                    'bg_color' => '#005dab',
-                ],
-                [
-                    'text' => 'خرید حضوری',
-                    'bg_color' => '#008000',
-                ]
-            ];
-        }
-
-        $all_rates = $this->reviews->sum('rating');
-        $count_rate = $this->reviews->count();
-        if ($count_rate == 0)
-            $count_rate = 1;
-        $average_rate = round($all_rates / $count_rate, 1);
-
         return [
             'id' => $this->id,
             'product_category_id' => $this->product_category_id,
@@ -148,10 +119,10 @@ class ProductResource extends JsonResource
             'is_active' => $this->is_active,
             'is_featured' => $this->is_featured,
             'is_online_only' => $this->is_online_only,
-            'image_url' => $images,
-            'type_buy' => $type_buy,
-            'rate' => $average_rate,
-            'number_rate' => $count_rate,
+            'image_url' => $this->imagesArray(),
+            'type_buy' => $this->typeBuy(),
+            'rate' => $this->averageRate(),
+            'number_rate' => $this->countRate(),
             'discount_price' => 0,
             'breadcrumb' => $this->category->getBreadcrumb(),
             'reviews' => ProductReviewResource::collection($this->whenLoaded('reviews')),

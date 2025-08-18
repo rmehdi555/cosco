@@ -27,8 +27,12 @@ class WishlistItemResource extends JsonResource
             'product_id' => $this->product_id,
             'product_slug' => $this->product->slug,
             'product_name' => $this->product->name,
-            'product_image_url' => $this->product->image_url ? asset('storage/' . $this->product->image_url) : null,
+            'product_image_url' => $this->product->mainImage->image_url ? asset('storage/' . $this->product->mainImage->image_url) : '',
             'product_price' => config('general.show_price')($this->product->price),
+            'rate' => $this->averageRate(),
+            'number_rate' => $this->countRate(),
+            'discount_price' => 0,
+            'type_buy' => $this->product->typeBuy(),
         ];
     }
-} 
+}
