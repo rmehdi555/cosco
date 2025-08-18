@@ -10,7 +10,7 @@
     },
     "servers": [
         {
-            "url": "http://localhost:8072",
+            "url": "http://localhost:8000",
             "description": "API Server"
         }
     ],
@@ -2986,9 +2986,9 @@
                         }
                     },
                     {
-                        "name": "sort_by",
+                        "name": "sortby",
                         "in": "query",
-                        "description": "مرتب‌سازی نتایج (cheapest, expensive, newest)",
+                        "description": "مرتب‌سازی نتایج بر اساس: ارزان‌ترین، گران‌ترین، جدیدترین",
                         "required": false,
                         "schema": {
                             "type": "string",
@@ -2998,6 +2998,33 @@
                                 "newest"
                             ],
                             "example": "newest"
+                        }
+                    },
+                    {
+                        "name": "min_price",
+                        "in": "query",
+                        "description": "حداقل قیمت محصول (به تومان)",
+                        "required": false,
+                        "schema": {
+                            "type": "integer"
+                        }
+                    },
+                    {
+                        "name": "max_price",
+                        "in": "query",
+                        "description": "حداکثر قیمت محصول (به تومان)",
+                        "required": false,
+                        "schema": {
+                            "type": "integer"
+                        }
+                    },
+                    {
+                        "name": "brand",
+                        "in": "query",
+                        "description": "فیلتر برند بر اساس اسلاگ",
+                        "required": false,
+                        "schema": {
+                            "type": "string"
                         }
                     }
                 ],

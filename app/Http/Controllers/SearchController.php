@@ -165,11 +165,32 @@ class SearchController extends Controller
      *         @OA\Schema(type="integer", example=12)
      *     ),
      *     @OA\Parameter(
-     *         name="sort_by",
+     *         name="sortby",
      *         in="query",
      *         required=false,
-     *         description="مرتب‌سازی نتایج (cheapest, expensive, newest)",
+     *         description="مرتب‌سازی نتایج بر اساس: ارزان‌ترین، گران‌ترین، جدیدترین",
      *         @OA\Schema(type="string", enum={"cheapest","expensive","newest"}, example="newest")
+     *     ),
+     *     @OA\Parameter(
+     *         name="min_price",
+     *         in="query",
+     *         required=false,
+     *         description="حداقل قیمت محصول (به تومان)",
+     *         @OA\Schema(type="integer")
+     *     ),
+     *     @OA\Parameter(
+     *         name="max_price",
+     *         in="query",
+     *         required=false,
+     *         description="حداکثر قیمت محصول (به تومان)",
+     *         @OA\Schema(type="integer")
+     *     ),
+     *     @OA\Parameter(
+     *         name="brand",
+     *         in="query",
+     *         required=false,
+     *         description="فیلتر برند بر اساس اسلاگ",
+     *         @OA\Schema(type="string")
      *     ),
      *     @OA\Response(
      *         response=200,
@@ -216,8 +237,11 @@ class SearchController extends Controller
 
         $products = Product::query()
 //            ->where('is_active', true)
-            ->where('name', 'like', "%$q%")
-            ->orWhere('slug', 'like', "%$q%")
+            ->with(['images', 'brand'])
+            ->where(function ($query) use ($q) {
+                $query->where('name', 'like', "%$q%")
+                      ->orWhere('slug', 'like', "%$q%");
+            })
             ->when(isset($request->sortby), function ($q) use ($request) {
                 if ($request->sortby == 'cheapest') {
                     return $q->orderBy('price', 'asc');
