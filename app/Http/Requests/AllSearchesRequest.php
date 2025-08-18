@@ -26,6 +26,9 @@ class AllSearchesRequest extends FormRequest
             'page' => 'nullable',
             'count' => 'nullable',
             'sort_by' => 'nullable|string',
+            'min_price' => 'nullable|integer',
+            'max_price' => 'nullable|integer',
+            'brand' => 'nullable|string',
         ];
     }
 

@@ -177,15 +177,15 @@ class ProductCategoryController extends Controller
             })
             ->when(
                 isset($request->min_price) and !isset($request->max_price),
-                fn($q) => $q->where('price', '>=', (int)$request->min_price)
+                fn($q) => $q->where('price', '>=', config('general.to_rial')($request->min_price))
             )
             ->when(
                 isset($request->max_price) and !isset($request->min_price),
-                fn($q) => $q->where('price', '<=', (int)$request->max_price)
+                fn($q) => $q->where('price', '<=', config('general.to_rial')($request->max_price))
             )
             ->when(
                 isset($request->max_price) and isset($request->min_price),
-                fn($q) => $q->whereBetween('price', [(int)$request->min_price, (int)$request->max_price])
+                fn($q) => $q->whereBetween('price', [config('general.to_rial')($request->min_price), config('general.to_rial')($request->max_price)])
             )
             ->when(
                 isset($request->brand),

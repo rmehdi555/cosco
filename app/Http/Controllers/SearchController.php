@@ -3,8 +3,11 @@
 namespace App\Http\Controllers;
 
 use App\Http\Requests\AllSearchesRequest;
+use App\Http\Resources\BrandResource;
 use App\Http\Resources\ProductResource;
 use App\Http\Resources\ProductSlidersResource;
+use App\Http\Resources\ShowWithProductResource;
+use App\Http\Resources\SliderResource;
 use App\Models\Product;
 use App\Models\ProductCategory;
 use App\Models\Brand;
@@ -224,7 +227,40 @@ class SearchController extends Controller
                 } elseif ($request->sortby == 'newest') {
                     return $q->orderBy('updated_at', 'desc');
                 }
-            })->latest()->paginate($request->count ?? 12);
+            })
+            ->when(
+                isset($request->min_price) and !isset($request->max_price),
+                fn($q) => $q->where('price', '>=', config('general.to_rial')($request->min_price))
+            )
+            ->when(
+                isset($request->max_price) and !isset($request->min_price),
+                fn($q) => $q->where('price', '<=', config('general.to_rial')($request->max_price))
+            )
+            ->when(
+                isset($request->max_price) and isset($request->min_price),
+                fn($q) => $q->whereBetween('price', [config('general.to_rial')($request->min_price), config('general.to_rial')($request->max_price)])
+            )
+            ->when(
+                isset($request->brand),
+                fn($q) => $q->whereHas('brand', fn($brandQuery) => $brandQuery->where('slug', $request->brand))
+            )->latest()->paginate($request->count ?? 12);
+
+        $categories = ProductCategory::
+//            where('is_active', true)
+        where('parent_id', null)->with('sliders')->get();
+
+        foreach ($categories as $category) {
+            $categoryIds[] = $category->id;
+        }
+
+        $sliders = $categories->flatMap(function ($category) {
+            return $category->sliders;
+        })->take(4);
+
+        $brands = Brand::with('productCategory')
+            ->whereIn('product_category_id', $categoryIds)
+            ->where('is_active', true)
+            ->get();
 
         return ApiResponse::success([
             'products' => [
@@ -234,6 +270,10 @@ class SearchController extends Controller
                 'currentPage' => $products->currentPage(),
                 'lastPage' => $products->lastPage(),
             ],
+            'brands' => BrandResource::collection($brands),
+            'sliders' => SliderResource::collection($sliders),
+            'categories' => ShowWithProductResource::collection($categories),
+
         ]);
     }
 }
