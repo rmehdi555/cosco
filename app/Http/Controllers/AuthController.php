@@ -401,7 +401,7 @@ class AuthController extends Controller
         return ApiResponse::success([
             'token' => $token,
             'user' => new UserResource($user),
-        ], trans('auth.login_success'))->cookie('browser_id', $token, 60 * 24 * 30, '/', null, false, true);
+        ], trans('auth.login_success'))->cookie('browser_id', $token, 60 * 24 * 30, '/', 'rdst.ca', true, true, false, 'None');
     }
 
     /**
@@ -473,7 +473,7 @@ class AuthController extends Controller
         return ApiResponse::success([
             'token' => $token,
             'user' => new UserResource($user),
-        ], trans('auth.login_success'))->cookie('browser_id', $token, 60 * 24 * 30, '/', null, false, true);
+        ], trans('auth.login_success'))->cookie('browser_id', $token, 60 * 24 * 30, '/', 'rdst.ca', true, true, false, 'None');
     }
 
     /**
