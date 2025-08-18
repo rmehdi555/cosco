@@ -38,7 +38,7 @@ class CartItemResource extends JsonResource
             'total_price' => config('general.show_price')($this->total_price),
             'product_id' => $this->product?->id,
             'product_name' => $this->product?->name,
-            'product_image' => asset('storage/' . $this->product?->images?->first()?->image_url),
+            'product_image' => $this->product?->images?->first()?->image_url ? asset('storage/' . $this->product->images->first()->image_url) : '',
             'product_slug' => $this->product?->slug,
             'count_for_user' => $this->product?->stock,
         ];

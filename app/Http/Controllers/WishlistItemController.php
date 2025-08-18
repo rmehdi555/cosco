@@ -74,6 +74,9 @@ class WishlistItemController extends Controller
             'product_id' => $data['product_id'],
         ]);
         
+        // Load relationships for the response
+        $item->load(['product.mainImage', 'product.brand', 'product.category', 'product.reviews']);
+        
         return ApiResponse::success(new WishlistItemResource($item), __('messages.wishlist_item_added'));
     }
 

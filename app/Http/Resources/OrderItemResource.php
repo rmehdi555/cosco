@@ -33,9 +33,9 @@ class OrderItemResource extends JsonResource
             'description' => $this->description,
             'price' => config('general.show_price')($this->price),
             'total_price' => config('general.show_price')($this->total_price),
-            'product_name' => $this->product->name,
-            'product_image' => asset('storage/' . $this->product->images->first()->image_url),
-            'product_slug' => $this->product->slug,
+            'product_name' => $this->product?->name,
+            'product_image' => $this->product?->images?->first()?->image_url ? asset('storage/' . $this->product->images->first()->image_url) : '',
+            'product_slug' => $this->product?->slug,
         ];
     }
 } 
