@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Http\Requests\ProductCommentRequest;
+use App\Http\Requests\ProductCountRequest;
 use App\Http\Resources\ProductSlidersResource;
 use App\Models\Product;
 use App\Http\Resources\ProductResource;
@@ -232,4 +233,28 @@ class ProductController extends Controller
             return ApiResponse::serverError(__('messages.error_comment'), $e->getMessage());
         }
     }
+
+    public function count(ProductCountRequest $request)
+    {
+        $list = [];
+        foreach ($request->cart as $key => $cart_item) {
+            $a = [];
+            $product = Product::
+//            where('is_active', true)->
+            where("slug", $cart_item['slug'])->firstOrFail();
+
+            if ($product->stock > $product->stock)
+                $count_for_user = $product->stock;
+            else
+                $count_for_user = $product->stock;
+
+            $a['slug'] = $product['slug'];
+            $a['count'] = $count_for_user;
+            $a['price'] = config('general.show_price')($product['price']);
+            $list[$key] = $a;
+        }
+
+        return ApiResponse::success($list, __('messages.item_refresh_success'));
+    }
+
 }

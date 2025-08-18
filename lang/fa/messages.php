@@ -21,5 +21,7 @@ return [
 
     //comments
     'comment_saved' => 'کاربر گرامی پیام شما دریافت شد و پس از بررسی توسط ادمین نمایش داده میشود',
-    'error_comment' => 'خطا در ثبت پیام'
+    'error_comment' => 'خطا در ثبت پیام',
+
+    'item_refresh_success' => 'محصول بروزرسانی شد',
 ];
