@@ -50,6 +50,11 @@ class ProductCategory extends Model
         return $this->hasMany(Slider::class, 'type', 'slug');
     }
 
+    public function brands()
+    {
+        return $this->hasMany(Brand::class);
+    }
+
     public function discountTypes()
     {
         return $this->hasMany(DiscountType::class, 'product_category_id');

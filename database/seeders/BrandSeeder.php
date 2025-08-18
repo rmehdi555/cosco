@@ -12,6 +12,7 @@ class BrandSeeder extends Seeder
     {
         DB::table('brands')->insert([
             [
+                'product_category_id' => 1,
                 'name' => 'برند اول',
                 'slug' => Str::slug('برند اول'),
                 'image_url' => 'brand1.jpg',
@@ -20,6 +21,7 @@ class BrandSeeder extends Seeder
                 'updated_at' => now(),
             ],
             [
+                'product_category_id' => 2,
                 'name' => 'برند دوم',
                 'slug' => Str::slug('برند دوم'),
                 'image_url' => 'brand2.jpg',
@@ -28,14 +30,16 @@ class BrandSeeder extends Seeder
                 'updated_at' => now(),
             ],
             [
+                'product_category_id' => 1,
                 'name' => 'برند سوم',
                 'slug' => Str::slug('برند سوم'),
                 'image_url' => 'brand3.jpg',
-                'is_active' => false,
+                'is_active' => true,
                 'created_at' => now(),
                 'updated_at' => now(),
             ],
             [
+                'product_category_id' => 2,
                 'name' => 'برند چهارم',
                 'slug' => Str::slug('برند چهارم'),
                 'image_url' => 'brand4.jpg',
@@ -44,6 +48,7 @@ class BrandSeeder extends Seeder
                 'updated_at' => now(),
             ],
             [
+                'product_category_id' => 1,
                 'name' => 'برند پنجم',
                 'slug' => Str::slug('برند پنجم'),
                 'image_url' => 'brand5.jpg',

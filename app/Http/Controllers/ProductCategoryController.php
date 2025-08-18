@@ -6,8 +6,10 @@ use App\Http\Requests\ShowWithProductRequest;
 use App\Http\Resources\ProductSlidersResource;
 use App\Http\Resources\ShowWithProductResource;
 use App\Http\Resources\SliderResource;
+use App\Http\Resources\BrandResource;
 use App\Models\ProductCategory;
 use App\Models\Product;
+use App\Models\Brand;
 use App\Http\Resources\ProductCategoryResource;
 use App\Http\Responses\ApiResponse;
 
@@ -85,6 +87,13 @@ class ProductCategoryController extends Controller
      *     description="Additional category filter (optional)",
      *     @OA\Schema(type="string")
      *   ),
+     *   @OA\Parameter(
+     *     name="brand",
+     *     in="query",
+     *     required=false,
+     *     description="Brand filter by slug",
+     *     @OA\Schema(type="string")
+     *   ),
      *   @OA\Response(
      *     response=200,
      *     description="Category with subcategories, products, sliders and breadcrumb wrapped in ApiResponse",
@@ -105,6 +114,7 @@ class ProductCategoryController extends Controller
      *           @OA\Property(property="currentPage", type="integer", example=1),
      *           @OA\Property(property="lastPage", type="integer", example=10)
      *         ),
+     *         @OA\Property(property="brands", type="array", @OA\Items(ref="#/components/schemas/BrandResource")),
      *         @OA\Property(property="sliders", type="array", @OA\Items(ref="#/components/schemas/SliderResource")),
      *         @OA\Property(
      *           property="breadcrumb",
@@ -149,6 +159,12 @@ class ProductCategoryController extends Controller
             $breadcrumb = $category->getBreadcrumb();
         }
 
+        // Get brands for these categories
+        $brands = Brand::with('productCategory')
+            ->whereIn('product_category_id', $categoryIds)
+            ->where('is_active', true)
+            ->get();
+
         $products = Product::whereIn('product_category_id', $categoryIds)->with('images')
             ->when(isset($request->sort_by), function ($q) use ($request) {
                 if ($request->sort_by == 'cheapest') {
@@ -170,7 +186,12 @@ class ProductCategoryController extends Controller
             ->when(
                 isset($request->max_price) and isset($request->min_price),
                 fn($q) => $q->whereBetween('price', [(int)$request->min_price, (int)$request->max_price])
-            )->latest()->paginate($request->count ?? 12);
+            )
+            ->when(
+                isset($request->brand),
+                fn($q) => $q->whereHas('brand', fn($brandQuery) => $brandQuery->where('slug', $request->brand))
+            )
+            ->latest()->paginate($request->count ?? 12);
 
         return ApiResponse::success([
             'categories' => ShowWithProductResource::collection($categories),
@@ -181,6 +202,7 @@ class ProductCategoryController extends Controller
                 'currentPage' => $products->currentPage(),
                 'lastPage' => $products->lastPage(),
             ],
+            'brands' => BrandResource::collection($brands),
             'sliders' => SliderResource::collection($sliders),
             'breadcrumb' => $breadcrumb,
         ]);

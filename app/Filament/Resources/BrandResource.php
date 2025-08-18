@@ -4,8 +4,10 @@ namespace App\Filament\Resources;
 
 use App\Filament\Resources\BrandResource\Pages;
 use App\Models\Brand;
+use App\Models\ProductCategory;
 use Filament\Forms\Components\FileUpload;
 use Filament\Forms\Components\Section;
+use Filament\Forms\Components\Select;
 use Filament\Forms\Components\TextInput;
 use Filament\Forms\Components\Toggle;
 use Filament\Forms\Form;
@@ -39,6 +41,16 @@ class BrandResource extends Resource
         return $form
             ->schema([
                 Section::make('اطلاعات برند')->schema([
+                    Select::make('product_category_id')
+                        ->label('دسته‌بندی محصول')
+                        ->relationship('productCategory', 'name')
+                        ->options(ProductCategory::where('is_active', true)->pluck('name', 'id'))
+                        ->required()
+                        ->searchable()
+                        ->preload()
+                        ->placeholder('انتخاب دسته‌بندی')
+                        ->helperText('دسته‌بندی محصولی که این برند در آن قرار دارد'),
+
                     TextInput::make('name')
                         ->label('نام برند')
                         ->required()
@@ -87,6 +99,13 @@ class BrandResource extends Resource
                     ->circular()
                     ->size(50),
 
+                TextColumn::make('productCategory.name')
+                    ->label('دسته‌بندی')
+                    ->searchable()
+                    ->sortable()
+                    ->badge()
+                    ->color('info'),
+
                 TextColumn::make('name')
                     ->label('نام برند')
                     ->searchable()
@@ -122,6 +141,12 @@ class BrandResource extends Resource
                     ->toggleable(isToggledHiddenByDefault: true),
             ])
             ->filters([
+                \Filament\Tables\Filters\SelectFilter::make('product_category_id')
+                    ->label('دسته‌بندی')
+                    ->relationship('productCategory', 'name')
+                    ->placeholder('همه دسته‌بندی‌ها')
+                    ->searchable(),
+
                 TernaryFilter::make('is_active')
                     ->label('وضعیت فعال')
                     ->placeholder('همه برندها')
@@ -198,10 +223,5 @@ class BrandResource extends Resource
             'view' => Pages\ViewBrand::route('/{record}'),
             'edit' => Pages\EditBrand::route('/{record}/edit'),
         ];
-    }
-
-    public static function canViewAny(): bool
-    {
-        return auth()->user()->isAdmin();
     }
 } 

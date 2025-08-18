@@ -29,7 +29,7 @@ class ShowWithProductRequest extends FormRequest
             'page' => 'nullable',
             'count' => 'nullable',
             'category' => 'nullable|string',
-
+            'brand' => 'nullable|string',
         ];
     }
 
@@ -46,6 +46,7 @@ class ShowWithProductRequest extends FormRequest
             'max_price.integer' => 'حداکثر قیمت باید عدد صحیح باشد.',
             'sort_by.string' => 'نوع مرتب‌سازی باید متن باشد.',
             'category.string' => 'دسته‌بندی باید متن باشد.',
+            'brand.string' => 'برند باید متن باشد.',
         ];
     }
 }

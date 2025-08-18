@@ -23,7 +23,9 @@ class BrandController extends Controller
      */
     public function index()
     {
-        $brands = Brand::where('is_active', true)->get();
+        $brands = Brand::with('productCategory')
+            ->where('is_active', true)
+            ->get();
         return ApiResponse::success(BrandResource::collection($brands));
     }
 
@@ -54,10 +56,13 @@ class BrandController extends Controller
     {
         $brand = Brand::where('slug', $slug)->firstOrFail();
         
-        // Load products relationship
-        $brand->load(['products' => function ($query) {
-            $query->where('is_active', true);
-        }]);
+        // Load relationships
+        $brand->load([
+            'productCategory',
+            'products' => function ($query) {
+                $query->where('is_active', true);
+            }
+        ]);
 
         return ApiResponse::success(new BrandResource($brand));
     }

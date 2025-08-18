@@ -13,6 +13,7 @@ return new class extends Migration
     {
         Schema::create('brands', function (Blueprint $table) {
             $table->id();
+            $table->foreignId('product_category_id')->constrained('product_categories')->onDelete('cascade');
             $table->string('name');
             $table->string('slug')->unique();
             $table->string('image_url');

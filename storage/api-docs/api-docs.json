@@ -10,7 +10,7 @@
     },
     "servers": [
         {
-            "url": "http://localhost:8072",
+            "url": "http://localhost:8000",
             "description": "API Server"
         }
     ],
@@ -2473,6 +2473,15 @@
                         "schema": {
                             "type": "string"
                         }
+                    },
+                    {
+                        "name": "brand",
+                        "in": "query",
+                        "description": "Brand filter by slug",
+                        "required": false,
+                        "schema": {
+                            "type": "string"
+                        }
                     }
                 ],
                 "responses": {
@@ -2524,6 +2533,12 @@
                                                         }
                                                     },
                                                     "type": "object"
+                                                },
+                                                "brands": {
+                                                    "type": "array",
+                                                    "items": {
+                                                        "$ref": "#/components/schemas/BrandResource"
+                                                    }
                                                 },
                                                 "sliders": {
                                                     "type": "array",
@@ -3878,6 +3893,10 @@
                         "type": "integer",
                         "example": 1
                     },
+                    "product_category_id": {
+                        "type": "integer",
+                        "example": 1
+                    },
                     "name": {
                         "type": "string",
                         "example": "اپل"
@@ -3893,6 +3912,23 @@
                     "is_active": {
                         "type": "boolean",
                         "example": true
+                    },
+                    "product_category": {
+                        "properties": {
+                            "id": {
+                                "type": "integer",
+                                "example": 1
+                            },
+                            "name": {
+                                "type": "string",
+                                "example": "دسته اول"
+                            },
+                            "slug": {
+                                "type": "string",
+                                "example": "دسته-اول"
+                            }
+                        },
+                        "type": "object"
                     },
                     "products": {
                         "type": "array",
