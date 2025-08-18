@@ -19,18 +19,18 @@ class ProductController extends Controller
     /**
      * @OA\Get(
      *   path="/api/products/{slug}",
-     *   summary="Get a single product with category, brand, and reviews",
+     *   summary="دریافت اطلاعات یک محصول به همراه دسته‌بندی، برند و نظرات",
      *   tags={"Product"},
      *   @OA\Parameter(
      *     name="slug",
      *     in="path",
      *     required=true,
-     *     description="Product slug",
+     *     description="اسلاگ محصول",
      *     @OA\Schema(type="string")
      *   ),
      *   @OA\Response(
      *     response=200,
-     *     description="Product details with recent products",
+     *     description="جزئیات محصول به همراه محصولات اخیر و مشابه",
      *     @OA\JsonContent(
      *       type="object",
      *       @OA\Property(property="status", type="integer", example=200),
@@ -42,8 +42,14 @@ class ProductController extends Controller
      *         @OA\Property(
      *           property="recent_products",
      *           type="array",
-     *           description="Recent products viewed by the user (database-based)",
+     *           description="محصولات اخیر مشاهده شده توسط کاربر (بر اساس دیتابیس)",
      *           @OA\Items(ref="#/components/schemas/ProductResource")
+     *         ),
+     *         @OA\Property(
+     *           property="similar_products",
+     *           type="array",
+     *           description="محصولات مشابه پیشنهادی",
+     *           @OA\Items(ref="#/components/schemas/ProductSlidersResource")
      *         )
      *       ),
      *       @OA\Property(property="errors", type="object", nullable=true, example=null)
@@ -51,7 +57,7 @@ class ProductController extends Controller
      *   ),
      *   @OA\Response(
      *     response=404,
-     *     description="Product not found",
+     *     description="محصول پیدا نشد",
      *     @OA\JsonContent(ref="#/components/schemas/ErrorResponse")
      *   )
      * )

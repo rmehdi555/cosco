@@ -73,6 +73,7 @@ Route::get('articles', [\App\Http\Controllers\ArticleController::class, 'index']
 Route::get('articles/{slug}', [\App\Http\Controllers\ArticleController::class, 'show']);
 Route::get('countries/tree', [\App\Http\Controllers\CountryController::class, 'tree']);
 Route::get('products/{slug}', [\App\Http\Controllers\ProductController::class, 'show']);
+Route::get('product-count/', [\App\Http\Controllers\ProductController::class, 'count']);
 Route::get('brands', [\App\Http\Controllers\BrandController::class, 'index']);
 Route::get('brands/{slug}', [\App\Http\Controllers\BrandController::class, 'show']);
 

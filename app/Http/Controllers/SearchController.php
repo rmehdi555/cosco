@@ -140,8 +140,8 @@ class SearchController extends Controller
     /**
      * @OA\Get(
      *     path="/api/search-all",
-     *     summary="Search products with pagination and sorting",
-     *     description="جستجوی محصولات با پارامترهای صفحه‌بندی و مرتب‌سازی",
+     *     summary="جستجوی محصولات با صفحه‌بندی و مرتب‌سازی",
+     *     description="جستجوی محصولات با پارامترهای صفحه‌بندی و مرتب‌سازی. خروجی شامل محصولات، برندها، اسلایدرها و دسته‌بندی‌ها است.",
      *     tags={"Search"},
      *     @OA\Parameter(
      *         name="q",
@@ -168,7 +168,7 @@ class SearchController extends Controller
      *         name="sort_by",
      *         in="query",
      *         required=false,
-     *         description="مرتب‌سازی نتایج",
+     *         description="مرتب‌سازی نتایج (cheapest, expensive, newest)",
      *         @OA\Schema(type="string", enum={"cheapest","expensive","newest"}, example="newest")
      *     ),
      *     @OA\Response(
@@ -184,23 +184,22 @@ class SearchController extends Controller
      *                 @OA\Property(
      *                     property="products",
      *                     type="object",
-     *                     @OA\Property(
-     *                         property="data",
-     *                         type="array",
-     *                         @OA\Items(ref="#/components/schemas/ProductSlidersResource")
-     *                     ),
+     *                     @OA\Property(property="data", type="array", @OA\Items(ref="#/components/schemas/ProductSlidersResource")),
      *                     @OA\Property(property="total", type="integer", example=120),
      *                     @OA\Property(property="perPage", type="integer", example=12),
      *                     @OA\Property(property="currentPage", type="integer", example=1),
      *                     @OA\Property(property="lastPage", type="integer", example=10)
-     *                 )
+     *                 ),
+     *                 @OA\Property(property="brands", type="array", @OA\Items(ref="#/components/schemas/BrandResource")),
+     *                 @OA\Property(property="sliders", type="array", @OA\Items(ref="#/components/schemas/SliderResource")),
+     *                 @OA\Property(property="categories", type="array", @OA\Items(ref="#/components/schemas/ShowWithProductResource"))
      *             ),
      *             @OA\Property(property="errors", type="null", example=null)
      *         )
      *     ),
      *     @OA\Response(
      *         response=422,
-     *         description="Validation error"
+     *         description="خطای اعتبارسنجی"
      *     )
      * )
      */

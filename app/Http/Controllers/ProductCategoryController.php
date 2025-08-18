@@ -36,67 +36,67 @@ class ProductCategoryController extends Controller
     /**
      * @OA\Get(
      *   path="/api/product-categories/{slug}/with-products",
-     *   summary="Get a category with its subcategories and products (with filters and pagination)",
+     *   summary="دریافت دسته‌بندی به همراه زیرمجموعه‌ها و محصولات (با فیلتر و صفحه‌بندی)",
      *   tags={"ProductCategory"},
      *   @OA\Parameter(
      *     name="slug",
      *     in="path",
      *     required=true,
-     *     description="Category slug. Use 'all' to fetch all top-level categories and their products.",
+     *     description="اسلاگ دسته‌بندی. مقدار 'all' برای دریافت همه دسته‌های سطح بالا و محصولات آن‌ها.",
      *     @OA\Schema(type="string")
      *   ),
      *   @OA\Parameter(
      *     name="min_price",
      *     in="query",
      *     required=false,
-     *     description="Minimum product price filter",
+     *     description="حداقل قیمت محصول",
      *     @OA\Schema(type="integer")
      *   ),
      *   @OA\Parameter(
      *     name="max_price",
      *     in="query",
      *     required=false,
-     *     description="Maximum product price filter",
+     *     description="حداکثر قیمت محصول",
      *     @OA\Schema(type="integer")
      *   ),
      *   @OA\Parameter(
      *     name="sort_by",
      *     in="query",
      *     required=false,
-     *     description="Sort products by one of: cheapest, expensive, newest",
+     *     description="مرتب‌سازی محصولات بر اساس: ارزان‌ترین، گران‌ترین، جدیدترین",
      *     @OA\Schema(type="string", enum={"cheapest","expensive","newest"})
      *   ),
      *   @OA\Parameter(
      *     name="page",
      *     in="query",
      *     required=false,
-     *     description="Results page number",
+     *     description="شماره صفحه نتایج",
      *     @OA\Schema(type="integer")
      *   ),
      *   @OA\Parameter(
      *     name="count",
      *     in="query",
      *     required=false,
-     *     description="Results per page",
+     *     description="تعداد نتایج در هر صفحه",
      *     @OA\Schema(type="integer")
      *   ),
      *   @OA\Parameter(
      *     name="category",
      *     in="query",
      *     required=false,
-     *     description="Additional category filter (optional)",
+     *     description="فیلتر دسته‌بندی اضافی (اختیاری)",
      *     @OA\Schema(type="string")
      *   ),
      *   @OA\Parameter(
      *     name="brand",
      *     in="query",
      *     required=false,
-     *     description="Brand filter by slug",
+     *     description="فیلتر برند بر اساس اسلاگ",
      *     @OA\Schema(type="string")
      *   ),
      *   @OA\Response(
      *     response=200,
-     *     description="Category with subcategories, products, sliders and breadcrumb wrapped in ApiResponse",
+     *     description="دسته‌بندی با زیرمجموعه‌ها، محصولات، اسلایدرها و breadcrumb در قالب ApiResponse",
      *     @OA\JsonContent(
      *       type="object",
      *       @OA\Property(property="status", type="integer", example=200),
@@ -131,7 +131,7 @@ class ProductCategoryController extends Controller
      *   ),
      *   @OA\Response(
      *     response=404,
-     *     description="Category not found",
+     *     description="دسته‌بندی پیدا نشد",
      *     @OA\JsonContent(ref="#/components/schemas/ErrorResponse")
      *   )
      * )

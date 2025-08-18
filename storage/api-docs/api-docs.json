@@ -10,7 +10,7 @@
     },
     "servers": [
         {
-            "url": "http://localhost:8000",
+            "url": "http://localhost:8072",
             "description": "API Server"
         }
     ],
@@ -2403,13 +2403,13 @@
                 "tags": [
                     "ProductCategory"
                 ],
-                "summary": "Get a category with its subcategories and products (with filters and pagination)",
+                "summary": "دریافت دسته‌بندی به همراه زیرمجموعه‌ها و محصولات (با فیلتر و صفحه‌بندی)",
                 "operationId": "e35ed420464e66736c727bca636498f8",
                 "parameters": [
                     {
                         "name": "slug",
                         "in": "path",
-                        "description": "Category slug. Use 'all' to fetch all top-level categories and their products.",
+                        "description": "اسلاگ دسته‌بندی. مقدار 'all' برای دریافت همه دسته‌های سطح بالا و محصولات آن‌ها.",
                         "required": true,
                         "schema": {
                             "type": "string"
@@ -2418,7 +2418,7 @@
                     {
                         "name": "min_price",
                         "in": "query",
-                        "description": "Minimum product price filter",
+                        "description": "حداقل قیمت محصول",
                         "required": false,
                         "schema": {
                             "type": "integer"
@@ -2427,7 +2427,7 @@
                     {
                         "name": "max_price",
                         "in": "query",
-                        "description": "Maximum product price filter",
+                        "description": "حداکثر قیمت محصول",
                         "required": false,
                         "schema": {
                             "type": "integer"
@@ -2436,7 +2436,7 @@
                     {
                         "name": "sort_by",
                         "in": "query",
-                        "description": "Sort products by one of: cheapest, expensive, newest",
+                        "description": "مرتب‌سازی محصولات بر اساس: ارزان‌ترین، گران‌ترین، جدیدترین",
                         "required": false,
                         "schema": {
                             "type": "string",
@@ -2450,7 +2450,7 @@
                     {
                         "name": "page",
                         "in": "query",
-                        "description": "Results page number",
+                        "description": "شماره صفحه نتایج",
                         "required": false,
                         "schema": {
                             "type": "integer"
@@ -2459,7 +2459,7 @@
                     {
                         "name": "count",
                         "in": "query",
-                        "description": "Results per page",
+                        "description": "تعداد نتایج در هر صفحه",
                         "required": false,
                         "schema": {
                             "type": "integer"
@@ -2468,7 +2468,7 @@
                     {
                         "name": "category",
                         "in": "query",
-                        "description": "Additional category filter (optional)",
+                        "description": "فیلتر دسته‌بندی اضافی (اختیاری)",
                         "required": false,
                         "schema": {
                             "type": "string"
@@ -2477,7 +2477,7 @@
                     {
                         "name": "brand",
                         "in": "query",
-                        "description": "Brand filter by slug",
+                        "description": "فیلتر برند بر اساس اسلاگ",
                         "required": false,
                         "schema": {
                             "type": "string"
@@ -2486,7 +2486,7 @@
                 ],
                 "responses": {
                     "200": {
-                        "description": "Category with subcategories, products, sliders and breadcrumb wrapped in ApiResponse",
+                        "description": "دسته‌بندی با زیرمجموعه‌ها، محصولات، اسلایدرها و breadcrumb در قالب ApiResponse",
                         "content": {
                             "application/json": {
                                 "schema": {
@@ -2576,7 +2576,7 @@
                         }
                     },
                     "404": {
-                        "description": "Category not found",
+                        "description": "دسته‌بندی پیدا نشد",
                         "content": {
                             "application/json": {
                                 "schema": {
@@ -2593,13 +2593,13 @@
                 "tags": [
                     "Product"
                 ],
-                "summary": "Get a single product with category, brand, and reviews",
+                "summary": "دریافت اطلاعات یک محصول به همراه دسته‌بندی، برند و نظرات",
                 "operationId": "2eb94cf22f00aa181040441a8ae7b07e",
                 "parameters": [
                     {
                         "name": "slug",
                         "in": "path",
-                        "description": "Product slug",
+                        "description": "اسلاگ محصول",
                         "required": true,
                         "schema": {
                             "type": "string"
@@ -2608,7 +2608,7 @@
                 ],
                 "responses": {
                     "200": {
-                        "description": "Product details with recent products",
+                        "description": "جزئیات محصول به همراه محصولات اخیر و مشابه",
                         "content": {
                             "application/json": {
                                 "schema": {
@@ -2627,10 +2627,17 @@
                                                     "$ref": "#/components/schemas/ProductResource"
                                                 },
                                                 "recent_products": {
-                                                    "description": "Recent products viewed by the user (database-based)",
+                                                    "description": "محصولات اخیر مشاهده شده توسط کاربر (بر اساس دیتابیس)",
                                                     "type": "array",
                                                     "items": {
                                                         "$ref": "#/components/schemas/ProductResource"
+                                                    }
+                                                },
+                                                "similar_products": {
+                                                    "description": "محصولات مشابه پیشنهادی",
+                                                    "type": "array",
+                                                    "items": {
+                                                        "$ref": "#/components/schemas/ProductSlidersResource"
                                                     }
                                                 }
                                             },
@@ -2648,7 +2655,7 @@
                         }
                     },
                     "404": {
-                        "description": "Product not found",
+                        "description": "محصول پیدا نشد",
                         "content": {
                             "application/json": {
                                 "schema": {
@@ -2943,8 +2950,8 @@
                 "tags": [
                     "Search"
                 ],
-                "summary": "Search products with pagination and sorting",
-                "description": "جستجوی محصولات با پارامترهای صفحه‌بندی و مرتب‌سازی",
+                "summary": "جستجوی محصولات با صفحه‌بندی و مرتب‌سازی",
+                "description": "جستجوی محصولات با پارامترهای صفحه‌بندی و مرتب‌سازی. خروجی شامل محصولات، برندها، اسلایدرها و دسته‌بندی‌ها است.",
                 "operationId": "d26eb938229bbd4ce857fa408e9117a4",
                 "parameters": [
                     {
@@ -2981,7 +2988,7 @@
                     {
                         "name": "sort_by",
                         "in": "query",
-                        "description": "مرتب‌سازی نتایج",
+                        "description": "مرتب‌سازی نتایج (cheapest, expensive, newest)",
                         "required": false,
                         "schema": {
                             "type": "string",
@@ -3037,6 +3044,24 @@
                                                         }
                                                     },
                                                     "type": "object"
+                                                },
+                                                "brands": {
+                                                    "type": "array",
+                                                    "items": {
+                                                        "$ref": "#/components/schemas/BrandResource"
+                                                    }
+                                                },
+                                                "sliders": {
+                                                    "type": "array",
+                                                    "items": {
+                                                        "$ref": "#/components/schemas/SliderResource"
+                                                    }
+                                                },
+                                                "categories": {
+                                                    "type": "array",
+                                                    "items": {
+                                                        "$ref": "#/components/schemas/ShowWithProductResource"
+                                                    }
                                                 }
                                             },
                                             "type": "object"
@@ -3052,7 +3077,7 @@
                         }
                     },
                     "422": {
-                        "description": "Validation error"
+                        "description": "خطای اعتبارسنجی"
                     }
                 }
             }
