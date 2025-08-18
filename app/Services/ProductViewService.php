@@ -17,7 +17,7 @@ class ProductViewService
     public function trackView(Product $product, Request $request)
     {
         $result = [];
-        $token = $request->cookie('browser_id');
+        $token = $request->header('token');
         $result['status'] = false;
         $result['user_id'] = 0;
 

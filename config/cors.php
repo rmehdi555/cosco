@@ -19,9 +19,7 @@ return [
 
     'allowed_methods' => ['*'],
 
-    'allowed_origins' => [
-        'https://rdst.ca',
-    ],
+    'allowed_origins' => ['*',],
 
     'allowed_origins_patterns' => [],
 
