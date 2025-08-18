@@ -11,11 +11,11 @@ use App\Http\Controllers\PaymentController;
 use App\Http\Controllers\CartController;
 
 Route::post('register', [AuthController::class, 'register']);
-Route::post('login', [AuthController::class, 'login']);
+Route::post('login', [AuthController::class, 'login'])->middleware('cors');
 Route::post('verify-email', [AuthController::class, 'verifyEmail']);
 Route::post('verify-sms', [AuthController::class, 'verifySms']);
 Route::post('send-otp', [AuthController::class, 'sendOtp']);
-Route::post('login-with-otp', [AuthController::class, 'loginWithOtp']);
+Route::post('login-with-otp', [AuthController::class, 'loginWithOtp'])->middleware('cors');
 Route::post('forgot-password', [AuthController::class, 'forgotPassword']);
 Route::post('reset-password', [AuthController::class, 'resetPassword']);
 
