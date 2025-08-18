@@ -30,7 +30,7 @@ Route::middleware('auth:api')->group(function () {
     Route::post('wishlists', [\App\Http\Controllers\WishlistController::class, 'store']);
     Route::put('wishlists/{id}', [\App\Http\Controllers\WishlistController::class, 'update']);
     Route::post('wishlists/{wishlist}/items', [\App\Http\Controllers\WishlistItemController::class, 'store']);
-    Route::delete('wishlists/{wishlist}/items/{item}', [\App\Http\Controllers\WishlistItemController::class, 'destroy']);
+    Route::delete('wishlist-items/{item}', [\App\Http\Controllers\WishlistItemController::class, 'destroy']);
     Route::get('wishlists/{id}', [\App\Http\Controllers\WishlistController::class, 'show']);
 
     // Membership routes

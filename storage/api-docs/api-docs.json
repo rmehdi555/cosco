@@ -3292,12 +3292,29 @@
                     }
                 },
                 "responses": {
-                    "201": {
-                        "description": "Wishlist item created",
+                    "200": {
+                        "description": "Wishlist item created successfully",
                         "content": {
                             "application/json": {
                                 "schema": {
-                                    "$ref": "#/components/schemas/WishlistItemResource"
+                                    "properties": {
+                                        "status": {
+                                            "type": "integer",
+                                            "example": 200
+                                        },
+                                        "message": {
+                                            "type": "string",
+                                            "example": "محصول به لیست علاقه‌مندی‌ها اضافه شد"
+                                        },
+                                        "data": {
+                                            "$ref": "#/components/schemas/WishlistItemResource"
+                                        },
+                                        "errors": {
+                                            "type": "null",
+                                            "example": null
+                                        }
+                                    },
+                                    "type": "object"
                                 }
                             }
                         }
@@ -3310,23 +3327,14 @@
                 ]
             }
         },
-        "/api/wishlists/{wishlist}/items/{item}": {
+        "/api/wishlist-items/{item}": {
             "delete": {
                 "tags": [
                     "WishlistItem"
                 ],
                 "summary": "Remove a product from a wishlist for the authenticated user",
-                "operationId": "a59bd8683a9b5851675edff8b3f86fd0",
+                "operationId": "f735df7074eb89507a396715094f388a",
                 "parameters": [
-                    {
-                        "name": "wishlist",
-                        "in": "path",
-                        "description": "Wishlist ID",
-                        "required": true,
-                        "schema": {
-                            "type": "integer"
-                        }
-                    },
                     {
                         "name": "item",
                         "in": "path",
@@ -3338,8 +3346,89 @@
                     }
                 ],
                 "responses": {
-                    "204": {
-                        "description": "Wishlist item deleted"
+                    "200": {
+                        "description": "Wishlist item deleted successfully",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "status": {
+                                            "type": "integer",
+                                            "example": 200
+                                        },
+                                        "message": {
+                                            "type": "string",
+                                            "example": "محصول از لیست علاقه‌مندی‌ها حذف شد"
+                                        },
+                                        "data": {
+                                            "type": "null",
+                                            "example": null
+                                        },
+                                        "errors": {
+                                            "type": "null",
+                                            "example": null
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    },
+                    "403": {
+                        "description": "Access denied - item doesn't belong to user",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "status": {
+                                            "type": "integer",
+                                            "example": 403
+                                        },
+                                        "message": {
+                                            "type": "string",
+                                            "example": "شما مجاز به حذف این آیتم نیستید"
+                                        },
+                                        "data": {
+                                            "type": "null",
+                                            "example": null
+                                        },
+                                        "errors": {
+                                            "type": "null",
+                                            "example": null
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    },
+                    "404": {
+                        "description": "Wishlist item not found",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "status": {
+                                            "type": "integer",
+                                            "example": 404
+                                        },
+                                        "message": {
+                                            "type": "string",
+                                            "example": "آیتم مورد نظر در لیست علاقه‌مندی‌ها یافت نشد"
+                                        },
+                                        "data": {
+                                            "type": "null",
+                                            "example": null
+                                        },
+                                        "errors": {
+                                            "type": "null",
+                                            "example": null
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
                     }
                 },
                 "security": [
