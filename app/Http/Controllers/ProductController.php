@@ -234,6 +234,67 @@ class ProductController extends Controller
         }
     }
 
+    /**
+     * @OA\Post(
+     *   path="/api/product-count",
+     *   summary="Get product count and pricing information for cart items",
+     *   description="Returns available stock count and current price for a list of products by their slugs",
+     *   tags={"Product"},
+     *   @OA\RequestBody(
+     *     required=true,
+     *     @OA\JsonContent(
+     *       type="object",
+     *       required={"cart"},
+     *       @OA\Property(
+     *         property="cart",
+     *         type="array",
+     *         description="Array of cart items with product slugs",
+     *         @OA\Items(
+     *           type="object",
+     *           required={"slug"},
+     *           @OA\Property(property="slug", type="string", description="Product slug", example="iphone-14-pro")
+     *         )
+     *       ),
+     *       example={
+     *         "cart": {
+     *           {"slug": "iphone-14-pro"},
+     *           {"slug": "samsung-galaxy-s23"}
+     *         }
+     *       }
+     *     )
+     *   ),
+     *   @OA\Response(
+     *     response=200,
+     *     description="Product count and pricing information",
+     *     @OA\JsonContent(
+     *       type="object",
+     *       @OA\Property(property="status", type="integer", example=200),
+     *       @OA\Property(property="message", type="string", example="اطلاعات محصولات با موفقیت بروزرسانی شد"),
+     *       @OA\Property(
+     *         property="data",
+     *         type="array",
+     *         @OA\Items(
+     *           type="object",
+     *           @OA\Property(property="slug", type="string", example="iphone-14-pro"),
+     *           @OA\Property(property="count", type="integer", example=25, description="Available stock count"),
+     *           @OA\Property(property="price", type="integer", example=10000000, description="Formatted price")
+     *         )
+     *       ),
+     *       @OA\Property(property="errors", type="null", example=null)
+     *     )
+     *   ),
+     *   @OA\Response(
+     *     response=404,
+     *     description="Product not found",
+     *     @OA\JsonContent(ref="#/components/schemas/ErrorResponse")
+     *   ),
+     *   @OA\Response(
+     *     response=422,
+     *     description="Validation error",
+     *     @OA\JsonContent(ref="#/components/schemas/ErrorResponse")
+     *   )
+     * )
+     */
     public function count(ProductCountRequest $request)
     {
         $list = [];

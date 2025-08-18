@@ -2827,6 +2827,126 @@
                 ]
             }
         },
+        "/api/product-count": {
+            "post": {
+                "tags": [
+                    "Product"
+                ],
+                "summary": "Get product count and pricing information for cart items",
+                "description": "Returns available stock count and current price for a list of products by their slugs",
+                "operationId": "af60a140aa9b958dfe9c6ff5222c9562",
+                "requestBody": {
+                    "required": true,
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "required": [
+                                    "cart"
+                                ],
+                                "properties": {
+                                    "cart": {
+                                        "description": "Array of cart items with product slugs",
+                                        "type": "array",
+                                        "items": {
+                                            "required": [
+                                                "slug"
+                                            ],
+                                            "properties": {
+                                                "slug": {
+                                                    "description": "Product slug",
+                                                    "type": "string",
+                                                    "example": "iphone-14-pro"
+                                                }
+                                            },
+                                            "type": "object"
+                                        }
+                                    }
+                                },
+                                "type": "object"
+                            },
+                            "example": {
+                                "cart": [
+                                    {
+                                        "slug": "iphone-14-pro"
+                                    },
+                                    {
+                                        "slug": "samsung-galaxy-s23"
+                                    }
+                                ]
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "200": {
+                        "description": "Product count and pricing information",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "status": {
+                                            "type": "integer",
+                                            "example": 200
+                                        },
+                                        "message": {
+                                            "type": "string",
+                                            "example": "اطلاعات محصولات با موفقیت بروزرسانی شد"
+                                        },
+                                        "data": {
+                                            "type": "array",
+                                            "items": {
+                                                "properties": {
+                                                    "slug": {
+                                                        "type": "string",
+                                                        "example": "iphone-14-pro"
+                                                    },
+                                                    "count": {
+                                                        "description": "Available stock count",
+                                                        "type": "integer",
+                                                        "example": 25
+                                                    },
+                                                    "price": {
+                                                        "description": "Formatted price",
+                                                        "type": "integer",
+                                                        "example": 10000000
+                                                    }
+                                                },
+                                                "type": "object"
+                                            }
+                                        },
+                                        "errors": {
+                                            "type": "null",
+                                            "example": null
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    },
+                    "404": {
+                        "description": "Product not found",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/ErrorResponse"
+                                }
+                            }
+                        }
+                    },
+                    "422": {
+                        "description": "Validation error",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/ErrorResponse"
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        },
         "/api/search": {
             "get": {
                 "tags": [
@@ -3308,6 +3428,34 @@
                                         },
                                         "data": {
                                             "$ref": "#/components/schemas/WishlistItemResource"
+                                        },
+                                        "errors": {
+                                            "type": "null",
+                                            "example": null
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    },
+                    "404": {
+                        "description": "Wishlist not found",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "status": {
+                                            "type": "integer",
+                                            "example": 404
+                                        },
+                                        "message": {
+                                            "type": "string",
+                                            "example": "لیست علاقه‌مندی مورد نظر یافت نشد"
+                                        },
+                                        "data": {
+                                            "type": "null",
+                                            "example": null
                                         },
                                         "errors": {
                                             "type": "null",
@@ -5106,6 +5254,23 @@
                     "product_price": {
                         "type": "string",
                         "example": "100,000 تومان"
+                    },
+                    "rate": {
+                        "type": "number",
+                        "format": "float",
+                        "example": 4.2
+                    },
+                    "number_rate": {
+                        "type": "integer",
+                        "example": 15
+                    },
+                    "discount_price": {
+                        "type": "integer",
+                        "example": 0
+                    },
+                    "type_buy": {
+                        "type": "string",
+                        "example": "نقدی"
                     }
                 },
                 "type": "object"
