@@ -58,25 +58,30 @@ class WishlistItemController extends Controller
     public function store(Request $request, $wishlist)
     {
         $user = Auth::user();
-        
+
         // Check if wishlist exists and belongs to user
         $wishlist = Wishlist::where('user_id', $user->id)->find($wishlist);
         if (!$wishlist) {
             return ApiResponse::error(__('messages.wishlist_not_found'), 404);
         }
-        
+
         $data = $request->validate([
             'product_id' => 'required|integer|exists:products,id',
         ]);
-        
+
+        $wishListItem = WishlistItem::where('product_id', $data['product_id'])->where('wishlist_id', $wishlist->id)->first();
+        if ($wishListItem) {
+            return ApiResponse::error(__('messages.wishlist_item_already_exists'), 409);
+        }
+
         $item = WishlistItem::firstOrCreate([
             'wishlist_id' => $wishlist->id,
             'product_id' => $data['product_id'],
         ]);
-        
+
         // Load relationships for the response
         $item->load(['product.mainImage', 'product.brand', 'product.category', 'product.reviews']);
-        
+
         return ApiResponse::success(new WishlistItemResource($item), __('messages.wishlist_item_added'));
     }
 
@@ -131,13 +136,13 @@ class WishlistItemController extends Controller
     public function destroy($item)
     {
         $user = Auth::user();
-        
+
         // First check if the item exists at all
         $wishlistItem = WishlistItem::find($item);
         if (!$wishlistItem) {
             return ApiResponse::error(__('messages.wishlist_item_not_found'), 404);
         }
-        
+
         // Then check if it belongs to the user
         $userWishlistItem = WishlistItem::with('wishlist')
             ->whereHas('wishlist', function ($query) use ($user) {
@@ -145,12 +150,12 @@ class WishlistItemController extends Controller
             })
             ->where('id', $item)
             ->first();
-            
+
         if (!$userWishlistItem) {
             return ApiResponse::error(__('messages.wishlist_item_access_denied'), 403);
         }
-        
+
         $userWishlistItem->delete();
         return ApiResponse::success(null, __('messages.wishlist_item_removed'));
     }
-} 
+}

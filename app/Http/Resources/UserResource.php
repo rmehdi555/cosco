@@ -22,7 +22,7 @@ class UserResource extends JsonResource
     /**
      * Transform the resource into an array.
      *
-     * @param  \Illuminate\Http\Request  $request
+     * @param \Illuminate\Http\Request $request
      * @return array<string, mixed>
      */
     public function toArray($request)
@@ -32,7 +32,7 @@ class UserResource extends JsonResource
             'last_name' => $this->last_name,
             'email' => $this->email,
             'cell_phone' => $this->cell_phone,
-            'avatar_image_url' => $this->avatar_image ? asset('storage/' . $this->avatar_image) : null,
+            'avatar_image_url' => $this->avatar_image ? asset('storage/' . $this->avatar_image) : '/assets/images/icons/user-default-icon.jpg',
         ];
     }
-} 
+}

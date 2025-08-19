@@ -24,4 +24,6 @@ return [
     'error_comment' => 'خطا در ثبت پیام',
 
     'item_refresh_success' => 'محصول بروزرسانی شد',
+
+    'wishlist_item_already_exists' => 'این آیتم از قبل وجود دارد.'
 ];
