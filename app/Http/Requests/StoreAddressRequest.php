@@ -16,8 +16,8 @@ use Illuminate\Foundation\Http\FormRequest;
  *   @OA\Property(property="plaque", type="string", example="12"),
  *   @OA\Property(property="address", type="string", example="خیابان انقلاب، پلاک 12"),
  *   @OA\Property(property="phone", type="string", example="02112345678"),
- *   @OA\Property(property="is_default", type="boolean", example=true),
- *   @OA\Property(property="is_active", type="boolean", example=true),
+ *   @OA\Property(property="is_default", type="string", example="true"),
+ *   @OA\Property(property="is_active", type="string", example="true"),
  * )
  */
 class StoreAddressRequest extends FormRequest

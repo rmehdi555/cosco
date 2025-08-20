@@ -60,12 +60,39 @@
                     }
                 },
                 "responses": {
-                    "201": {
-                        "description": "Address created",
+                    "200": {
+                        "description": "Address created successfully",
                         "content": {
                             "application/json": {
                                 "schema": {
-                                    "$ref": "#/components/schemas/AddressResource"
+                                    "properties": {
+                                        "status": {
+                                            "type": "integer",
+                                            "example": 200
+                                        },
+                                        "message": {
+                                            "type": "string",
+                                            "example": "عملیات با موفقیت انجام شد"
+                                        },
+                                        "data": {
+                                            "$ref": "#/components/schemas/AddressResource"
+                                        },
+                                        "errors": {
+                                            "type": "null",
+                                            "example": null
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    },
+                    "422": {
+                        "description": "Validation error",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/ErrorResponse"
                                 }
                             }
                         }
@@ -917,9 +944,9 @@
                             "application/json": {
                                 "schema": {
                                     "properties": {
-                                        "success": {
-                                            "type": "boolean",
-                                            "example": true
+                                        "status": {
+                                            "type": "integer",
+                                            "example": 200
                                         },
                                         "message": {
                                             "type": "string",
@@ -938,6 +965,10 @@
                                                 }
                                             },
                                             "type": "object"
+                                        },
+                                        "errors": {
+                                            "type": "null",
+                                            "example": null
                                         }
                                     },
                                     "type": "object"
@@ -950,17 +981,7 @@
                         "content": {
                             "application/json": {
                                 "schema": {
-                                    "properties": {
-                                        "success": {
-                                            "type": "boolean",
-                                            "example": false
-                                        },
-                                        "message": {
-                                            "type": "string",
-                                            "example": "سبد خرید یافت نشد"
-                                        }
-                                    },
-                                    "type": "object"
+                                    "$ref": "#/components/schemas/ErrorResponse"
                                 }
                             }
                         }
@@ -1006,9 +1027,9 @@
                             "application/json": {
                                 "schema": {
                                     "properties": {
-                                        "success": {
-                                            "type": "boolean",
-                                            "example": true
+                                        "status": {
+                                            "type": "integer",
+                                            "example": 200
                                         },
                                         "message": {
                                             "type": "string",
@@ -1016,6 +1037,10 @@
                                         },
                                         "data": {
                                             "$ref": "#/components/schemas/CartResource"
+                                        },
+                                        "errors": {
+                                            "type": "null",
+                                            "example": null
                                         }
                                     },
                                     "type": "object"
@@ -1029,9 +1054,9 @@
                             "application/json": {
                                 "schema": {
                                     "properties": {
-                                        "success": {
-                                            "type": "boolean",
-                                            "example": true
+                                        "status": {
+                                            "type": "integer",
+                                            "example": 201
                                         },
                                         "message": {
                                             "type": "string",
@@ -1039,6 +1064,10 @@
                                         },
                                         "data": {
                                             "$ref": "#/components/schemas/CartResource"
+                                        },
+                                        "errors": {
+                                            "type": "null",
+                                            "example": null
                                         }
                                     },
                                     "type": "object"
@@ -1046,7 +1075,7 @@
                             }
                         }
                     },
-                    "400": {
+                    "422": {
                         "description": "Validation error",
                         "content": {
                             "application/json": {
@@ -1452,11 +1481,23 @@
                             "application/json": {
                                 "schema": {
                                     "properties": {
+                                        "status": {
+                                            "type": "integer",
+                                            "example": 200
+                                        },
+                                        "message": {
+                                            "type": "string",
+                                            "example": "عملیات با موفقیت انجام شد"
+                                        },
                                         "data": {
                                             "type": "array",
                                             "items": {
                                                 "$ref": "#/components/schemas/OrderResource"
                                             }
+                                        },
+                                        "errors": {
+                                            "type": "null",
+                                            "example": null
                                         }
                                     },
                                     "type": "object"
@@ -1473,7 +1514,7 @@
             },
             "post": {
                 "tags": [
-                    "Carts"
+                    "Orders"
                 ],
                 "summary": "Create a new order",
                 "description": "Creates a new order with items for the authenticated user",
@@ -1495,9 +1536,9 @@
                             "application/json": {
                                 "schema": {
                                     "properties": {
-                                        "success": {
-                                            "type": "boolean",
-                                            "example": true
+                                        "status": {
+                                            "type": "integer",
+                                            "example": 201
                                         },
                                         "message": {
                                             "type": "string",
@@ -1505,6 +1546,10 @@
                                         },
                                         "data": {
                                             "$ref": "#/components/schemas/OrderResource"
+                                        },
+                                        "errors": {
+                                            "type": "null",
+                                            "example": null
                                         }
                                     },
                                     "type": "object"
@@ -1512,7 +1557,7 @@
                             }
                         }
                     },
-                    "400": {
+                    "422": {
                         "description": "Validation error",
                         "content": {
                             "application/json": {
@@ -1576,11 +1621,33 @@
                             "application/json": {
                                 "schema": {
                                     "properties": {
+                                        "status": {
+                                            "type": "integer",
+                                            "example": 200
+                                        },
+                                        "message": {
+                                            "type": "string",
+                                            "example": "عملیات با موفقیت انجام شد"
+                                        },
                                         "data": {
                                             "$ref": "#/components/schemas/OrderResource"
+                                        },
+                                        "errors": {
+                                            "type": "null",
+                                            "example": null
                                         }
                                     },
                                     "type": "object"
+                                }
+                            }
+                        }
+                    },
+                    "403": {
+                        "description": "Forbidden - Order does not belong to user",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/ErrorResponse"
                                 }
                             }
                         }
@@ -3672,6 +3739,12 @@
                         "type": "string",
                         "example": "توضیحات سفارش",
                         "nullable": true
+                    },
+                    "received_at": {
+                        "description": "Order received_at",
+                        "type": "string",
+                        "example": "2025-08-22",
+                        "nullable": false
                     }
                 },
                 "type": "object"
@@ -3865,12 +3938,12 @@
                         "example": "02112345678"
                     },
                     "is_default": {
-                        "type": "boolean",
-                        "example": true
+                        "type": "string",
+                        "example": "true"
                     },
                     "is_active": {
-                        "type": "boolean",
-                        "example": true
+                        "type": "string",
+                        "example": "true"
                     }
                 },
                 "type": "object"
@@ -4298,10 +4371,17 @@
                         "example": "در انتظار"
                     },
                     "total_amount": {
-                        "description": "Total amount of cart in Toman",
-                        "type": "number",
-                        "format": "decimal",
-                        "example": 15000
+                        "description": "Formatted total amount with currency",
+                        "type": "string",
+                        "example": "15,000 تومان"
+                    },
+                    "received_at": {
+                        "description": "Available delivery dates",
+                        "type": "array",
+                        "items": {
+                            "type": "string",
+                            "example": "2024-01-15"
+                        }
                     }
                 },
                 "type": "object"
@@ -4530,16 +4610,14 @@
                         "example": "توضیحات اضافی"
                     },
                     "price": {
-                        "description": "Product price in Toman",
-                        "type": "number",
-                        "format": "decimal",
-                        "example": 7500
+                        "description": "Formatted product price with currency",
+                        "type": "string",
+                        "example": "7,500 تومان"
                     },
                     "total_price": {
-                        "description": "Total price (quantity × price) in Toman",
-                        "type": "number",
-                        "format": "decimal",
-                        "example": 15000
+                        "description": "Formatted total price (quantity × price) with currency",
+                        "type": "string",
+                        "example": "15,000 تومان"
                     },
                     "product_name": {
                         "description": "Product name",
@@ -4563,16 +4641,25 @@
                 "title": "Order Resource",
                 "description": "Order resource schema",
                 "properties": {
+                    "id": {
+                        "description": "Order ID",
+                        "type": "integer",
+                        "example": 1
+                    },
                     "status": {
                         "description": "Order status label in Persian",
                         "type": "string",
                         "example": "در انتظار"
                     },
+                    "status_english": {
+                        "description": "Order status in English",
+                        "type": "string",
+                        "example": "pending"
+                    },
                     "total_amount": {
-                        "description": "Total amount in Toman",
-                        "type": "number",
-                        "format": "decimal",
-                        "example": 15000
+                        "description": "Formatted total amount with currency",
+                        "type": "string",
+                        "example": "15,000 تومان"
                     },
                     "formatted_total_amount": {
                         "description": "Formatted total amount with currency",
@@ -4583,6 +4670,11 @@
                         "description": "Payment status label in Persian",
                         "type": "string",
                         "example": "پرداخت نشده"
+                    },
+                    "payment_status_english": {
+                        "description": "Payment status in English",
+                        "type": "string",
+                        "example": "unpaid"
                     },
                     "description": {
                         "description": "Order description",

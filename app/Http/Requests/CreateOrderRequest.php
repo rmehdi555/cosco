@@ -45,7 +45,14 @@ use Illuminate\Foundation\Http\FormRequest;
  *         description="Order description",
  *         nullable=true,
  *         example="توضیحات سفارش"
- *     )
+ *     ),
+ *     @OA\Property(
+ *          property="received_at",
+ *          type="string",
+ *          description="Order received_at",
+ *          nullable=false,
+ *          example="2025-08-22"
+ *      )
  * )
  */
 class CreateOrderRequest extends FormRequest
