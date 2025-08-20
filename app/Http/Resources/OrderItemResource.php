@@ -12,8 +12,8 @@ use Illuminate\Http\Resources\Json\JsonResource;
  *     description="Order item resource schema",
  *     @OA\Property(property="quantity", type="integer", example=2, description="Quantity of the product in order"),
  *     @OA\Property(property="description", type="string", example="توضیحات اضافی", description="Additional description for order item"),
- *     @OA\Property(property="price", type="number", format="decimal", example=7500, description="Product price in Toman"),
- *     @OA\Property(property="total_price", type="number", format="decimal", example=15000, description="Total price (quantity × price) in Toman"),
+ *     @OA\Property(property="price", type="string", example="7,500 تومان", description="Formatted product price with currency"),
+ *     @OA\Property(property="total_price", type="string", example="15,000 تومان", description="Formatted total price (quantity × price) with currency"),
  *     @OA\Property(property="product_name", type="string", example="محصول نمونه", description="Product name"),
  *     @OA\Property(property="product_image", type="string", example="https://example.com/storage/products/image.jpg", description="Product image URL"),
  *     @OA\Property(property="product_slug", type="string", example="mhsol-aol", description="Product slug for URL")

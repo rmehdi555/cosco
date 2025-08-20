@@ -43,9 +43,20 @@ class AddressController extends Controller
      *     @OA\JsonContent(ref="#/components/schemas/StoreAddressRequest")
      *   ),
      *   @OA\Response(
-     *     response=201,
-     *     description="Address created",
-     *     @OA\JsonContent(ref="#/components/schemas/AddressResource")
+     *     response=200,
+     *     description="Address created successfully",
+     *     @OA\JsonContent(
+     *       type="object",
+     *       @OA\Property(property="status", type="integer", example=200),
+     *       @OA\Property(property="message", type="string", example="عملیات با موفقیت انجام شد"),
+     *       @OA\Property(property="data", ref="#/components/schemas/AddressResource"),
+     *       @OA\Property(property="errors", type="null", example=null)
+     *     )
+     *   ),
+     *   @OA\Response(
+     *     response=422,
+     *     description="Validation error",
+     *     @OA\JsonContent(ref="#/components/schemas/ErrorResponse")
      *   )
      * )
      */

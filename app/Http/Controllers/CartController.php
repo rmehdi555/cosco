@@ -43,12 +43,10 @@ class CartController extends Controller
      *         description="Cart updated successfully",
      *         @OA\JsonContent(
      *             type="object",
-     *             @OA\Property(property="success", type="boolean", example=true),
+     *             @OA\Property(property="status", type="integer", example=200),
      *             @OA\Property(property="message", type="string", example="سبد خرید با موفقیت بروزرسانی شد"),
-     *             @OA\Property(
-     *                 property="data",
-     *                 ref="#/components/schemas/CartResource"
-     *             )
+     *             @OA\Property(property="data", ref="#/components/schemas/CartResource"),
+     *             @OA\Property(property="errors", type="null", example=null)
      *         )
      *     ),
      *     @OA\Response(
@@ -56,16 +54,14 @@ class CartController extends Controller
      *         description="Cart created successfully",
      *         @OA\JsonContent(
      *             type="object",
-     *             @OA\Property(property="success", type="boolean", example=true),
+     *             @OA\Property(property="status", type="integer", example=201),
      *             @OA\Property(property="message", type="string", example="سبد خرید با موفقیت ایجاد شد"),
-     *             @OA\Property(
-     *                 property="data",
-     *                 ref="#/components/schemas/CartResource"
-     *             )
+     *             @OA\Property(property="data", ref="#/components/schemas/CartResource"),
+     *             @OA\Property(property="errors", type="null", example=null)
      *         )
      *     ),
      *     @OA\Response(
-     *         response=400,
+     *         response=422,
      *         description="Validation error",
      *         @OA\JsonContent(ref="#/components/schemas/ErrorResponse")
      *     ),
@@ -161,7 +157,7 @@ class CartController extends Controller
      *         description="Cart retrieved successfully",
      *         @OA\JsonContent(
      *             type="object",
-     *             @OA\Property(property="success", type="boolean", example=true),
+     *             @OA\Property(property="status", type="integer", example=200),
      *             @OA\Property(property="message", type="string", example="سبد خرید با موفقیت دریافت شد"),
      *             @OA\Property(
      *                 property="data",
@@ -175,17 +171,14 @@ class CartController extends Controller
      *                     type="array",
      *                     @OA\Items(ref="#/components/schemas/CartItemResource")
      *                 )
-     *             )
+     *             ),
+     *             @OA\Property(property="errors", type="null", example=null)
      *         )
      *     ),
      *     @OA\Response(
      *         response=404,
      *         description="Cart not found",
-     *         @OA\JsonContent(
-     *             type="object",
-     *             @OA\Property(property="success", type="boolean", example=false),
-     *             @OA\Property(property="message", type="string", example="سبد خرید یافت نشد")
-     *         )
+     *         @OA\JsonContent(ref="#/components/schemas/ErrorResponse")
      *     ),
      *     @OA\Response(
      *         response=401,

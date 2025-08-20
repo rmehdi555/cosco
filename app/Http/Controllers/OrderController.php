@@ -48,17 +48,19 @@ class OrderController extends Controller
      *         required=false,
      *         @OA\Schema(type="string", enum={"unpaid", "paid", "refunded"})
      *     ),
-
      *     @OA\Response(
      *         response=200,
      *         description="Successful operation",
      *         @OA\JsonContent(
      *             type="object",
+     *             @OA\Property(property="status", type="integer", example=200),
+     *             @OA\Property(property="message", type="string", example="عملیات با موفقیت انجام شد"),
      *             @OA\Property(
      *                 property="data",
      *                 type="array",
      *                 @OA\Items(ref="#/components/schemas/OrderResource")
-     *             )
+     *             ),
+     *             @OA\Property(property="errors", type="null", example=null)
      *         )
      *     )
      * )
@@ -108,11 +110,16 @@ class OrderController extends Controller
      *         description="Successful operation",
      *         @OA\JsonContent(
      *             type="object",
-     *             @OA\Property(
-     *                 property="data",
-     *                 ref="#/components/schemas/OrderResource"
-     *             )
+     *             @OA\Property(property="status", type="integer", example=200),
+     *             @OA\Property(property="message", type="string", example="عملیات با موفقیت انجام شد"),
+     *             @OA\Property(property="data", ref="#/components/schemas/OrderResource"),
+     *             @OA\Property(property="errors", type="null", example=null)
      *         )
+     *     ),
+     *     @OA\Response(
+     *         response=403,
+     *         description="Forbidden - Order does not belong to user",
+     *         @OA\JsonContent(ref="#/components/schemas/ErrorResponse")
      *     )
      * )
      */
@@ -134,7 +141,7 @@ class OrderController extends Controller
      * @OA\Post(
      *     path="/api/orders",
      *     operationId="createOrder",
-     *     tags={"Carts"},
+     *     tags={"Orders"},
      *     summary="Create a new order",
      *     description="Creates a new order with items for the authenticated user",
      *     security={{"bearerAuth":{}}},
@@ -147,16 +154,14 @@ class OrderController extends Controller
      *         description="Order created successfully",
      *         @OA\JsonContent(
      *             type="object",
-     *             @OA\Property(property="success", type="boolean", example=true),
+     *             @OA\Property(property="status", type="integer", example=201),
      *             @OA\Property(property="message", type="string", example="سفارش با موفقیت ایجاد شد"),
-     *             @OA\Property(
-     *                 property="data",
-     *                 ref="#/components/schemas/OrderResource"
-     *             )
+     *             @OA\Property(property="data", ref="#/components/schemas/OrderResource"),
+     *             @OA\Property(property="errors", type="null", example=null)
      *         )
      *     ),
      *     @OA\Response(
-     *         response=400,
+     *         response=422,
      *         description="Validation error",
      *         @OA\JsonContent(ref="#/components/schemas/ErrorResponse")
      *     ),

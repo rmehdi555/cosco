@@ -12,7 +12,13 @@ use Illuminate\Http\Resources\Json\JsonResource;
  *     title="Cart Resource",
  *     description="Cart resource schema",
  *     @OA\Property(property="status", type="string", example="در انتظار", description="Cart status label in Persian"),
- *     @OA\Property(property="total_amount", type="number", format="decimal", example=15000, description="Total amount of cart in Toman")
+ *     @OA\Property(property="total_amount", type="string", example="15,000 تومان", description="Formatted total amount with currency"),
+ *     @OA\Property(
+ *         property="received_at",
+ *         type="array",
+ *         description="Available delivery dates",
+ *         @OA\Items(type="string", example="2024-01-15")
+ *     )
  * )
  */
 class CartResource extends JsonResource
