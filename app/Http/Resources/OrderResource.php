@@ -40,15 +40,18 @@ class OrderResource extends JsonResource
     public function toArray(Request $request): array
     {
         return [
+            'id' => $this->id,
             'status' => $this->status?->getLabel(),
+            'status_english' => $this->status,
             'total_amount' => config('general.show_price')($this->total_amount),
             'formatted_total_amount' => config('general.format_price')($this->total_amount),
             'payment_status' => $this->payment_status?->getLabel(),
+            'payment_status_english' => $this->payment_status,
             'description' => $this->description,
             'shipping_address' => new AddressResource($this->shippingAddress),
             'order_items' => OrderItemResource::collection($this->whenLoaded('orderItems')),
-            'received_at' => config('general.show_date')($this->received_at),
+            'received_at' => config('general.show_date')($this->received_at) ?? '',
             'created_at' => config('general.show_date')($this->created_at),
         ];
     }
-} 
+}

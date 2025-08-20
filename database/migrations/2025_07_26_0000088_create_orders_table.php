@@ -23,6 +23,9 @@ return new class extends Migration
             $table->timestamps();
             $table->softDeletes();
         });
+
+        DB::statement('ALTER TABLE orders AUTO_INCREMENT = 1000;');
+
     }
 
     /**
@@ -32,4 +35,4 @@ return new class extends Migration
     {
         Schema::dropIfExists('orders');
     }
-}; 
+};

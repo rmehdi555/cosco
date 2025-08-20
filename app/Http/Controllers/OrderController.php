@@ -26,7 +26,7 @@ class OrderController extends Controller
 {
     /**
      * Display user's orders
-     * 
+     *
      * @OA\Get(
      *     path="/api/orders",
      *     operationId="getUserOrders",
@@ -66,7 +66,7 @@ class OrderController extends Controller
     public function index(Request $request)
     {
         $user = $request->user();
-        
+
         $query = $user->orders()
             ->with(['shippingAddress.country', 'shippingAddress.province', 'shippingAddress.city', 'orderItems.product'])
             ->orderBy('created_at', 'desc');
@@ -88,7 +88,7 @@ class OrderController extends Controller
 
     /**
      * Display the specified order
-     * 
+     *
      * @OA\Get(
      *     path="/api/orders/{id}",
      *     operationId="getOrder",
@@ -130,7 +130,7 @@ class OrderController extends Controller
 
     /**
      * Create a new order with items
-     * 
+     *
      * @OA\Post(
      *     path="/api/orders",
      *     operationId="createOrder",
@@ -178,6 +178,7 @@ class OrderController extends Controller
         $items = $request->validated('items');
         $shippingAddressId = $request->validated('shipping_address_id');
         $description = $request->validated('description');
+        $received_at = $request->validated('received_at');
 
         // Check if shipping address belongs to the user
         $shippingAddress = Address::where('id', $shippingAddressId)
@@ -199,6 +200,7 @@ class OrderController extends Controller
                 'payment_status' => OrderPaymentStatus::UNPAID,
                 'shipping_address_id' => $shippingAddressId,
                 'description' => $description,
+                'received_at' => $received_at,
             ]);
 
             $totalAmount = 0;
@@ -206,7 +208,7 @@ class OrderController extends Controller
             // Create order items
             foreach ($items as $item) {
                 $product = Product::where('slug', $item['product_slug'])->firstOrFail();
-                
+
                 $orderItem = OrderItem::create([
                     'order_id' => $order->id,
                     'product_id' => $product->id,
@@ -233,11 +235,11 @@ class OrderController extends Controller
 
         } catch (\Exception $e) {
             DB::rollBack();
-            
+
             return ApiResponse::serverError(
                 __('orders.creation_failed'),
                 $e->getMessage()
             );
         }
     }
-} 
+}

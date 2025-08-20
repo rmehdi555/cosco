@@ -36,8 +36,8 @@ class StoreAddressRequest extends FormRequest
             'plaque' => 'required|string',
             'address' => 'required|string',
             'phone' => 'required|string',
-            'is_default' => 'boolean',
-            'is_active' => 'boolean',
+            'is_default' => 'string',
+            'is_active' => 'string',
         ];
     }
 

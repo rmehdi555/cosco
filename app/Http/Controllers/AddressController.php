@@ -54,6 +54,8 @@ class AddressController extends Controller
         $user = Auth::user();
         $data = $request->validated();
         $data['user_id'] = $user->id;
+        $data['is_default'] = $request->is_default == 'true' ? true : false;
+        $data['is_active'] = $request->is_active == 'true' ? true : false;
         $address = Address::create($data);
         return ApiResponse::success(new AddressResource($address));
     }
@@ -93,4 +95,4 @@ class AddressController extends Controller
         $address->update($data);
         return ApiResponse::success(new AddressResource($address));
     }
-} 
+}

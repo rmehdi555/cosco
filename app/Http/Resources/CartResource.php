@@ -2,6 +2,7 @@
 
 namespace App\Http\Resources;
 
+use Carbon\Carbon;
 use Illuminate\Http\Request;
 use Illuminate\Http\Resources\Json\JsonResource;
 
@@ -23,10 +24,12 @@ class CartResource extends JsonResource
      */
     public function toArray(Request $request): array
     {
+        $dates = collect(range(2, 4))->map(fn($day) => Carbon::now()->addDays($day)->toDateString());
+
         return [
             'status' => $this->status?->getLabel(),
             'total_amount' => config('general.show_price')($this->total_amount),
-
+            'received_at' => $dates
         ];
     }
-} 
+}

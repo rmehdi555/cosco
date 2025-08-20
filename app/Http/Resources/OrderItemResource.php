@@ -31,11 +31,11 @@ class OrderItemResource extends JsonResource
         return [
             'quantity' => $this->quantity,
             'description' => $this->description,
-            'price' => config('general.show_price')($this->price),
-            'total_price' => config('general.show_price')($this->total_price),
+            'price' => config('general.format_price')($this->price),
+            'total_price' => config('general.format_price')($this->total_price),
             'product_name' => $this->product?->name,
             'product_image' => $this->product?->images?->first()?->image_url ? asset('storage/' . $this->product->images->first()->image_url) : '',
             'product_slug' => $this->product?->slug,
         ];
     }
-} 
+}

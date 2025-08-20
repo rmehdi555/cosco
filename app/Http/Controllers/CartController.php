@@ -7,6 +7,7 @@ use App\Http\Resources\CartResource;
 use App\Http\Resources\CartItemResource;
 use App\Models\Cart;
 use App\Models\CartItem;
+use App\Models\Order;
 use App\Models\Product;
 use App\Enums\CartStatus;
 use Illuminate\Http\JsonResponse;
@@ -25,7 +26,7 @@ class CartController extends Controller
 {
     /**
      * Update user's cart with new items (replace existing items)
-     * 
+     *
      * @OA\Post(
      *     path="/api/carts",
      *     operationId="updateCart",
@@ -85,8 +86,8 @@ class CartController extends Controller
 
             // Find existing cart or create new one
             $cart = Cart::where('user_id', $user->id)
-                        ->where('status', CartStatus::PENDING)
-                        ->first();
+                ->where('status', CartStatus::PENDING)
+                ->first();
 
             $isNewCart = !$cart;
 
@@ -107,7 +108,7 @@ class CartController extends Controller
             // Create new cart items
             foreach ($items as $item) {
                 $product = Product::where('slug', $item['product_slug'])->firstOrFail();
-                
+
                 $cartItem = CartItem::create([
                     'cart_id' => $cart->id,
                     'product_id' => $product->id,
@@ -137,7 +138,7 @@ class CartController extends Controller
 
         } catch (\Exception $e) {
             DB::rollBack();
-            
+
             return ApiResponse::serverError(
                 $isNewCart ? __('cart.creation_failed') : __('cart.update_failed'),
                 $e->getMessage()
@@ -147,7 +148,7 @@ class CartController extends Controller
 
     /**
      * Get user's cart items
-     * 
+     *
      * @OA\Get(
      *     path="/api/carts",
      *     operationId="getUserCart",
@@ -199,9 +200,9 @@ class CartController extends Controller
 
         // Find user's current cart
         $cart = Cart::where('user_id', $user->id)
-                    ->where('status', CartStatus::PENDING)
-                    ->with(['cartItems.product'])
-                    ->first();
+            ->where('status', CartStatus::PENDING)
+            ->with(['cartItems.product'])
+            ->first();
 
         if (!$cart) {
             return ApiResponse::error(__('cart.not_found'), null, 404);
@@ -212,4 +213,4 @@ class CartController extends Controller
             'items' => CartItemResource::collection($cart->cartItems)
         ], __('cart.retrieved_successfully'));
     }
-} 
+}
