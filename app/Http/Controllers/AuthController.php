@@ -625,4 +625,37 @@ class AuthController extends Controller
 
         return ApiResponse::success(new UserResource($user), trans('auth.profile_updated_success'));
     }
+
+    /**
+     * @OA\Post(
+     *     path="/api/logout",
+     *     summary="User logout",
+     *     tags={"Authentication"},
+     *     security={{"bearerAuth":{}}},
+     *     @OA\Response(
+     *         response=200,
+     *         description="Logout successful",
+     *         @OA\JsonContent(
+     *             @OA\Property(property="success", type="boolean", example=true),
+     *             @OA\Property(property="message", type="string", example="خروج با موفقیت انجام شد.")
+     *         )
+     *     ),
+     *     @OA\Response(
+     *         response=401,
+     *         description="Unauthorized"
+     *     )
+     * )
+     */
+    public function logout()
+    {
+        $user = Auth::user();
+        
+        if ($user) {
+            // Revoke all tokens for the current user
+            $user->tokens()->delete();
+        }
+
+        return ApiResponse::success(null, trans('auth.logout_success'))
+            ->cookie('browser_id', null, -1, '/', 'rdst.ca', true, true, false, 'None');
+    }
 }

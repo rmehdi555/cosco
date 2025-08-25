@@ -13,6 +13,8 @@ use App\Models\Payment;
 use Illuminate\Http\Resources\Json\AnonymousResourceCollection;
 use Illuminate\Support\Facades\Log;
 use App\Http\Responses\ApiResponse;
+use App\Enums\PaymentStatus;
+use App\Enums\PaymentMethod;
 
 /**
  * @OA\Tag(
@@ -59,18 +61,73 @@ class PaymentController extends Controller
      *         required=false,
      *         @OA\Schema(type="integer", default=15)
      *     ),
+     *     @OA\Parameter(
+     *         name="page",
+     *         in="query",
+     *         description="Page number",
+     *         required=false,
+     *         @OA\Schema(type="integer", default=1)
+     *     ),
      *     @OA\Response(
      *         response=200,
      *         description="Successful operation",
      *         @OA\JsonContent(
-     *             type="object",
+     *             @OA\Property(property="success", type="boolean", example=true),
+     *             @OA\Property(property="message", type="string", example="لیست پرداخت‌ها با موفقیت دریافت شد."),
      *             @OA\Property(
      *                 property="data",
-     *                 type="array",
-     *                 @OA\Items(ref="#/components/schemas/PaymentResource")
-     *             ),
-     *             @OA\Property(property="links", type="object"),
-     *             @OA\Property(property="meta", type="object")
+     *                 type="object",
+     *                 @OA\Property(
+     *                     property="payments",
+     *                     type="object",
+     *                     @OA\Property(
+     *                         property="data",
+     *                         type="array",
+     *                         @OA\Items(ref="#/components/schemas/PaymentResource")
+     *                     )
+     *                 ),
+     *                 @OA\Property(
+     *                     property="pagination",
+     *                     type="object",
+     *                     @OA\Property(property="current_page", type="integer", example=1),
+     *                     @OA\Property(property="last_page", type="integer", example=5),
+     *                     @OA\Property(property="per_page", type="integer", example=15),
+     *                     @OA\Property(property="total", type="integer", example=75),
+     *                     @OA\Property(property="from", type="integer", example=1),
+     *                     @OA\Property(property="to", type="integer", example=15),
+     *                     @OA\Property(property="has_more_pages", type="boolean", example=true),
+     *                     @OA\Property(
+     *                         property="links",
+     *                         type="object",
+     *                         @OA\Property(property="first", type="string", example="https://api.example.com/payments?page=1"),
+     *                         @OA\Property(property="last", type="string", example="https://api.example.com/payments?page=5"),
+     *                         @OA\Property(property="prev", type="string", nullable=true, example=null),
+     *                         @OA\Property(property="next", type="string", example="https://api.example.com/payments?page=2")
+     *                     )
+     *                 ),
+     *                 @OA\Property(
+     *                     property="filters",
+     *                     type="object",
+     *                     @OA\Property(
+     *                         property="status",
+     *                         type="array",
+     *                         @OA\Items(
+     *                             type="object",
+     *                             @OA\Property(property="value", type="string", example="pending"),
+     *                             @OA\Property(property="label", type="string", example="در انتظار")
+     *                         )
+     *                     ),
+     *                     @OA\Property(
+     *                         property="method",
+     *                         type="array",
+     *                         @OA\Items(
+     *                             type="object",
+     *                             @OA\Property(property="value", type="string", example="online"),
+     *                             @OA\Property(property="label", type="string", example="آنلاین")
+     *                         )
+     *                     )
+     *                 )
+     *             )
      *         )
      *     ),
      *     @OA\Response(
@@ -80,7 +137,7 @@ class PaymentController extends Controller
      *     )
      * )
      */
-    public function index(Request $request): AnonymousResourceCollection
+    public function index(Request $request): JsonResponse
     {
         $user = $request->user();
         
@@ -103,7 +160,43 @@ class PaymentController extends Controller
         $perPage = $request->get('per_page', 15);
         $payments = $query->paginate($perPage);
 
-        return PaymentResource::collection($payments);
+        // Get available filter options from enums
+        $statusOptions = collect(PaymentStatus::cases())->map(function ($status) {
+            return [
+                'value' => $status->value,
+                'label' => $status->label(),
+            ];
+        })->toArray();
+
+        $methodOptions = collect(PaymentMethod::cases())->map(function ($method) {
+            return [
+                'value' => $method->value,
+                'label' => $method->label(),
+            ];
+        })->toArray();
+
+        return ApiResponse::success([
+            'payments' => PaymentResource::collection($payments),
+            'pagination' => [
+                'current_page' => $payments->currentPage(),
+                'last_page' => $payments->lastPage(),
+                'per_page' => $payments->perPage(),
+                'total' => $payments->total(),
+                'from' => $payments->firstItem(),
+                'to' => $payments->lastItem(),
+                'has_more_pages' => $payments->hasMorePages(),
+                'links' => [
+                    'first' => $payments->url(1),
+                    'last' => $payments->url($payments->lastPage()),
+                    'prev' => $payments->previousPageUrl(),
+                    'next' => $payments->nextPageUrl(),
+                ]
+            ],
+            'filters' => [
+                'status' => $statusOptions,
+                'method' => $methodOptions,
+            ]
+        ], trans('payments.list_retrieved_success'));
     }
 
     /**
@@ -125,7 +218,8 @@ class PaymentController extends Controller
      *         response=200,
      *         description="Successful operation",
      *         @OA\JsonContent(
-     *             type="object",
+     *             @OA\Property(property="success", type="boolean", example=true),
+     *             @OA\Property(property="message", type="string", example="جزئیات پرداخت با موفقیت دریافت شد."),
      *             @OA\Property(
      *                 property="data",
      *                 ref="#/components/schemas/PaymentResource"
@@ -149,18 +243,18 @@ class PaymentController extends Controller
      *     )
      * )
      */
-    public function show(Request $request, Payment $payment): PaymentResource
+    public function show(Request $request, Payment $payment): JsonResponse
     {
         $user = $request->user();
         
         // Check if the payment belongs to the authenticated user
         if ($payment->order->user_id !== $user->id) {
-            abort(403, __('payments.not_authorized_to_view'));
+            return ApiResponse::error(trans('payments.not_authorized_to_view'), null, 403);
         }
 
         $payment->load(['order.shippingAddress.country', 'order.shippingAddress.province', 'order.shippingAddress.city']);
 
-        return new PaymentResource($payment);
+        return ApiResponse::success(new PaymentResource($payment), trans('payments.details_retrieved_success'));
     }
 
     /**
@@ -183,10 +277,14 @@ class PaymentController extends Controller
      *         description="Payment request sent successfully",
      *         @OA\JsonContent(
      *             @OA\Property(property="success", type="boolean", example=true),
-     *             @OA\Property(property="payment_id", type="integer", example=1),
-     *             @OA\Property(property="gateway_url", type="string", example="https://sandbox.zarinpal.com/pg/StartPay/A000000000000000000000000000000000000"),
-     *             @OA\Property(property="transaction_id", type="string", example="A000000000000000000000000000000000000"),
-     *             @OA\Property(property="message", type="string", example="Payment request sent successfully"),
+     *             @OA\Property(property="message", type="string", example="درخواست پرداخت با موفقیت ارسال شد."),
+     *             @OA\Property(
+     *                 property="data",
+     *                 type="object",
+     *                 @OA\Property(property="payment_id", type="integer", example=1),
+     *                 @OA\Property(property="gateway_url", type="string", example="https://sandbox.zarinpal.com/pg/StartPay/A000000000000000000000000000000000000"),
+     *                 @OA\Property(property="transaction_id", type="string", example="A000000000000000000000000000000000000"),
+     *             )
      *         )
      *     ),
      *     @OA\Response(
@@ -217,20 +315,20 @@ class PaymentController extends Controller
         $order = Order::with('user')->find($request->order_id);
 
         if (!$order) {
-            return ApiResponse::error(__('orders.not_found'), null, 400);
+            return ApiResponse::error(trans('orders.not_found'), null, 404);
         }
 
         // بررسی وضعیت پرداخت
         if ($order->payment_status === 'paid') {
-            return ApiResponse::error(__('payments.order_already_paid'), null, 400);
+            return ApiResponse::error(trans('payments.order_already_paid'), null, 400);
         }
 
         $result = $this->paymentService->sendToGateway($order, $request->gateway);
 
         if ($result['success']) {
-            return ApiResponse::success($result, 200);
+            return ApiResponse::success($result, trans('payments.gateway_request_sent_success'));
         } else {
-            return ApiResponse::error($result, 500);
+            return ApiResponse::error($result['message'] ?? trans('payments.gateway_request_failed'), null, 500);
         }
     }
 
@@ -335,42 +433,47 @@ class PaymentController extends Controller
      *         description="Payment status retrieved successfully",
      *         @OA\JsonContent(
      *             @OA\Property(property="success", type="boolean", example=true),
-     *             @OA\Property(property="order_id", type="integer", example=1, description="Order ID"),
-     *             @OA\Property(property="payment_status", type="string", example="paid", description="Payment status"),
-     *             @OA\Property(property="order_status", type="string", example="processing", description="Order status"),
-     *             @OA\Property(property="total_amount", type="number", example=100000, description="Total order amount"),
+     *             @OA\Property(property="message", type="string", example="وضعیت پرداخت با موفقیت دریافت شد."),
      *             @OA\Property(
-     *                 property="user_info",
+     *                 property="data",
      *                 type="object",
-     *                 description="User information",
-     *                 @OA\Property(property="user_id", type="integer", example=1),
-     *                 @OA\Property(property="name", type="string", example="John Doe"),
-     *                 @OA\Property(property="cell_phone", type="string", example="09123456789"),
-     *                 @OA\Property(property="email", type="string", example="john@example.com"),
-     *             ),
-     *             @OA\Property(
-     *                 property="payment_info",
-     *                 type="object",
-     *                 description="Latest payment information",
-     *                 @OA\Property(property="payment_id", type="integer", example=1),
-     *                 @OA\Property(property="method", type="string", example="Online"),
-     *                 @OA\Property(property="status", type="string", example="Completed"),
-     *                 @OA\Property(property="amount", type="number", example=100000),
-     *                 @OA\Property(property="transaction_id", type="string", example="A000000000000000000000000000000000000"),
-     *                 @OA\Property(property="reference_id", type="string", example="123456789"),
-     *                 @OA\Property(property="paid_at", type="string", example="2024-01-01T12:00:00.000000Z"),
-     *                 @OA\Property(property="created_at", type="string", example="2024-01-01T11:00:00.000000Z"),
-     *             ),
-     *             @OA\Property(property="created_at", type="string", example="2024-01-01T10:00:00.000000Z", description="Order creation date"),
-     *             @OA\Property(property="updated_at", type="string", example="2024-01-01T12:00:00.000000Z", description="Order last update date"),
-     *             @OA\Property(
-     *                 property="status_summary",
-     *                 type="object",
-     *                 description="Status summary",
-     *                 @OA\Property(property="is_paid", type="boolean", example=true),
-     *                 @OA\Property(property="is_pending", type="boolean", example=false),
-     *                 @OA\Property(property="is_failed", type="boolean", example=false),
-     *                 @OA\Property(property="can_retry_payment", type="boolean", example=false),
+     *                 @OA\Property(property="order_id", type="integer", example=1, description="Order ID"),
+     *                 @OA\Property(property="payment_status", type="string", example="paid", description="Payment status"),
+     *                 @OA\Property(property="order_status", type="string", example="processing", description="Order status"),
+     *                 @OA\Property(property="total_amount", type="number", example=100000, description="Total order amount"),
+     *                 @OA\Property(
+     *                     property="user_info",
+     *                     type="object",
+     *                     description="User information",
+     *                     @OA\Property(property="user_id", type="integer", example=1),
+     *                     @OA\Property(property="name", type="string", example="John Doe"),
+     *                     @OA\Property(property="cell_phone", type="string", example="09123456789"),
+     *                     @OA\Property(property="email", type="string", example="john@example.com"),
+     *                 ),
+     *                 @OA\Property(
+     *                     property="payment_info",
+     *                     type="object",
+     *                     description="Latest payment information",
+     *                     @OA\Property(property="payment_id", type="integer", example=1),
+     *                     @OA\Property(property="method", type="string", example="Online"),
+     *                     @OA\Property(property="status", type="string", example="Completed"),
+     *                     @OA\Property(property="amount", type="number", example=100000),
+     *                     @OA\Property(property="transaction_id", type="string", example="A000000000000000000000000000000000000"),
+     *                     @OA\Property(property="reference_id", type="string", example="123456789"),
+     *                     @OA\Property(property="paid_at", type="string", example="2024-01-01T12:00:00.000000Z"),
+     *                     @OA\Property(property="created_at", type="string", example="2024-01-01T11:00:00.000000Z"),
+     *                 ),
+     *                 @OA\Property(property="created_at", type="string", example="2024-01-01T10:00:00.000000Z", description="Order creation date"),
+     *                 @OA\Property(property="updated_at", type="string", example="2024-01-01T12:00:00.000000Z", description="Order last update date"),
+     *                 @OA\Property(
+     *                     property="status_summary",
+     *                     type="object",
+     *                     description="Status summary",
+     *                     @OA\Property(property="is_paid", type="boolean", example=true),
+     *                     @OA\Property(property="is_pending", type="boolean", example=false),
+     *                     @OA\Property(property="is_failed", type="boolean", example=false),
+     *                     @OA\Property(property="can_retry_payment", type="boolean", example=false),
+     *                 )
      *             )
      *         )
      *     ),
@@ -401,7 +504,7 @@ class PaymentController extends Controller
             }])->find($orderId);
 
             if (!$order) {
-                return ApiResponse::notFound(__('orders.not_found'));
+                return ApiResponse::error(trans('orders.not_found'), null, 404);
             }
 
             // دریافت آخرین پرداخت
@@ -448,7 +551,7 @@ class PaymentController extends Controller
                     'is_failed' => $order->payment_status === 'failed',
                     'can_retry_payment' => $order->payment_status === 'failed' || $order->payment_status === 'pending',
                 ]
-            ], 200);
+            ], trans('payments.status_retrieved_success'));
 
         } catch (\Exception $e) {
             Log::error('Payment Status Error: ' . $e->getMessage(), [
@@ -456,7 +559,7 @@ class PaymentController extends Controller
                 'trace' => $e->getTraceAsString()
             ]);
 
-            return ApiResponse::serverError(__('payments.error_retrieving_information'));
+            return ApiResponse::error(trans('payments.error_retrieving_information'), null, 500);
         }
     }
 
@@ -472,40 +575,45 @@ class PaymentController extends Controller
      *         description="Active gateways retrieved successfully",
      *         @OA\JsonContent(
      *             @OA\Property(property="success", type="boolean", example=true),
+     *             @OA\Property(property="message", type="string", example="درگاه‌های پرداخت با موفقیت دریافت شدند."),
      *             @OA\Property(
-     *                 property="gateways",
+     *                 property="data",
      *                 type="object",
-     *                 description="Active payment gateways",
      *                 @OA\Property(
-     *                     property="melli_test",
+     *                     property="gateways",
      *                     type="object",
-     *                     description="Melli bank test gateway",
-     *                     @OA\Property(property="name", type="string", example="Melli Bank Test"),
-     *                     @OA\Property(property="type", type="string", example="melli_test"),
-     *                     @OA\Property(property="enabled", type="boolean", example=true),
-     *                     @OA\Property(property="merchant_id", type="string", example="46645"),
-     *                     @OA\Property(property="terminal_id", type="string", example="GBHDTY98"),
+     *                     description="Active payment gateways",
+     *                     @OA\Property(
+     *                         property="melli_test",
+     *                         type="object",
+     *                         description="Melli bank test gateway",
+     *                         @OA\Property(property="name", type="string", example="Melli Bank Test"),
+     *                         @OA\Property(property="type", type="string", example="melli_test"),
+     *                         @OA\Property(property="enabled", type="boolean", example=true),
+     *                         @OA\Property(property="merchant_id", type="string", example="46645"),
+     *                         @OA\Property(property="terminal_id", type="string", example="GBHDTY98"),
+     *                     ),
+     *                     @OA\Property(
+     *                         property="zarinpal_test",
+     *                         type="object",
+     *                         description="Zarinpal test gateway",
+     *                         @OA\Property(property="name", type="string", example="Zarinpal Test"),
+     *                         @OA\Property(property="type", type="string", example="zarinpal_test"),
+     *                         @OA\Property(property="enabled", type="boolean", example=true),
+     *                         @OA\Property(property="merchant_id", type="string", example="xxxxxxxx-xxxx-xxxx-xxxx-xxxxxxxxxxxx"),
+     *                     ),
+     *                     @OA\Property(
+     *                         property="zarinpal",
+     *                         type="object",
+     *                         description="Zarinpal main gateway",
+     *                         @OA\Property(property="name", type="string", example="Zarinpal"),
+     *                         @OA\Property(property="type", type="string", example="zarinpal"),
+     *                         @OA\Property(property="enabled", type="boolean", example=false),
+     *                         @OA\Property(property="merchant_id", type="string", example="xxxxxxxx-xxxx-xxxx-xxxx-xxxxxxxxxxxx"),
+     *                     ),
      *                 ),
-     *                 @OA\Property(
-     *                     property="zarinpal_test",
-     *                     type="object",
-     *                     description="Zarinpal test gateway",
-     *                     @OA\Property(property="name", type="string", example="Zarinpal Test"),
-     *                     @OA\Property(property="type", type="string", example="zarinpal_test"),
-     *                     @OA\Property(property="enabled", type="boolean", example=true),
-     *                     @OA\Property(property="merchant_id", type="string", example="xxxxxxxx-xxxx-xxxx-xxxx-xxxxxxxxxxxx"),
-     *                 ),
-     *                 @OA\Property(
-     *                     property="zarinpal",
-     *                     type="object",
-     *                     description="Zarinpal main gateway",
-     *                     @OA\Property(property="name", type="string", example="Zarinpal"),
-     *                     @OA\Property(property="type", type="string", example="zarinpal"),
-     *                     @OA\Property(property="enabled", type="boolean", example=false),
-     *                     @OA\Property(property="merchant_id", type="string", example="xxxxxxxx-xxxx-xxxx-xxxx-xxxxxxxxxxxx"),
-     *                 ),
-     *             ),
-     *             @OA\Property(property="default_gateway", type="string", example="melli_test", description="Default gateway"),
+     *                 @OA\Property(property="default_gateway", type="string", example="melli_test", description="Default gateway"),
+     *             )
      *         )
      *     ),
      *     @OA\Response(
@@ -522,7 +630,7 @@ class PaymentController extends Controller
     {
         $gateways = $this->paymentService->getActiveGateways();
 
-        return ApiResponse::success($gateways);
+        return ApiResponse::success($gateways, trans('payments.gateways_retrieved_success'));
     }
 
 

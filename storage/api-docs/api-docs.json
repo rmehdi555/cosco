@@ -10,7 +10,7 @@
     },
     "servers": [
         {
-            "url": "http://localhost:8072",
+            "url": "http://localhost:8000",
             "description": "API Server"
         }
     ],
@@ -861,6 +861,45 @@
                     },
                     "422": {
                         "description": "Validation error"
+                    }
+                },
+                "security": [
+                    {
+                        "bearerAuth": []
+                    }
+                ]
+            }
+        },
+        "/api/logout": {
+            "post": {
+                "tags": [
+                    "Authentication"
+                ],
+                "summary": "User logout",
+                "operationId": "fe8f3429cd6979b3b4517e186505f9f9",
+                "responses": {
+                    "200": {
+                        "description": "Logout successful",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "success": {
+                                            "type": "boolean",
+                                            "example": true
+                                        },
+                                        "message": {
+                                            "type": "string",
+                                            "example": "خروج با موفقیت انجام شد."
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    },
+                    "401": {
+                        "description": "Unauthorized"
                     }
                 },
                 "security": [
@@ -1779,6 +1818,16 @@
                             "type": "integer",
                             "default": 15
                         }
+                    },
+                    {
+                        "name": "page",
+                        "in": "query",
+                        "description": "Page number",
+                        "required": false,
+                        "schema": {
+                            "type": "integer",
+                            "default": 1
+                        }
                     }
                 ],
                 "responses": {
@@ -1788,16 +1837,120 @@
                             "application/json": {
                                 "schema": {
                                     "properties": {
+                                        "success": {
+                                            "type": "boolean",
+                                            "example": true
+                                        },
+                                        "message": {
+                                            "type": "string",
+                                            "example": "لیست پرداخت‌ها با موفقیت دریافت شد."
+                                        },
                                         "data": {
-                                            "type": "array",
-                                            "items": {
-                                                "$ref": "#/components/schemas/PaymentResource"
-                                            }
-                                        },
-                                        "links": {
-                                            "type": "object"
-                                        },
-                                        "meta": {
+                                            "properties": {
+                                                "payments": {
+                                                    "properties": {
+                                                        "data": {
+                                                            "type": "array",
+                                                            "items": {
+                                                                "$ref": "#/components/schemas/PaymentResource"
+                                                            }
+                                                        }
+                                                    },
+                                                    "type": "object"
+                                                },
+                                                "pagination": {
+                                                    "properties": {
+                                                        "current_page": {
+                                                            "type": "integer",
+                                                            "example": 1
+                                                        },
+                                                        "last_page": {
+                                                            "type": "integer",
+                                                            "example": 5
+                                                        },
+                                                        "per_page": {
+                                                            "type": "integer",
+                                                            "example": 15
+                                                        },
+                                                        "total": {
+                                                            "type": "integer",
+                                                            "example": 75
+                                                        },
+                                                        "from": {
+                                                            "type": "integer",
+                                                            "example": 1
+                                                        },
+                                                        "to": {
+                                                            "type": "integer",
+                                                            "example": 15
+                                                        },
+                                                        "has_more_pages": {
+                                                            "type": "boolean",
+                                                            "example": true
+                                                        },
+                                                        "links": {
+                                                            "properties": {
+                                                                "first": {
+                                                                    "type": "string",
+                                                                    "example": "https://api.example.com/payments?page=1"
+                                                                },
+                                                                "last": {
+                                                                    "type": "string",
+                                                                    "example": "https://api.example.com/payments?page=5"
+                                                                },
+                                                                "prev": {
+                                                                    "type": "string",
+                                                                    "example": null,
+                                                                    "nullable": true
+                                                                },
+                                                                "next": {
+                                                                    "type": "string",
+                                                                    "example": "https://api.example.com/payments?page=2"
+                                                                }
+                                                            },
+                                                            "type": "object"
+                                                        }
+                                                    },
+                                                    "type": "object"
+                                                },
+                                                "filters": {
+                                                    "properties": {
+                                                        "status": {
+                                                            "type": "array",
+                                                            "items": {
+                                                                "properties": {
+                                                                    "value": {
+                                                                        "type": "string",
+                                                                        "example": "pending"
+                                                                    },
+                                                                    "label": {
+                                                                        "type": "string",
+                                                                        "example": "در انتظار"
+                                                                    }
+                                                                },
+                                                                "type": "object"
+                                                            }
+                                                        },
+                                                        "method": {
+                                                            "type": "array",
+                                                            "items": {
+                                                                "properties": {
+                                                                    "value": {
+                                                                        "type": "string",
+                                                                        "example": "online"
+                                                                    },
+                                                                    "label": {
+                                                                        "type": "string",
+                                                                        "example": "آنلاین"
+                                                                    }
+                                                                },
+                                                                "type": "object"
+                                                            }
+                                                        }
+                                                    },
+                                                    "type": "object"
+                                                }
+                                            },
                                             "type": "object"
                                         }
                                     },
@@ -1850,6 +2003,14 @@
                             "application/json": {
                                 "schema": {
                                     "properties": {
+                                        "success": {
+                                            "type": "boolean",
+                                            "example": true
+                                        },
+                                        "message": {
+                                            "type": "string",
+                                            "example": "جزئیات پرداخت با موفقیت دریافت شد."
+                                        },
                                         "data": {
                                             "$ref": "#/components/schemas/PaymentResource"
                                         }
@@ -1941,21 +2102,26 @@
                                             "type": "boolean",
                                             "example": true
                                         },
-                                        "payment_id": {
-                                            "type": "integer",
-                                            "example": 1
-                                        },
-                                        "gateway_url": {
-                                            "type": "string",
-                                            "example": "https://sandbox.zarinpal.com/pg/StartPay/A000000000000000000000000000000000000"
-                                        },
-                                        "transaction_id": {
-                                            "type": "string",
-                                            "example": "A000000000000000000000000000000000000"
-                                        },
                                         "message": {
                                             "type": "string",
-                                            "example": "Payment request sent successfully"
+                                            "example": "درخواست پرداخت با موفقیت ارسال شد."
+                                        },
+                                        "data": {
+                                            "properties": {
+                                                "payment_id": {
+                                                    "type": "integer",
+                                                    "example": 1
+                                                },
+                                                "gateway_url": {
+                                                    "type": "string",
+                                                    "example": "https://sandbox.zarinpal.com/pg/StartPay/A000000000000000000000000000000000000"
+                                                },
+                                                "transaction_id": {
+                                                    "type": "string",
+                                                    "example": "A000000000000000000000000000000000000"
+                                                }
+                                            },
+                                            "type": "object"
                                         }
                                     },
                                     "type": "object"
@@ -2141,114 +2307,123 @@
                                             "type": "boolean",
                                             "example": true
                                         },
-                                        "order_id": {
-                                            "description": "Order ID",
-                                            "type": "integer",
-                                            "example": 1
-                                        },
-                                        "payment_status": {
-                                            "description": "Payment status",
+                                        "message": {
                                             "type": "string",
-                                            "example": "paid"
+                                            "example": "وضعیت پرداخت با موفقیت دریافت شد."
                                         },
-                                        "order_status": {
-                                            "description": "Order status",
-                                            "type": "string",
-                                            "example": "processing"
-                                        },
-                                        "total_amount": {
-                                            "description": "Total order amount",
-                                            "type": "number",
-                                            "example": 100000
-                                        },
-                                        "user_info": {
-                                            "description": "User information",
+                                        "data": {
                                             "properties": {
-                                                "user_id": {
+                                                "order_id": {
+                                                    "description": "Order ID",
                                                     "type": "integer",
                                                     "example": 1
                                                 },
-                                                "name": {
+                                                "payment_status": {
+                                                    "description": "Payment status",
                                                     "type": "string",
-                                                    "example": "John Doe"
+                                                    "example": "paid"
                                                 },
-                                                "cell_phone": {
+                                                "order_status": {
+                                                    "description": "Order status",
                                                     "type": "string",
-                                                    "example": "09123456789"
+                                                    "example": "processing"
                                                 },
-                                                "email": {
-                                                    "type": "string",
-                                                    "example": "john@example.com"
-                                                }
-                                            },
-                                            "type": "object"
-                                        },
-                                        "payment_info": {
-                                            "description": "Latest payment information",
-                                            "properties": {
-                                                "payment_id": {
-                                                    "type": "integer",
-                                                    "example": 1
-                                                },
-                                                "method": {
-                                                    "type": "string",
-                                                    "example": "Online"
-                                                },
-                                                "status": {
-                                                    "type": "string",
-                                                    "example": "Completed"
-                                                },
-                                                "amount": {
+                                                "total_amount": {
+                                                    "description": "Total order amount",
                                                     "type": "number",
                                                     "example": 100000
                                                 },
-                                                "transaction_id": {
-                                                    "type": "string",
-                                                    "example": "A000000000000000000000000000000000000"
+                                                "user_info": {
+                                                    "description": "User information",
+                                                    "properties": {
+                                                        "user_id": {
+                                                            "type": "integer",
+                                                            "example": 1
+                                                        },
+                                                        "name": {
+                                                            "type": "string",
+                                                            "example": "John Doe"
+                                                        },
+                                                        "cell_phone": {
+                                                            "type": "string",
+                                                            "example": "09123456789"
+                                                        },
+                                                        "email": {
+                                                            "type": "string",
+                                                            "example": "john@example.com"
+                                                        }
+                                                    },
+                                                    "type": "object"
                                                 },
-                                                "reference_id": {
-                                                    "type": "string",
-                                                    "example": "123456789"
+                                                "payment_info": {
+                                                    "description": "Latest payment information",
+                                                    "properties": {
+                                                        "payment_id": {
+                                                            "type": "integer",
+                                                            "example": 1
+                                                        },
+                                                        "method": {
+                                                            "type": "string",
+                                                            "example": "Online"
+                                                        },
+                                                        "status": {
+                                                            "type": "string",
+                                                            "example": "Completed"
+                                                        },
+                                                        "amount": {
+                                                            "type": "number",
+                                                            "example": 100000
+                                                        },
+                                                        "transaction_id": {
+                                                            "type": "string",
+                                                            "example": "A000000000000000000000000000000000000"
+                                                        },
+                                                        "reference_id": {
+                                                            "type": "string",
+                                                            "example": "123456789"
+                                                        },
+                                                        "paid_at": {
+                                                            "type": "string",
+                                                            "example": "2024-01-01T12:00:00.000000Z"
+                                                        },
+                                                        "created_at": {
+                                                            "type": "string",
+                                                            "example": "2024-01-01T11:00:00.000000Z"
+                                                        }
+                                                    },
+                                                    "type": "object"
                                                 },
-                                                "paid_at": {
+                                                "created_at": {
+                                                    "description": "Order creation date",
+                                                    "type": "string",
+                                                    "example": "2024-01-01T10:00:00.000000Z"
+                                                },
+                                                "updated_at": {
+                                                    "description": "Order last update date",
                                                     "type": "string",
                                                     "example": "2024-01-01T12:00:00.000000Z"
                                                 },
-                                                "created_at": {
-                                                    "type": "string",
-                                                    "example": "2024-01-01T11:00:00.000000Z"
-                                                }
-                                            },
-                                            "type": "object"
-                                        },
-                                        "created_at": {
-                                            "description": "Order creation date",
-                                            "type": "string",
-                                            "example": "2024-01-01T10:00:00.000000Z"
-                                        },
-                                        "updated_at": {
-                                            "description": "Order last update date",
-                                            "type": "string",
-                                            "example": "2024-01-01T12:00:00.000000Z"
-                                        },
-                                        "status_summary": {
-                                            "description": "Status summary",
-                                            "properties": {
-                                                "is_paid": {
-                                                    "type": "boolean",
-                                                    "example": true
-                                                },
-                                                "is_pending": {
-                                                    "type": "boolean",
-                                                    "example": false
-                                                },
-                                                "is_failed": {
-                                                    "type": "boolean",
-                                                    "example": false
-                                                },
-                                                "can_retry_payment": {
-                                                    "type": "boolean",
-                                                    "example": false
+                                                "status_summary": {
+                                                    "description": "Status summary",
+                                                    "properties": {
+                                                        "is_paid": {
+                                                            "type": "boolean",
+                                                            "example": true
+                                                        },
+                                                        "is_pending": {
+                                                            "type": "boolean",
+                                                            "example": false
+                                                        },
+                                                        "is_failed": {
+                                                            "type": "boolean",
+                                                            "example": false
+                                                        },
+                                                        "can_retry_payment": {
+                                                            "type": "boolean",
+                                                            "example": false
+                                                        }
+                                                    },
+                                                    "type": "object"
                                                 }
                                             },
                                             "type": "object"
@@ -2326,86 +2501,95 @@
                                             "type": "boolean",
                                             "example": true
                                         },
-                                        "gateways": {
-                                            "description": "Active payment gateways",
+                                        "message": {
+                                            "type": "string",
+                                            "example": "درگاه‌های پرداخت با موفقیت دریافت شدند."
+                                        },
+                                        "data": {
                                             "properties": {
-                                                "melli_test": {
-                                                    "description": "Melli bank test gateway",
+                                                "gateways": {
+                                                    "description": "Active payment gateways",
                                                     "properties": {
-                                                        "name": {
-                                                            "type": "string",
-                                                            "example": "Melli Bank Test"
+                                                        "melli_test": {
+                                                            "description": "Melli bank test gateway",
+                                                            "properties": {
+                                                                "name": {
+                                                                    "type": "string",
+                                                                    "example": "Melli Bank Test"
+                                                                },
+                                                                "type": {
+                                                                    "type": "string",
+                                                                    "example": "melli_test"
+                                                                },
+                                                                "enabled": {
+                                                                    "type": "boolean",
+                                                                    "example": true
+                                                                },
+                                                                "merchant_id": {
+                                                                    "type": "string",
+                                                                    "example": "46645"
+                                                                },
+                                                                "terminal_id": {
+                                                                    "type": "string",
+                                                                    "example": "GBHDTY98"
+                                                                }
+                                                            },
+                                                            "type": "object"
                                                         },
-                                                        "type": {
-                                                            "type": "string",
-                                                            "example": "melli_test"
+                                                        "zarinpal_test": {
+                                                            "description": "Zarinpal test gateway",
+                                                            "properties": {
+                                                                "name": {
+                                                                    "type": "string",
+                                                                    "example": "Zarinpal Test"
+                                                                },
+                                                                "type": {
+                                                                    "type": "string",
+                                                                    "example": "zarinpal_test"
+                                                                },
+                                                                "enabled": {
+                                                                    "type": "boolean",
+                                                                    "example": true
+                                                                },
+                                                                "merchant_id": {
+                                                                    "type": "string",
+                                                                    "example": "xxxxxxxx-xxxx-xxxx-xxxx-xxxxxxxxxxxx"
+                                                                }
+                                                            },
+                                                            "type": "object"
                                                         },
-                                                        "enabled": {
-                                                            "type": "boolean",
-                                                            "example": true
-                                                        },
-                                                        "merchant_id": {
-                                                            "type": "string",
-                                                            "example": "46645"
-                                                        },
-                                                        "terminal_id": {
-                                                            "type": "string",
-                                                            "example": "GBHDTY98"
+                                                        "zarinpal": {
+                                                            "description": "Zarinpal main gateway",
+                                                            "properties": {
+                                                                "name": {
+                                                                    "type": "string",
+                                                                    "example": "Zarinpal"
+                                                                },
+                                                                "type": {
+                                                                    "type": "string",
+                                                                    "example": "zarinpal"
+                                                                },
+                                                                "enabled": {
+                                                                    "type": "boolean",
+                                                                    "example": false
+                                                                },
+                                                                "merchant_id": {
+                                                                    "type": "string",
+                                                                    "example": "xxxxxxxx-xxxx-xxxx-xxxx-xxxxxxxxxxxx"
+                                                                }
+                                                            },
+                                                            "type": "object"
                                                         }
                                                     },
                                                     "type": "object"
                                                 },
-                                                "zarinpal_test": {
-                                                    "description": "Zarinpal test gateway",
-                                                    "properties": {
-                                                        "name": {
-                                                            "type": "string",
-                                                            "example": "Zarinpal Test"
-                                                        },
-                                                        "type": {
-                                                            "type": "string",
-                                                            "example": "zarinpal_test"
-                                                        },
-                                                        "enabled": {
-                                                            "type": "boolean",
-                                                            "example": true
-                                                        },
-                                                        "merchant_id": {
-                                                            "type": "string",
-                                                            "example": "xxxxxxxx-xxxx-xxxx-xxxx-xxxxxxxxxxxx"
-                                                        }
-                                                    },
-                                                    "type": "object"
-                                                },
-                                                "zarinpal": {
-                                                    "description": "Zarinpal main gateway",
-                                                    "properties": {
-                                                        "name": {
-                                                            "type": "string",
-                                                            "example": "Zarinpal"
-                                                        },
-                                                        "type": {
-                                                            "type": "string",
-                                                            "example": "zarinpal"
-                                                        },
-                                                        "enabled": {
-                                                            "type": "boolean",
-                                                            "example": false
-                                                        },
-                                                        "merchant_id": {
-                                                            "type": "string",
-                                                            "example": "xxxxxxxx-xxxx-xxxx-xxxx-xxxxxxxxxxxx"
-                                                        }
-                                                    },
-                                                    "type": "object"
+                                                "default_gateway": {
+                                                    "description": "Default gateway",
+                                                    "type": "string",
+                                                    "example": "melli_test"
                                                 }
                                             },
                                             "type": "object"
-                                        },
-                                        "default_gateway": {
-                                            "description": "Default gateway",
-                                            "type": "string",
-                                            "example": "melli_test"
                                         }
                                     },
                                     "type": "object"

@@ -23,6 +23,7 @@ Route::post('reset-password', [AuthController::class, 'resetPassword']);
 Route::middleware('auth:api')->group(function () {
     Route::get('profile', [AuthController::class, 'profile']);
     Route::post('profile/update', [AuthController::class, 'updateProfile']);
+    Route::post('logout', [AuthController::class, 'logout']);
     Route::get('addresses', [\App\Http\Controllers\AddressController::class, 'index']);
     Route::post('addresses', [\App\Http\Controllers\AddressController::class, 'store']);
     Route::put('addresses/{id}', [\App\Http\Controllers\AddressController::class, 'update']);
