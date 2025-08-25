@@ -61,9 +61,9 @@ class PaymentResource extends JsonResource
             'description' => $this->description,
             'callback_url' => $this->callback_url,
             'gateway_response' => $this->gateway_response_array,
-            'created_at' => $this->created_at?->toISOString(),
-            'updated_at' => $this->updated_at?->toISOString(),
+            'created_at' => config('general.show_date')($this->created_at),
+            'updated_at' => config('general.show_date')($this->updated_at),
             'order' => new OrderResource($this->whenLoaded('order')),
         ];
     }
-} 
+}

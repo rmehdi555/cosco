@@ -1,6 +1,7 @@
 <?php
 
 use App\Http\Controllers\ProductController;
+use App\Http\Controllers\SitemapController;
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\AuthController;
 use App\Http\Controllers\MembershipTypeController;
@@ -83,3 +84,7 @@ Route::get('home-page/', [\App\Http\Controllers\HomeController::class, 'index'])
 // Global search
 Route::get('search', [\App\Http\Controllers\SearchController::class, 'search']);
 Route::get('search-all', [\App\Http\Controllers\SearchController::class, 'searchAll']);
+
+//sitemap
+Route::get('sitemap', [SitemapController::class, 'index']);
+Route::get('robots', [SitemapController::class, 'robots']);

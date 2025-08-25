@@ -44,8 +44,8 @@ class ArticleCategoryResource extends JsonResource
             'seo_index' => $this->seo_index,
             'seo_canonical' => $this->seo_canonical,
             'articles' => ArticleResource::collection($this->whenLoaded('articles')),
-            'created_at' => $this->created_at,
-            'updated_at' => $this->updated_at,
+            'created_at' => config('general.show_date')($this->created_at),
+            'updated_at' => config('general.show_date')($this->updated_at),
         ];
     }
-} 
+}

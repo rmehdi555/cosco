@@ -1479,7 +1479,7 @@
                     "Orders"
                 ],
                 "summary": "Get user's orders",
-                "description": "Returns a list of all orders for the authenticated user",
+                "description": "Returns a paginated list of orders for the authenticated user with available filter options",
                 "operationId": "getUserOrders",
                 "parameters": [
                     {
@@ -1511,6 +1511,26 @@
                                 "refunded"
                             ]
                         }
+                    },
+                    {
+                        "name": "page",
+                        "in": "query",
+                        "description": "Page number",
+                        "required": false,
+                        "schema": {
+                            "type": "integer",
+                            "example": 1
+                        }
+                    },
+                    {
+                        "name": "count",
+                        "in": "query",
+                        "description": "Items per page",
+                        "required": false,
+                        "schema": {
+                            "type": "integer",
+                            "example": 5
+                        }
                     }
                 ],
                 "responses": {
@@ -1529,10 +1549,80 @@
                                             "example": "عملیات با موفقیت انجام شد"
                                         },
                                         "data": {
-                                            "type": "array",
-                                            "items": {
-                                                "$ref": "#/components/schemas/OrderResource"
-                                            }
+                                            "properties": {
+                                                "orders": {
+                                                    "properties": {
+                                                        "data": {
+                                                            "type": "array",
+                                                            "items": {
+                                                                "$ref": "#/components/schemas/OrderResource"
+                                                            }
+                                                        }
+                                                    },
+                                                    "type": "object"
+                                                },
+                                                "pagination": {
+                                                    "properties": {
+                                                        "total": {
+                                                            "type": "integer",
+                                                            "example": 100
+                                                        },
+                                                        "perPage": {
+                                                            "type": "integer",
+                                                            "example": 5
+                                                        },
+                                                        "currentPage": {
+                                                            "type": "integer",
+                                                            "example": 1
+                                                        },
+                                                        "lastPage": {
+                                                            "type": "integer",
+                                                            "example": 20
+                                                        }
+                                                    },
+                                                    "type": "object"
+                                                },
+                                                "filters": {
+                                                    "properties": {
+                                                        "status": {
+                                                            "description": "Order status options (name pairs)\n     *                         ",
+                                                            "type": "array",
+                                                            "items": {
+                                                                "properties": {
+                                                                    "name_en": {
+                                                                        "type": "string",
+                                                                        "example": "pending"
+                                                                    },
+                                                                    "name_fa": {
+                                                                        "type": "string",
+                                                                        "example": "در انتظار"
+                                                                    }
+                                                                },
+                                                                "type": "object"
+                                                            }
+                                                        },
+                                                        "payment_status": {
+                                                            "description": "Payment status options (value/label)",
+                                                            "type": "array",
+                                                            "items": {
+                                                                "properties": {
+                                                                    "value": {
+                                                                        "type": "string",
+                                                                        "example": "unpaid"
+                                                                    },
+                                                                    "label": {
+                                                                        "type": "string",
+                                                                        "example": "پرداخت نشده"
+                                                                    }
+                                                                },
+                                                                "type": "object"
+                                                            }
+                                                        }
+                                                    },
+                                                    "type": "object"
+                                                }
+                                            },
+                                            "type": "object"
                                         },
                                         "errors": {
                                             "type": "null",
@@ -1778,7 +1868,7 @@
                     "Payments"
                 ],
                 "summary": "Get user payments list",
-                "description": "This API returns a list of all payments for the authenticated user. It supports filtering by status and payment method.",
+                "description": "Returns a paginated list of payments for the authenticated user with available filter options.",
                 "operationId": "getUserPayments",
                 "parameters": [
                     {
@@ -1837,9 +1927,9 @@
                             "application/json": {
                                 "schema": {
                                     "properties": {
-                                        "success": {
-                                            "type": "boolean",
-                                            "example": true
+                                        "status": {
+                                            "type": "integer",
+                                            "example": 200
                                         },
                                         "message": {
                                             "type": "string",
@@ -3476,6 +3566,135 @@
                     },
                     "422": {
                         "description": "خطای اعتبارسنجی"
+                    }
+                }
+            }
+        },
+        "/api/sitemap": {
+            "get": {
+                "tags": [
+                    "Sitemap"
+                ],
+                "summary": "Get sitemap URLs",
+                "description": "Returns a list of important site URLs with metadata for crawlers",
+                "operationId": "getSitemap",
+                "responses": {
+                    "200": {
+                        "description": "Successful operation",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "status": {
+                                            "type": "integer",
+                                            "example": 200
+                                        },
+                                        "message": {
+                                            "type": "string",
+                                            "example": ""
+                                        },
+                                        "data": {
+                                            "type": "array",
+                                            "items": {
+                                                "properties": {
+                                                    "url": {
+                                                        "type": "string",
+                                                        "example": "https://example.com/articles/example-slug"
+                                                    },
+                                                    "lastModified": {
+                                                        "type": "string",
+                                                        "example": "2024-01-01"
+                                                    },
+                                                    "changeFrequency": {
+                                                        "type": "string",
+                                                        "example": "always"
+                                                    },
+                                                    "priority": {
+                                                        "type": "number",
+                                                        "format": "float",
+                                                        "example": 0.9
+                                                    }
+                                                },
+                                                "type": "object"
+                                            }
+                                        },
+                                        "errors": {
+                                            "type": "null",
+                                            "example": null
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        },
+        "/api/robots": {
+            "get": {
+                "tags": [
+                    "Sitemap"
+                ],
+                "summary": "Get robots rules",
+                "description": "Returns robots.txt-like rules and sitemap location",
+                "operationId": "getRobots",
+                "responses": {
+                    "200": {
+                        "description": "Successful operation",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "status": {
+                                            "type": "integer",
+                                            "example": 200
+                                        },
+                                        "message": {
+                                            "type": "string",
+                                            "example": ""
+                                        },
+                                        "data": {
+                                            "properties": {
+                                                "rules": {
+                                                    "properties": {
+                                                        "userAgent": {
+                                                            "type": "string",
+                                                            "example": "*"
+                                                        },
+                                                        "allow": {
+                                                            "type": "array",
+                                                            "items": {
+                                                                "type": "string",
+                                                                "example": "/"
+                                                            }
+                                                        },
+                                                        "disallow": {
+                                                            "type": "array",
+                                                            "items": {
+                                                                "type": "string",
+                                                                "example": "/dashboard"
+                                                            }
+                                                        }
+                                                    },
+                                                    "type": "object"
+                                                },
+                                                "sitemap": {
+                                                    "type": "string",
+                                                    "example": "https://example.com/sitemap.xml"
+                                                }
+                                            },
+                                            "type": "object"
+                                        },
+                                        "errors": {
+                                            "type": "null",
+                                            "example": null
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
                     }
                 }
             }
@@ -5601,6 +5820,10 @@
         {
             "name": "Order Items",
             "description": "API endpoints for order items"
+        },
+        {
+            "name": "Sitemap",
+            "description": "Public endpoints for sitemap and robots"
         },
         {
             "name": "Address",

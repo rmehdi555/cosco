@@ -34,7 +34,7 @@ class OrderController extends Controller
      *     operationId="getUserOrders",
      *     tags={"Orders"},
      *     summary="Get user's orders",
-     *     description="Returns a list of all orders for the authenticated user",
+     *     description="Returns a paginated list of orders for the authenticated user with available filter options",
      *     security={{"bearerAuth":{}}},
      *     @OA\Parameter(
      *         name="status",
@@ -50,6 +50,20 @@ class OrderController extends Controller
      *         required=false,
      *         @OA\Schema(type="string", enum={"unpaid", "paid", "refunded"})
      *     ),
+     *     @OA\Parameter(
+     *         name="page",
+     *         in="query",
+     *         description="Page number",
+     *         required=false,
+     *         @OA\Schema(type="integer", example=1)
+     *     ),
+     *     @OA\Parameter(
+     *         name="count",
+     *         in="query",
+     *         description="Items per page",
+     *         required=false,
+     *         @OA\Schema(type="integer", example=5)
+     *     ),
      *     @OA\Response(
      *         response=200,
      *         description="Successful operation",
@@ -59,8 +73,49 @@ class OrderController extends Controller
      *             @OA\Property(property="message", type="string", example="عملیات با موفقیت انجام شد"),
      *             @OA\Property(
      *                 property="data",
-     *                 type="array",
-     *                 @OA\Items(ref="#/components/schemas/OrderResource")
+     *                 type="object",
+     *                 @OA\Property(
+     *                     property="orders",
+     *                     type="object",
+     *                     @OA\Property(
+     *                         property="data",
+     *                         type="array",
+     *                         @OA\Items(ref="#/components/schemas/OrderResource")
+     *                     )
+     *                 ),
+     *                 @OA\Property(
+     *                     property="pagination",
+     *                     type="object",
+     *                     @OA\Property(property="total", type="integer", example=100),
+     *                     @OA\Property(property="perPage", type="integer", example=5),
+     *                     @OA\Property(property="currentPage", type="integer", example=1),
+     *                     @OA\Property(property="lastPage", type="integer", example=20)
+     *                 ),
+     *                 @OA\Property(
+     *                     property="filters",
+     *                     type="object",
+     *                     @OA\Property(
+     *                         property="status",
+     *                         type="array",
+     *                         description="Order status options (name pairs)
+     *                         ",
+     *                         @OA\Items(
+     *                             type="object",
+     *                             @OA\Property(property="name_en", type="string", example="pending"),
+     *                             @OA\Property(property="name_fa", type="string", example="در انتظار")
+     *                         )
+     *                     ),
+     *                     @OA\Property(
+     *                         property="payment_status",
+     *                         type="array",
+     *                         description="Payment status options (value/label)",
+     *                         @OA\Items(
+     *                             type="object",
+     *                             @OA\Property(property="value", type="string", example="unpaid"),
+     *                             @OA\Property(property="label", type="string", example="پرداخت نشده")
+     *                         )
+     *                     )
+     *                 )
      *             ),
      *             @OA\Property(property="errors", type="null", example=null)
      *         )

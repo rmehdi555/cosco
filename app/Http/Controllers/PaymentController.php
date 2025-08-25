@@ -39,7 +39,7 @@ class PaymentController extends Controller
      *     operationId="getUserPayments",
      *     tags={"Payments"},
      *     summary="Get user payments list",
-     *     description="This API returns a list of all payments for the authenticated user. It supports filtering by status and payment method.",
+     *     description="Returns a paginated list of payments for the authenticated user with available filter options.",
      *     security={{"bearerAuth":{}}},
      *     @OA\Parameter(
      *         name="status",
@@ -73,7 +73,8 @@ class PaymentController extends Controller
      *         response=200,
      *         description="Successful operation",
      *         @OA\JsonContent(
-     *             @OA\Property(property="success", type="boolean", example=true),
+     *             type="object",
+     *             @OA\Property(property="status", type="integer", example=200),
      *             @OA\Property(property="message", type="string", example="لیست پرداخت‌ها با موفقیت دریافت شد."),
      *             @OA\Property(
      *                 property="data",

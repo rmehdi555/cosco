@@ -49,7 +49,7 @@ class ProductReviewResource extends JsonResource
             'comment' => $this->comment,
             'approved' => $this->approved,
             'parent_id' => $this->parent_id,
-            'created_at' => $this->created_at->format('Y-m-d H:i'),
+            'created_at' => config('general.show_date')($this->created_at),
             'files' => $images
         ];
     }
