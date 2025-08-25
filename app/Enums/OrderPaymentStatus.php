@@ -39,4 +39,16 @@ enum OrderPaymentStatus: string
             self::REFUNDED->value => self::REFUNDED->getLabel(),
         ];
     }
-} 
+
+    public static function getNamePairs(): array
+    {
+        $result = [];
+        foreach (self::cases() as $case) {
+            $result[] = [
+                'value' => $case->value,
+                'label' => $case->getLabel(),
+            ];
+        }
+        return $result;
+    }
+}

@@ -201,12 +201,13 @@ class ProductController extends Controller
      */
     public function comment(ProductCommentRequest $request)
     {
+//        return response()->json($request->validated());
         try {
             DB::beginTransaction();
             $product = Product::whereSlug($request->product_slug)->firstOrFail();
             $productReview = ProductReview::create([
                 'product_id' => $product->id,
-                'description' => $request->description,
+                'comment' => $request->description,
                 'user_id' => Auth::id(),
                 'rating' => $request->rate,
             ]);
@@ -215,21 +216,25 @@ class ProductController extends Controller
             if ($request->has('comment')) {
                 $files = [];
                 foreach ($request->comment as $comment) {
-                    $path = $comment['file']->store('product-comments', 'public');
-                    $files[] = [
-                        'product_review_id' => $productReview->id,
-                        'image_url' => $path,
-                        'created_at' => $now,
-                        'updated_at' => $now,
-                    ];
+                    if (isset($comment['file']) and $comment['file']) {
+                        $path = $comment['file']->store('product-comments', 'public');
+                        $files[] = [
+                            'product_review_id' => $productReview->id,
+                            'image_url' => $path,
+                            'created_at' => $now,
+                            'updated_at' => $now,
+                        ];
+                    }
                 }
-                ProductReviewFile::insert($files);
+                if (!empty($files)) {
+                    ProductReviewFile::insert($files);
+                }
             }
 
+            DB::commit();
             return ApiResponse::success(true, __('messages.comment_saved'));
         } catch (\Exception $e) {
             DB::rollBack();
-
             return ApiResponse::serverError(__('messages.error_comment'), $e->getMessage());
         }
     }

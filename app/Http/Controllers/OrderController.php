@@ -2,6 +2,8 @@
 
 namespace App\Http\Controllers;
 
+use App\Http\Requests\OrderIndexRequest;
+use App\Http\Resources\OrderIndexResource;
 use App\Http\Resources\OrderResource;
 use App\Http\Requests\CreateOrderRequest;
 use App\Models\Order;
@@ -65,27 +67,36 @@ class OrderController extends Controller
      *     )
      * )
      */
-    public function index(Request $request)
+    public function index(OrderIndexRequest $request)
     {
         $user = $request->user();
 
-        $query = $user->orders()
+        $orders = $user->orders()
             ->with(['shippingAddress.country', 'shippingAddress.province', 'shippingAddress.city', 'orderItems.product'])
-            ->orderBy('created_at', 'desc');
+            ->when(
+                isset($request->status),
+                fn($q) => $q->where('status', $request->status)
+            )->when(
+                isset($request->payment_status),
+                fn($q) => $q->where('payment_status', $request->payment_status)
+            )->orderBy('created_at', 'desc')->paginate($request->count ?? 5);
 
-        // Filter by status
-        if ($request->has('status')) {
-            $query->where('status', $request->status);
-        }
+        $orderStatus = OrderStatus::getNamePairs();
+        $orderPaymentStatus = OrderPaymentStatus::getNamePairs();
 
-        // Filter by payment status
-        if ($request->has('payment_status')) {
-            $query->where('payment_status', $request->payment_status);
-        }
-
-        $orders = $query->get();
-
-        return ApiResponse::success(OrderResource::collection($orders));
+        return ApiResponse::success([
+            'orders' => OrderResource::collection($orders),
+            'pagination' => [
+                'total' => $orders->total(),
+                'perPage' => $orders->perPage(),
+                'currentPage' => $orders->currentPage(),
+                'lastPage' => $orders->lastPage(),
+            ],
+            'filters' => [
+                'status' => $orderStatus,
+                'payment_status' => $orderPaymentStatus,
+            ]
+        ]);
     }
 
     /**

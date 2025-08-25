@@ -30,7 +30,7 @@ class CartResource extends JsonResource
      */
     public function toArray(Request $request): array
     {
-        $dates = collect(range(2, 4))->map(fn($day) => Carbon::now()->addDays($day)->toDateString());
+        $dates = collect(range(2, 4))->map(fn($day) => config('general.show_date')(Carbon::now()->addDays($day)->toDateString()));
 
         return [
             'status' => $this->status?->getLabel(),

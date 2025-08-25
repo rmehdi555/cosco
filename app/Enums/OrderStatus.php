@@ -47,4 +47,17 @@ enum OrderStatus: string
             self::CANCELLED->value => self::CANCELLED->getLabel(),
         ];
     }
-} 
+
+    public static function getNamePairs(): array
+    {
+        $result = [];
+        foreach (self::cases() as $case) {
+            $result[] = [
+                'name_en' => $case->value,
+                'name_fa' => $case->getLabel(),
+            ];
+        }
+        return $result;
+    }
+
+}
