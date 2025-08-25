@@ -50,4 +50,9 @@ class ProductReview extends Model
     {
         return $this->replies()->with('replies');
     }
-} 
+
+    public function productReviewFile():HasMany
+    {
+        return $this->hasMany(ProductReviewFile::class);
+    }
+}

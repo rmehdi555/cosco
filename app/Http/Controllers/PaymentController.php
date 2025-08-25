@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Http\Controllers\Controller;
+use App\Http\Requests\PaymentIndexRequest;
 use App\Services\OnlinePaymentService;
 use App\Models\Order;
 use Illuminate\Http\Request;
@@ -137,25 +138,21 @@ class PaymentController extends Controller
      *     )
      * )
      */
-    public function index(Request $request): JsonResponse
+    public function index(PaymentIndexRequest $request): JsonResponse
     {
         $user = $request->user();
-        
+
         $query = Payment::whereHas('order', function ($q) use ($user) {
             $q->where('user_id', $user->id);
         })
-        ->with(['order.shippingAddress.country', 'order.shippingAddress.province', 'order.shippingAddress.city'])
-        ->orderBy('created_at', 'desc');
-
-        // Filter by status
-        if ($request->has('status')) {
-            $query->where('status', $request->status);
-        }
-
-        // Filter by method
-        if ($request->has('method')) {
-            $query->where('method', $request->method);
-        }
+            ->when(
+                isset($request->status),
+                fn($q) => $q->where('status', $request->status)
+            )->when(
+                isset($request->method),
+                fn($q) => $q->where('method', $request->method))
+            ->with(['order.shippingAddress.country', 'order.shippingAddress.province', 'order.shippingAddress.city'])
+            ->orderBy('created_at', 'desc');
 
         $perPage = $request->get('per_page', 15);
         $payments = $query->paginate($perPage);
@@ -246,7 +243,7 @@ class PaymentController extends Controller
     public function show(Request $request, Payment $payment): JsonResponse
     {
         $user = $request->user();
-        
+
         // Check if the payment belongs to the authenticated user
         if ($payment->order->user_id !== $user->id) {
             return ApiResponse::error(trans('payments.not_authorized_to_view'), null, 403);
@@ -401,7 +398,7 @@ class PaymentController extends Controller
     {
         $callbackData = $request->all();
         $gateway = $request->get('gateway');
-        
+
         $result = $this->paymentService->verifyPayment($callbackData, $gateway);
 
         return view('payment.result', [
@@ -499,7 +496,7 @@ class PaymentController extends Controller
     {
         try {
             // دریافت سفارش با اطلاعات مرتبط
-            $order = Order::with(['user', 'payments' => function($query) {
+            $order = Order::with(['user', 'payments' => function ($query) {
                 $query->latest()->first();
             }])->find($orderId);
 
@@ -634,4 +631,4 @@ class PaymentController extends Controller
     }
 
 
-} 
+}

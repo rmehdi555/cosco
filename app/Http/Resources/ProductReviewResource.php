@@ -33,6 +33,13 @@ class ProductReviewResource extends JsonResource
 {
     public function toArray($request)
     {
+        $images = [];
+        foreach ($this->productReviewFile as $image) {
+            $images[] = [
+                'original' => asset('storage/' . $image->image_url)
+            ];
+        }
+
         return [
             'id' => $this->id,
             'user_id' => $this->user_id,
@@ -43,9 +50,7 @@ class ProductReviewResource extends JsonResource
             'approved' => $this->approved,
             'parent_id' => $this->parent_id,
             'created_at' => $this->created_at->format('Y-m-d H:i'),
-            'files' => [[
-                'original' => 'https://api.rdst.ca/storage/product-images/01K29NKBWHNPB5E48HW6V0Y1PV.jpg'
-            ]]
+            'files' => $images
         ];
     }
 }
