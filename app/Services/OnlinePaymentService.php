@@ -109,7 +109,7 @@ class OnlinePaymentService
             }
 
             // تایید از درگاه
-            $result = $this->verifyWithGateway($callbackData, $gatewayConfig);
+            $result = $this->verifyWithGateway($callbackData, $gatewayConfig, (int)$payment->amount);
 
             // بروزرسانی وضعیت پرداخت
             $this->updatePaymentStatus($payment, $result);
@@ -121,6 +121,7 @@ class OnlinePaymentService
                 'success' => $result['success'],
                 'payment' => $payment,
                 'order' => $payment->order,
+                'order_id' => $payment->order_id,
                 'message' => $result['message'],
                 'gateway_response' => $result['gateway_response']
             ];
@@ -293,11 +294,9 @@ class OnlinePaymentService
      */
     private function sendToZarinpal(Order $order, Payment $payment, array $gatewayConfig): array
     {
-        $amount = $order->total_amount * 10; // تبدیل به ریال
-
         $data = [
             'merchant_id' => $gatewayConfig['merchant_id'],
-            'amount' => $amount,
+            'amount' => (int)$payment->amount,
             'callback_url' => $payment->callback_url,
             'description' => $payment->description,
             'metadata' => [
@@ -312,7 +311,7 @@ class OnlinePaymentService
         Log::info('Zarinpal Request Data:', [
             'order_id' => $order->id,
             'payment_id' => $payment->id,
-            'amount' => $amount,
+            'amount' => (int)$payment->amount,
             'merchant_id' => $gatewayConfig['merchant_id'],
             'request_url' => $gatewayConfig['request_url'],
             'data' => $data
@@ -366,9 +365,9 @@ class OnlinePaymentService
     /**
      * تایید با درگاه
      */
-    private function verifyWithGateway(array $callbackData, array $gatewayConfig): array
+    private function verifyWithGateway(array $callbackData, array $gatewayConfig, int $paymentAmount): array
     {
-        $gatewayType = $gatewayConfig['type'] ?? 'melli_test';
+        $gatewayType = $gatewayConfig['type'] ?? 'zarinpal_test';
 
         switch ($gatewayType) {
             case 'melli_test':
@@ -376,7 +375,7 @@ class OnlinePaymentService
 
             case 'zarinpal':
             case 'zarinpal_test':
-                return $this->verifyWithZarinpal($callbackData, $gatewayConfig);
+                return $this->verifyWithZarinpal($callbackData, $gatewayConfig, $paymentAmount);
 
             default:
                 throw new \Exception("نوع درگاه {$gatewayType} پشتیبانی نمی‌شود");
@@ -458,10 +457,10 @@ class OnlinePaymentService
     /**
      * تایید با درگاه زرین‌پال
      */
-    private function verifyWithZarinpal(array $callbackData, array $gatewayConfig): array
+    private function verifyWithZarinpal(array $callbackData, array $gatewayConfig, int $paymentAmount): array
     {
-        $authority = $callbackData['authority'] ?? null;
-        $status = $callbackData['status'] ?? null;
+        $authority = $callbackData['Authority'] ?? null;
+        $status = $callbackData['Status'] ?? null;
 
         if (!$authority) {
             return [
@@ -483,7 +482,7 @@ class OnlinePaymentService
         $data = [
             'merchant_id' => $gatewayConfig['merchant_id'],
             'authority' => $authority,
-            'amount' => $callbackData['amount'] ?? 0,
+            'amount' => $paymentAmount ?? 0,
         ];
 
         $response = Http::withHeaders([
@@ -500,7 +499,7 @@ class OnlinePaymentService
                     'message' => 'پرداخت با موفقیت انجام شد',
                     'gateway_response' => $result,
                     'ref_id' => $result['data']['ref_id'],
-                    'amount' => $result['data']['amount'],
+//                    'amount' => $result['data']['amount'],
                 ];
             } else {
                 return [
@@ -541,7 +540,7 @@ class OnlinePaymentService
                 ->first();
         } else {
             // برای زرین‌پال
-            $authority = $callbackData['authority'] ?? null;
+            $authority = $callbackData['Authority'] ?? null;
             if (!$authority) {
                 return null;
             }
@@ -580,11 +579,11 @@ class OnlinePaymentService
         if ($paymentSuccess) {
             $order->update([
                 'payment_status' => 'paid',
-                'status' => 'processing'
+                'status' => 'paid'
             ]);
         } else {
             $order->update([
-                'payment_status' => 'failed'
+                'payment_status' => 'unpaid'
             ]);
         }
     }

@@ -52,7 +52,7 @@ class PaymentResource extends JsonResource
             'method_label' => $this->method?->label(),
             'status' => $this->status?->value,
             'status_label' => $this->status?->label(),
-            'paid_at' => $this->paid_at?->toISOString(),
+            'paid_at' => config('general.show_date')($this->paid_at?->toISOString()),
             'amount' => $this->amount,
             'formatted_amount' => number_format($this->amount) . ' Rials',
             'merchant_id' => $this->merchant_id,

@@ -2715,6 +2715,109 @@
                 ]
             }
         },
+        "/api/payment/callback/verify": {
+            "get": {
+                "tags": [
+                    "Payments"
+                ],
+                "summary": "Verify payment callback (API)",
+                "description": "Verifies the payment with the selected gateway using callback query parameters, then redirects the client to the result page.",
+                "operationId": "befe9fe908fe0c4150355b8de983b3f1",
+                "parameters": [
+                    {
+                        "name": "gateway",
+                        "in": "query",
+                        "description": "Payment gateway name",
+                        "required": false,
+                        "schema": {
+                            "type": "string",
+                            "example": "melli_test"
+                        }
+                    },
+                    {
+                        "name": "Token",
+                        "in": "query",
+                        "description": "Transaction token from Melli bank gateway",
+                        "required": false,
+                        "schema": {
+                            "type": "string",
+                            "example": "123456789"
+                        }
+                    },
+                    {
+                        "name": "ResCod",
+                        "in": "query",
+                        "description": "Response code from gateway (0 for success)",
+                        "required": false,
+                        "schema": {
+                            "type": "string",
+                            "example": "0"
+                        }
+                    },
+                    {
+                        "name": "RefNum",
+                        "in": "query",
+                        "description": "Payment reference number",
+                        "required": false,
+                        "schema": {
+                            "type": "string",
+                            "example": "123456789"
+                        }
+                    },
+                    {
+                        "name": "authority",
+                        "in": "query",
+                        "description": "Transaction ID from Zarinpal gateway",
+                        "required": false,
+                        "schema": {
+                            "type": "string",
+                            "example": "A000000000000000000000000000000000000"
+                        }
+                    },
+                    {
+                        "name": "status",
+                        "in": "query",
+                        "description": "Payment status (OK for success, Cancel for failure) - Zarinpal only",
+                        "required": false,
+                        "schema": {
+                            "type": "string",
+                            "enum": [
+                                "OK",
+                                "Cancel"
+                            ],
+                            "example": "OK"
+                        }
+                    },
+                    {
+                        "name": "ref_id",
+                        "in": "query",
+                        "description": "Payment reference ID - Zarinpal only",
+                        "required": false,
+                        "schema": {
+                            "type": "string",
+                            "example": "123456789"
+                        }
+                    }
+                ],
+                "responses": {
+                    "302": {
+                        "description": "Redirect to result page",
+                        "headers": {
+                            "Location": {
+                                "description": "Destination URL containing order identifier",
+                                "schema": {
+                                    "type": "string",
+                                    "example": "https://rdst.ca/callback-zarinpal-result/123"
+                                }
+                            }
+                        }
+                    },
+                    "500": {
+                        "description": "Server error while verifying payment"
+                    }
+                }
+            }
+        },
         "/api/product-categories/tree": {
             "get": {
                 "tags": [

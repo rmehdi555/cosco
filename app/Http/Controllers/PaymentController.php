@@ -402,22 +402,14 @@ class PaymentController extends Controller
 
         $result = $this->paymentService->verifyPayment($callbackData, $gateway);
 
-//        return view('payment.result', [
-//            'success' => $result['success'],
-//            'message' => $result['message'],
-//            'order' => $result['order'] ?? null,
-//            'payment' => $result['payment'] ?? null,
-//            'gateway_response' => $result['gateway_response'] ?? null,
-//            'callback_data' => $callbackData
-//        ]);
-        return ApiResponse::success([
+        return view('payment.result', [
             'success' => $result['success'],
             'message' => $result['message'],
             'order' => $result['order'] ?? null,
             'payment' => $result['payment'] ?? null,
             'gateway_response' => $result['gateway_response'] ?? null,
             'callback_data' => $callbackData
-        ], trans('payments.gateway_response_sent_success'));
+        ]);
     }
 
     /**
@@ -537,8 +529,8 @@ class PaymentController extends Controller
                     'amount' => $latestPayment->amount,
                     'transaction_id' => $latestPayment->bank_transaction_id,
                     'reference_id' => $latestPayment->bank_reference_id,
-                    'paid_at' => $latestPayment->paid_at,
-                    'created_at' => $latestPayment->created_at,
+                    'paid_at' => config('general.show_date')($latestPayment->paid_at),
+                    'created_at' => config('general.show_date')($latestPayment->created_at,)
                 ];
             }
 
@@ -549,15 +541,15 @@ class PaymentController extends Controller
                 'total_amount' => $order->total_amount,
                 'user_info' => $userInfo,
                 'payment_info' => $paymentInfo,
-                'created_at' => $order->created_at,
-                'updated_at' => $order->updated_at,
+                'created_at' => config('general.show_date')($order->created_at),
+                'updated_at' => config('general.show_date')($order->updated_at),
                 'status_summary' => [
                     'is_paid' => $order->payment_status === 'paid',
                     'is_pending' => $order->payment_status === 'pending',
                     'is_failed' => $order->payment_status === 'failed',
                     'can_retry_payment' => $order->payment_status === 'failed' || $order->payment_status === 'pending',
                 ]
-            ], trans('payments.status_retrieved_success'));
+            ], trans('payments.payment_retrieved'));
 
         } catch (\Exception $e) {
             Log::error('Payment Status Error: ' . $e->getMessage(), [
@@ -639,5 +631,84 @@ class PaymentController extends Controller
         return ApiResponse::success($gateways, trans('payments.gateways_retrieved_success'));
     }
 
+    /**
+     * @OA\Get(
+     *     path="/api/payment/callback/verify",
+     *     summary="Verify payment callback (API)",
+     *     description="Verifies the payment with the selected gateway using callback query parameters, then redirects the client to the result page.",
+     *     tags={"Payments"},
+     *     @OA\Parameter(
+     *         name="gateway",
+     *         in="query",
+     *         description="Payment gateway name",
+     *         required=false,
+     *         @OA\Schema(type="string", example="melli_test")
+     *     ),
+     *     @OA\Parameter(
+     *         name="Token",
+     *         in="query",
+     *         description="Transaction token from Melli bank gateway",
+     *         required=false,
+     *         @OA\Schema(type="string", example="123456789")
+     *     ),
+     *     @OA\Parameter(
+     *         name="ResCod",
+     *         in="query",
+     *         description="Response code from gateway (0 for success)",
+     *         required=false,
+     *         @OA\Schema(type="string", example="0")
+     *     ),
+     *     @OA\Parameter(
+     *         name="RefNum",
+     *         in="query",
+     *         description="Payment reference number",
+     *         required=false,
+     *         @OA\Schema(type="string", example="123456789")
+     *     ),
+     *     @OA\Parameter(
+     *         name="authority",
+     *         in="query",
+     *         description="Transaction ID from Zarinpal gateway",
+     *         required=false,
+     *         @OA\Schema(type="string", example="A000000000000000000000000000000000000")
+     *     ),
+     *     @OA\Parameter(
+     *         name="status",
+     *         in="query",
+     *         description="Payment status (OK for success, Cancel for failure) - Zarinpal only",
+     *         required=false,
+     *         @OA\Schema(type="string", example="OK", enum={"OK", "Cancel"})
+     *     ),
+     *     @OA\Parameter(
+     *         name="ref_id",
+     *         in="query",
+     *         description="Payment reference ID - Zarinpal only",
+     *         required=false,
+     *         @OA\Schema(type="string", example="123456789")
+     *     ),
+     *     @OA\Response(
+     *         response=302,
+     *         description="Redirect to result page",
+     *         @OA\Header(
+     *             header="Location",
+     *             description="Destination URL containing order identifier",
+     *             @OA\Schema(type="string", example="https://rdst.ca/callback-zarinpal-result/123")
+     *         )
+     *     ),
+     *     @OA\Response(
+     *         response=500,
+     *         description="Server error while verifying payment"
+     *     )
+     * )
+     */
+    public function callbackVerify(Request $request)
+    {
+        $callbackData = $request->all();
+        $gateway = $request->get('gateway');
+
+        $result = $this->paymentService->verifyPayment($callbackData, $gateway);
+
+        return redirect()->away('https://rdst.ca/callback-zarinpal-result/' . $result['order_id']);
+    }
 
 }
