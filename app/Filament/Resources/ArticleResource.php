@@ -22,6 +22,7 @@ use Filament\Tables\Filters\Filter;
 use Filament\Tables\Filters\SelectFilter;
 use Filament\Tables\Table;
 use Illuminate\Database\Eloquent\Builder;
+use Illuminate\Support\Facades\Auth;
 use Mohamedsabil83\FilamentFormsTinyeditor\Components\TinyEditor;
 
 class ArticleResource extends Resource
@@ -66,8 +67,22 @@ class ArticleResource extends Resource
 
                     Section::make()->schema([
                         TextInput::make('slug')->label('اسلاگ')->unique(ignoreRecord: true)->maxLength(255)->required(),
-                        Select::make('category_id')->relationship('category', 'name')->label('دسته بندی')->required(),
-                        Select::make('user_id')->relationship('user', 'first_name')->label('کاربر')->required(),
+                        Select::make('category_id')
+                            ->relationship('category', 'name', function ($query) {
+                                return $query->whereNotNull('name')->where('name', '!=', '');
+                            })
+                            ->label('دسته بندی')
+                            ->required()
+                            ->searchable()
+                            ->placeholder('انتخاب دسته بندی'),
+                        Select::make('user_id')
+                            ->relationship('user', 'first_name', function ($query) {
+                                return $query->whereNotNull('first_name')->where('first_name', '!=', '');
+                            })
+                            ->label('کاربر')
+                            ->required()
+                            ->searchable()
+                            ->placeholder('انتخاب کاربر'),
                         FileUpload::make('image_url')->image()->label('تصویر')->imageEditor()->nullable(),
                         TextInput::make('view_count')->label('تعداد بازدید')->numeric()->default(0),
                         Toggle::make('is_show')->label('وضعیت نمایش')->default(true),
@@ -84,20 +99,32 @@ class ArticleResource extends Resource
                 TextColumn::make('title')->label('عنوان')->searchable(),
                 TextColumn::make('view_count')->label('تعداد بازدید'),
                 TextColumn::make('link_view_article')->label('نمایش در سایت ')
-                    ->url(fn(Article $article) => config('app.front_url') . "/articles/" . "{$article->slug}")
-                    ->getStateUsing(fn(Article $article) => "{$article->slug}")
+                    ->url(fn(Article $article) => $article->slug ? config('app.front_url') . "/articles/" . $article->slug : null)
+                    ->getStateUsing(fn(Article $article) => $article->slug ?: 'بدون اسلاگ')
                     ->openUrlInNewTab()
                     ->icon('heroicon-o-link')
                     ->color('primary'),
-                TextColumn::make('category.name')->label('دسته بندی'),
-                TextColumn::make('user.first_name')->label('کاربر'),
+                TextColumn::make('category.name')
+                    ->label('دسته بندی')
+                    ->placeholder('بدون دسته بندی'),
+                TextColumn::make('user.first_name')
+                    ->label('کاربر')
+                    ->placeholder('کاربر نامشخص'),
                 IconColumn::make('is_show')->label('وضعیت نمایش')->boolean(),
                 IconColumn::make('is_future')->label('انتشار آینده')->boolean(),
                 TextColumn::make('created_at')->label('ایجاد در')->dateTime(),
             ])
             ->filters([
-                SelectFilter::make('category')->label('دسته بندی')->relationship('category', 'name'),
-                SelectFilter::make('user')->label('کاربر')->relationship('user', 'first_name'),
+                SelectFilter::make('category')
+                    ->label('دسته بندی')
+                    ->relationship('category', 'name', function ($query) {
+                        return $query->whereNotNull('name')->where('name', '!=', '');
+                    }),
+                SelectFilter::make('user')
+                    ->label('کاربر')
+                    ->relationship('user', 'first_name', function ($query) {
+                        return $query->whereNotNull('first_name')->where('first_name', '!=', '');
+                    }),
                 Filter::make('title')->form([
                     TextInput::make('title')->label('عنوان'),
                 ])->query(fn(Builder $query, array $data): Builder => $query->when(
@@ -131,7 +158,9 @@ class ArticleResource extends Resource
 
     public static function canViewAny(): bool
     {
-        return auth()->user()->isAdmin();
+        /** @var User|null $user */
+        $user = Auth::user();
+        return $user && $user->isAdmin();
     }
 }
 
