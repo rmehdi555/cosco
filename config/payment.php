@@ -20,7 +20,7 @@ return [
             'name' => 'زرین‌پال تستی',
             'type' => 'zarinpal_test',
             'enabled' => env('ZARINPAL_TEST_ENABLED', true),
-            'merchant_id' => env('ZARINPAL_TEST_MERCHANT_ID', 'xxxxxxxx-xxxx-xxxx-xxxx-xxxxxxxxxxxx'),
+            'merchant_id' => env('ZARINPAL_TEST_MERCHANT_ID', '60be4084-91e4-45ff-8116-b90cc36c7c4b'),
             'request_url' => 'https://sandbox.zarinpal.com/pg/v4/payment/request.json',
             'verify_url' => 'https://sandbox.zarinpal.com/pg/v4/payment/verify.json',
             'gateway_url' => 'https://sandbox.zarinpal.com/pg/StartPay/',

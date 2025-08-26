@@ -55,6 +55,7 @@ Route::middleware('auth:api')->group(function () {
     Route::get('payment/gateways', [PaymentController::class, 'getGateways']);
     Route::get('payments', [PaymentController::class, 'index']);
     Route::get('payments/{payment}', [PaymentController::class, 'show']);
+    Route::get('/payment/callback', [\App\Http\Controllers\PaymentController::class, 'callback'])->name('payment.callback.api');
 
     // Cart routes
     Route::get('carts', [CartController::class, 'index']);

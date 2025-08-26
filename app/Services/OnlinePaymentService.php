@@ -28,13 +28,13 @@ class OnlinePaymentService
     {
         try {
             $gateway = $gateway ?: $this->defaultGateway;
-            
+
             if (!isset($this->gateways[$gateway])) {
                 throw new \Exception("درگاه پرداخت {$gateway} یافت نشد");
             }
 
             $gatewayConfig = $this->gateways[$gateway];
-            
+
             // بررسی فعال بودن درگاه
             if (!$gatewayConfig['enabled']) {
                 throw new \Exception("درگاه پرداخت {$gateway} غیرفعال است");
@@ -96,7 +96,7 @@ class OnlinePaymentService
     {
         try {
             $gateway = $gateway ?: $this->defaultGateway;
-            
+
             if (!isset($this->gateways[$gateway])) {
                 throw new \Exception("درگاه پرداخت {$gateway} یافت نشد");
             }
@@ -151,7 +151,7 @@ class OnlinePaymentService
             'status' => PaymentStatus::PENDING,
             'amount' => $order->total_amount,
             'description' => "پرداخت سفارش شماره {$order->id}",
-            'callback_url' => route('payment.callback', ['gateway' => $gateway]),
+            'callback_url' => route('payment.callback.api', ['gateway' => $gateway]),
             'merchant_id' => $this->gateways[$gateway]['merchant_id'] ?? null,
         ]);
     }
@@ -161,16 +161,16 @@ class OnlinePaymentService
      */
     private function sendRequestToGateway(Order $order, Payment $payment, array $gatewayConfig): array
     {
-        $gatewayType = $gatewayConfig['type'] ?? 'melli_test';
+        $gatewayType = $gatewayConfig['type'] ?? 'zarinpal_test';
 
         switch ($gatewayType) {
             case 'melli_test':
                 return $this->sendToMelli($order, $payment, $gatewayConfig);
-            
+
             case 'zarinpal':
             case 'zarinpal_test':
                 return $this->sendToZarinpal($order, $payment, $gatewayConfig);
-            
+
             default:
                 throw new \Exception("نوع درگاه {$gatewayType} پشتیبانی نمی‌شود");
         }
@@ -182,7 +182,7 @@ class OnlinePaymentService
     private function sendToMelli(Order $order, Payment $payment, array $gatewayConfig): array
     {
         $amount = $order->total_amount * 10; // تبدیل به ریال
-        
+
         $data = [
             'MerchantID' => $gatewayConfig['merchant_id'],
             'TerminalID' => $gatewayConfig['terminal_id'],
@@ -219,11 +219,11 @@ class OnlinePaymentService
 
         if ($response->successful()) {
             $result = $response->json();
-            
+
             if (isset($result['ResCod']) && $result['ResCod'] == '0') {
                 $token = $result['Token'];
                 $gatewayUrl = $gatewayConfig['gateway_url'] . '?Token=' . $token;
-                
+
                 return [
                     'success' => true,
                     'gateway_url' => $gatewayUrl,
@@ -294,7 +294,7 @@ class OnlinePaymentService
     private function sendToZarinpal(Order $order, Payment $payment, array $gatewayConfig): array
     {
         $amount = $order->total_amount * 10; // تبدیل به ریال
-        
+
         $data = [
             'merchant_id' => $gatewayConfig['merchant_id'],
             'amount' => $amount,
@@ -303,7 +303,7 @@ class OnlinePaymentService
             'metadata' => [
                 'mobile' => $order->user->cell_phone ?? '',
                 'email' => $order->user->email ?? '',
-                'order_id' => $order->id,
+                'order_id' => (string)$order->id,
                 'payment_id' => $payment->id,
             ]
         ];
@@ -334,11 +334,11 @@ class OnlinePaymentService
 
         if ($response->successful()) {
             $result = $response->json();
-            
+
             if ($result['data']['code'] == 100) {
                 $authority = $result['data']['authority'];
                 $gatewayUrl = $gatewayConfig['gateway_url'] . $authority;
-                
+
                 return [
                     'success' => true,
                     'gateway_url' => $gatewayUrl,
@@ -360,6 +360,7 @@ class OnlinePaymentService
                 'gateway_response' => ['error' => 'HTTP Error', 'status' => $response->status()],
             ];
         }
+
     }
 
     /**
@@ -372,11 +373,11 @@ class OnlinePaymentService
         switch ($gatewayType) {
             case 'melli_test':
                 return $this->verifyWithMelli($callbackData, $gatewayConfig);
-            
+
             case 'zarinpal':
             case 'zarinpal_test':
                 return $this->verifyWithZarinpal($callbackData, $gatewayConfig);
-            
+
             default:
                 throw new \Exception("نوع درگاه {$gatewayType} پشتیبانی نمی‌شود");
         }
@@ -420,7 +421,7 @@ class OnlinePaymentService
 
         if ($response->successful()) {
             $result = $response->json();
-            
+
             if (isset($result['ResCod']) && $result['ResCod'] == '0') {
                 return [
                     'success' => true,
@@ -492,7 +493,7 @@ class OnlinePaymentService
 
         if ($response->successful()) {
             $result = $response->json();
-            
+
             if ($result['data']['code'] == 100) {
                 return [
                     'success' => true,
@@ -528,7 +529,7 @@ class OnlinePaymentService
         }
 
         $gatewayType = $gatewayConfig['type'] ?? 'melli_test';
-        
+
         if ($gatewayType === 'melli_test') {
             $token = $callbackData['Token'] ?? null;
             if (!$token) {
@@ -621,7 +622,7 @@ class OnlinePaymentService
     public function getActiveGateways(): array
     {
         $active = [];
-        
+
         foreach ($this->gateways as $key => $gateway) {
             if ($gateway['enabled']) {
                 $active[$key] = [

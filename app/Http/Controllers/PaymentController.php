@@ -395,21 +395,29 @@ class PaymentController extends Controller
      *     )
      * )
      */
-    public function callback(Request $request): View
+    public function callback(Request $request)
     {
         $callbackData = $request->all();
         $gateway = $request->get('gateway');
 
         $result = $this->paymentService->verifyPayment($callbackData, $gateway);
 
-        return view('payment.result', [
+//        return view('payment.result', [
+//            'success' => $result['success'],
+//            'message' => $result['message'],
+//            'order' => $result['order'] ?? null,
+//            'payment' => $result['payment'] ?? null,
+//            'gateway_response' => $result['gateway_response'] ?? null,
+//            'callback_data' => $callbackData
+//        ]);
+        return ApiResponse::success([
             'success' => $result['success'],
             'message' => $result['message'],
             'order' => $result['order'] ?? null,
             'payment' => $result['payment'] ?? null,
             'gateway_response' => $result['gateway_response'] ?? null,
             'callback_data' => $callbackData
-        ]);
+        ], trans('payments.gateway_response_sent_success'));
     }
 
     /**
