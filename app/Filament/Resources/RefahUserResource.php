@@ -410,12 +410,8 @@ class RefahUserResource extends Resource
                     }),
             ])
             ->actions([
-                ViewAction::make()
-                    ->label('مشاهده'),
                 EditAction::make()
                     ->label('ویرایش'),
-                DeleteAction::make()
-                    ->label('حذف'),
             ])
             ->bulkActions([
                 BulkActionGroup::make([
@@ -426,8 +422,6 @@ class RefahUserResource extends Resource
                         ->action(function (Collection $records) {
                             return RefahUserExport::exportSelected($records);
                         }),
-                    DeleteBulkAction::make()
-                        ->label('حذف انتخاب شده‌ها'),
                 ]),
             ])
             ->defaultSort('created_at', 'desc')

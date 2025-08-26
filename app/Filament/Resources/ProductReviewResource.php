@@ -6,17 +6,20 @@ use App\Filament\Resources\ProductReviewResource\Pages;
 use App\Models\ProductReview;
 use App\Models\User;
 use App\Models\Product;
+use Illuminate\Support\Facades\Auth;
 use Filament\Forms\Components\Grid;
 use Filament\Forms\Components\Section;
 use Filament\Forms\Components\Select;
 use Filament\Forms\Components\Textarea;
 use Filament\Forms\Components\TextInput;
 use Filament\Forms\Components\Toggle;
+use Filament\Forms\Components\FileUpload;
 use Filament\Forms\Form;
 use Filament\Resources\Resource;
 use Filament\Tables;
 use Filament\Tables\Columns\IconColumn;
 use Filament\Tables\Columns\TextColumn;
+use Filament\Tables\Columns\ImageColumn;
 use Filament\Tables\Filters\Filter;
 use Filament\Tables\Filters\SelectFilter;
 use Filament\Tables\Filters\TernaryFilter;
@@ -81,6 +84,11 @@ class ProductReviewResource extends Resource
                             ->label('تایید شده')
                             ->default(false)
                             ->helperText('آیا این نظر تایید شده است؟'),
+
+                        Toggle::make('is_active')
+                            ->label('فعال')
+                            ->default(true)
+                            ->helperText('آیا این نظر فعال است و نمایش داده می‌شود؟'),
                     ])->columnSpan(1),
                 ]),
 
@@ -91,6 +99,39 @@ class ProductReviewResource extends Resource
                         ->rows(5)
                         ->placeholder('متن نظر کاربر را وارد کنید')
                         ->helperText('متن کامل نظر کاربر'),
+                ]),
+
+                Section::make('تصاویر نظر')->schema([
+                    FileUpload::make('review_images')
+                        ->label('تصاویر نظر')
+                        ->multiple()
+                        ->image()
+                        ->imageEditor()
+                        ->imageCropAspectRatio('16:9')
+                        ->imageResizeTargetWidth('800')
+                        ->imageResizeTargetHeight('450')
+                        ->disk('public')
+                        ->directory('product-comments')
+                        ->maxSize(2048)
+                        ->helperText('تصاویر مرتبط با نظر - حداکثر 2 مگابایت برای هر تصویر')
+                        ->downloadable()
+                        ->openable()
+                        ->preserveFilenames()
+                        ->afterStateUpdated(function ($state, $record) {
+                            if ($record && $state) {
+                                // Handle file uploads for existing records
+                                $files = [];
+                                foreach ($state as $file) {
+                                    $files[] = [
+                                        'product_review_id' => $record->id,
+                                        'image_url' => $file,
+                                        'created_at' => now(),
+                                        'updated_at' => now(),
+                                    ];
+                                }
+                                \App\Models\ProductReviewFile::insert($files);
+                            }
+                        }),
                 ]),
             ]);
     }
@@ -151,6 +192,14 @@ class ProductReviewResource extends Resource
                     ->searchable()
                     ->sortable(),
 
+                TextColumn::make('productReviewFile_count')
+                    ->label('تعداد تصاویر')
+                    ->counts('productReviewFile')
+                    ->badge()
+                    ->color('info')
+                    ->sortable()
+                    ->toggleable(isToggledHiddenByDefault: true),
+
                 TextColumn::make('parent.id')
                     ->label('پاسخ به')
                     ->sortable()
@@ -173,6 +222,16 @@ class ProductReviewResource extends Resource
                     ->trueColor('success')
                     ->falseColor('danger')
                     ->sortable(),
+
+                IconColumn::make('is_active')
+                    ->label('فعال')
+                    ->boolean()
+                    ->trueIcon('heroicon-o-check-circle')
+                    ->falseIcon('heroicon-o-x-circle')
+                    ->trueColor('success')
+                    ->falseColor('danger')
+                    ->sortable()
+                    ->toggleable(isToggledHiddenByDefault: true),
 
                 TextColumn::make('created_at')
                     ->label('تاریخ ایجاد')
@@ -282,15 +341,110 @@ class ProductReviewResource extends Resource
                 Filter::make('pending_approval')
                     ->label('در انتظار تایید')
                     ->query(fn (Builder $query): Builder => $query->where('approved', false)),
+
+                Filter::make('with_images')
+                    ->label('دارای تصویر')
+                    ->query(fn (Builder $query): Builder => $query->whereHas('productReviewFile')),
+
+                Filter::make('without_images')
+                    ->label('بدون تصویر')
+                    ->query(fn (Builder $query): Builder => $query->whereDoesntHave('productReviewFile')),
             ])
             ->actions([
-                Tables\Actions\ViewAction::make(),
                 Tables\Actions\EditAction::make(),
-                Tables\Actions\DeleteAction::make(),
+                Tables\Actions\Action::make('view_images')
+                    ->label('مشاهده تصاویر')
+                    ->icon('heroicon-o-photo')
+                    ->color('info')
+                    ->visible(fn (?ProductReview $record): bool => $record && $record->productReviewFile->count() > 0)
+                    ->modalHeading('تصاویر نظر')
+                    ->modalContent(function (?ProductReview $record) {
+                        if (!$record || $record->productReviewFile->count() === 0) {
+                            return view('filament.components.no-images');
+                        }
+                        
+                        return view('filament.components.review-images', [
+                            'images' => $record->productReviewFile
+                        ]);
+                    })
+                    ->modalWidth('4xl'),
+                Tables\Actions\Action::make('approve')
+                    ->label('تایید کردن')
+                    ->icon('heroicon-o-check-circle')
+                    ->color('success')
+                    ->visible(fn (?ProductReview $record): bool => $record && !$record->approved)
+                    ->requiresConfirmation()
+                    ->modalHeading('تایید کردن نظر')
+                    ->modalDescription('آیا مطمئن هستید که می‌خواهید این نظر را تایید کنید؟')
+                    ->modalSubmitActionLabel('تایید کردن')
+                    ->action(function (ProductReview $record): void {
+                        $record->update(['approved' => true]);
+                    })
+                    ->after(function (ProductReview $record): void {
+                        \Filament\Notifications\Notification::make()
+                            ->title('نظر تایید شد')
+                            ->success()
+                            ->send();
+                    }),
+                Tables\Actions\Action::make('disapprove')
+                    ->label('عدم تایید')
+                    ->icon('heroicon-o-x-circle')
+                    ->color('danger')
+                    ->visible(fn (?ProductReview $record): bool => $record && $record->approved)
+                    ->requiresConfirmation()
+                    ->modalHeading('عدم تایید نظر')
+                    ->modalDescription('آیا مطمئن هستید که می‌خواهید این نظر را عدم تایید کنید؟')
+                    ->modalSubmitActionLabel('عدم تایید')
+                    ->action(function (ProductReview $record): void {
+                        $record->update(['approved' => false]);
+                    })
+                    ->after(function (ProductReview $record): void {
+                        \Filament\Notifications\Notification::make()
+                            ->title('نظر عدم تایید شد')
+                            ->success()
+                            ->send();
+                    }),
             ])
             ->bulkActions([
                 Tables\Actions\BulkActionGroup::make([
-                    Tables\Actions\DeleteBulkAction::make(),
+                    Tables\Actions\BulkAction::make('approve')
+                        ->label('تایید کردن انتخاب شده‌ها')
+                        ->icon('heroicon-o-check-circle')
+                        ->color('success')
+                        ->requiresConfirmation()
+                        ->modalHeading('تایید کردن نظرات انتخاب شده')
+                        ->modalDescription('آیا مطمئن هستید که می‌خواهید نظرات انتخاب شده را تایید کنید؟')
+                        ->modalSubmitActionLabel('تایید کردن')
+                        ->action(function (\Illuminate\Database\Eloquent\Collection $records): void {
+                            $records->each(function ($record) {
+                                $record->update(['approved' => true]);
+                            });
+                        })
+                        ->after(function (\Illuminate\Database\Eloquent\Collection $records): void {
+                            \Filament\Notifications\Notification::make()
+                                ->title(count($records) . ' نظر تایید شد')
+                                ->success()
+                                ->send();
+                        }),
+                    Tables\Actions\BulkAction::make('disapprove')
+                        ->label('عدم تایید انتخاب شده‌ها')
+                        ->icon('heroicon-o-x-circle')
+                        ->color('danger')
+                        ->requiresConfirmation()
+                        ->modalHeading('عدم تایید نظرات انتخاب شده')
+                        ->modalDescription('آیا مطمئن هستید که می‌خواهید نظرات انتخاب شده را عدم تایید کنید؟')
+                        ->modalSubmitActionLabel('عدم تایید')
+                        ->action(function (\Illuminate\Database\Eloquent\Collection $records): void {
+                            $records->each(function ($record) {
+                                $record->update(['approved' => false]);
+                            });
+                        })
+                        ->after(function (\Illuminate\Database\Eloquent\Collection $records): void {
+                            \Filament\Notifications\Notification::make()
+                                ->title(count($records) . ' نظر عدم تایید شد')
+                                ->success()
+                                ->send();
+                        }),
                 ]),
             ])
             ->defaultSort('created_at', 'desc');
@@ -301,13 +455,14 @@ class ProductReviewResource extends Resource
         return [
             'index' => Pages\ListProductReviews::route('/'),
             'create' => Pages\CreateProductReview::route('/create'),
-            'view' => Pages\ViewProductReview::route('/{record}'),
             'edit' => Pages\EditProductReview::route('/{record}/edit'),
         ];
     }
 
     public static function canViewAny(): bool
     {
-        return auth()->user()->isAdmin();
+        /** @var User|null $user */
+        $user = Auth::user();
+        return $user && $user->isAdmin();
     }
 } 

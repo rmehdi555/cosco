@@ -146,13 +146,10 @@ class CouponUsageResource extends Resource
                     ->query(fn (Builder $query): Builder => $query->whereMonth('used_at', now()->month)->whereYear('used_at', now()->year)),
             ])
             ->actions([
-                Tables\Actions\ViewAction::make(),
                 Tables\Actions\EditAction::make(),
-                Tables\Actions\DeleteAction::make(),
             ])
             ->bulkActions([
                 Tables\Actions\BulkActionGroup::make([
-                    Tables\Actions\DeleteBulkAction::make(),
                 ]),
             ])
             ->defaultSort('used_at', 'desc');

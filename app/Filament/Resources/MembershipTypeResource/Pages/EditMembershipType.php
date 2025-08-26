@@ -13,8 +13,6 @@ class EditMembershipType extends EditRecord
     protected function getHeaderActions(): array
     {
         return [
-            Actions\DeleteAction::make()
-                ->label('حذف'),
         ];
     }
 

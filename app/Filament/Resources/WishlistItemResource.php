@@ -232,13 +232,10 @@ class WishlistItemResource extends Resource
                     ->query(fn (Builder $query): Builder => $query->where('created_at', '>=', now()->subDays(7))),
             ])
             ->actions([
-                Tables\Actions\ViewAction::make(),
                 Tables\Actions\EditAction::make(),
-                Tables\Actions\DeleteAction::make(),
             ])
             ->bulkActions([
                 Tables\Actions\BulkActionGroup::make([
-                    Tables\Actions\DeleteBulkAction::make(),
                 ]),
             ])
             ->defaultSort('created_at', 'desc');

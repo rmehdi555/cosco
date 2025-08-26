@@ -110,17 +110,11 @@ class RefahOrganizationResource extends Resource
                     ->native(false),
             ])
             ->actions([
-                ViewAction::make()
-                    ->label('مشاهده'),
                 EditAction::make()
                     ->label('ویرایش'),
-                DeleteAction::make()
-                    ->label('حذف'),
             ])
             ->bulkActions([
                 BulkActionGroup::make([
-                    DeleteBulkAction::make()
-                        ->label('حذف انتخاب شده‌ها'),
                 ]),
             ])
             ->defaultSort('created_at', 'desc')

@@ -66,7 +66,8 @@ class RoleResource extends Resource
                     ->action(fn(Role $record, array $data) => $record),
             ])
             ->bulkActions([
-                Tables\Actions\DeleteBulkAction::make(),
+                Tables\Actions\BulkActionGroup::make([
+                ]),
             ]);
     }
 

@@ -83,11 +83,9 @@ class CountryResource extends Resource
             ])
             ->actions([
                 \Filament\Tables\Actions\EditAction::make(),
-                \Filament\Tables\Actions\DeleteAction::make(),
             ])
             ->bulkActions([
                 \Filament\Tables\Actions\BulkActionGroup::make([
-                    \Filament\Tables\Actions\DeleteBulkAction::make(),
                 ]),
             ]);
     }

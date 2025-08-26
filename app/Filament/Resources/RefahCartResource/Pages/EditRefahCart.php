@@ -13,10 +13,6 @@ class EditRefahCart extends EditRecord
     protected function getHeaderActions(): array
     {
         return [
-            Actions\ViewAction::make()
-                ->label('مشاهده'),
-            Actions\DeleteAction::make()
-                ->label('حذف'),
         ];
     }
 
