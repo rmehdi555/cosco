@@ -39,6 +39,7 @@ Route::middleware('auth:api')->group(function () {
     Route::get('memberships', [MembershipController::class, 'index']);
     Route::get('memberships/status', [MembershipController::class, 'status']);
     Route::get('memberships/{membership}', [MembershipController::class, 'show']);
+    Route::post('membership/', [MembershipController::class, 'store']);
 
     // Order routes
     Route::get('orders', [OrderController::class, 'index']);

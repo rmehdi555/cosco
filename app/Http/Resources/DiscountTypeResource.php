@@ -70,6 +70,7 @@ class DiscountTypeResource extends JsonResource
                 'footer' => $this->footer,
                 'image_url' => asset('storage/' . $this->image_url),
                 'link' => $this->link,
+                'slug' => $this->productCategory->slug,
                 'target' => $this->target,
                 'background_color_up' => $this->background_color_up,
                 'background_color_down' => $this->background_color_down,

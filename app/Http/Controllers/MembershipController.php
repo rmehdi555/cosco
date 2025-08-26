@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Http\Requests\MemeberShipStoreRequest;
 use App\Http\Resources\MembershipResource;
 use App\Models\Membership;
 use App\Models\User;
@@ -20,7 +21,7 @@ class MembershipController extends Controller
 {
     /**
      * Display user's memberships
-     * 
+     *
      * @OA\Get(
      *     path="/api/memberships",
      *     operationId="getUserMemberships",
@@ -49,7 +50,7 @@ class MembershipController extends Controller
     public function index(Request $request)
     {
         $user = $request->user();
-        
+
         $memberships = $user->memberships()
             ->with('membershipType')
             ->orderBy('created_at', 'desc')
@@ -60,7 +61,7 @@ class MembershipController extends Controller
 
     /**
      * Display user's active membership status
-     * 
+     *
      * @OA\Get(
      *     path="/api/memberships/status",
      *     operationId="getUserMembershipStatus",
@@ -112,9 +113,9 @@ class MembershipController extends Controller
     public function status(Request $request)
     {
         $user = $request->user();
-        
+
         $activeMembership = $user->active_membership;
-        
+
         if (!$activeMembership) {
             return ApiResponse::success([
                 'has_active_membership' => false,
@@ -126,7 +127,7 @@ class MembershipController extends Controller
 
         // Check if membership has expired
         $remainingDays = $activeMembership->remaining_days;
-        
+
         if ($remainingDays <= 0) {
             return ApiResponse::success([
                 'has_active_membership' => false,
@@ -146,7 +147,7 @@ class MembershipController extends Controller
 
     /**
      * Display the specified membership
-     * 
+     *
      * @OA\Get(
      *     path="/api/memberships/{id}",
      *     operationId="getMembership",
@@ -195,4 +196,9 @@ class MembershipController extends Controller
 
         return ApiResponse::success(new MembershipResource($membership));
     }
-} 
+
+    public function store(MemeberShipStoreRequest $request)
+    {
+
+    }
+}
