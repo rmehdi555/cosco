@@ -25,6 +25,7 @@ use Filament\Tables\Filters\SelectFilter;
 use Filament\Tables\Filters\TernaryFilter;
 use Filament\Tables\Table;
 use Illuminate\Database\Eloquent\Builder;
+use Illuminate\Support\Str;
 
 class ProductReviewResource extends Resource
 {
@@ -64,11 +65,14 @@ class ProductReviewResource extends Resource
 
                         Select::make('parent_id')
                             ->label('پاسخ به')
-                            ->relationship('parent', 'id')
+                            ->relationship('parent', 'comment', function ($query) {
+                                return $query->whereNotNull('comment')->where('comment', '!=', '');
+                            })
                             ->nullable()
                             ->searchable()
                             ->placeholder('انتخاب نظر والد (اختیاری)')
-                            ->helperText('اگر این نظر پاسخ به نظر دیگری است، آن را انتخاب کنید'),
+                            ->helperText('اگر این نظر پاسخ به نظر دیگری است، آن را انتخاب کنید')
+                            ->getOptionLabelFromRecordUsing(fn ($record) => $record ? 'نظر #' . $record->id . ' - ' . Str::limit($record->comment, 50) : null),
                     ])->columnSpan(1),
 
                     Section::make('محتوای نظر')->schema([
