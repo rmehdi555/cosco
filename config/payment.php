@@ -2,20 +2,20 @@
 
 return [
     'default_gateway' => env('PAYMENT_DEFAULT_GATEWAY', 'melli_test'),
-    
+
     'gateways' => [
         'melli_test' => [
             'name' => 'بانک ملی تستی',
             'type' => 'melli_test',
             'enabled' => env('MELLI_TEST_ENABLED', true),
             'merchant_id' => env('MELLI_TEST_MERCHANT_ID', '12345'),
-            'terminal_id' => env('MELLI_TEST_TERMINAL_ID', 'GBHDTY98'),
+            'terminal_id' => env('MELLI_TEST_TERMINAL_ID', 'YmMzNzljODUzZGY2ZGYzNTk4MTNkMGJl'),
             'key' => env('MELLI_TEST_KEY', 'MzVlOTU1NmVhYWM1MDrhOWFlYTVjMDJi'),
             'request_url' => 'https://sandbox.banktest.ir/melli/sadad.shaparak.ir/VPG/api/v0/Request/PaymentRequest',
             'verify_url' => 'https://sandbox.banktest.ir/melli/sadad.shaparak.ir/VPG/api/v0/Advice/Verify',
             'gateway_url' => 'https://sandbox.banktest.ir/melli/sadad.shaparak.ir/VPG/Purchase',
         ],
-        
+
         'zarinpal_test' => [
             'name' => 'زرین‌پال تستی',
             'type' => 'zarinpal_test',
@@ -25,7 +25,7 @@ return [
             'verify_url' => 'https://sandbox.zarinpal.com/pg/v4/payment/verify.json',
             'gateway_url' => 'https://sandbox.zarinpal.com/pg/StartPay/',
         ],
-        
+
         'zarinpal' => [
             'name' => 'زرین‌پال',
             'type' => 'zarinpal',
@@ -35,7 +35,7 @@ return [
             'verify_url' => 'https://api.zarinpal.com/pg/v4/payment/verify.json',
             'gateway_url' => 'https://www.zarinpal.com/pg/StartPay/',
         ],
-        
+
         'asanpardakht' => [
             'name' => 'آسان پرداخت',
             'type' => 'asanpardakht',
