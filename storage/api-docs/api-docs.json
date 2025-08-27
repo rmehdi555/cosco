@@ -10,7 +10,7 @@
     },
     "servers": [
         {
-            "url": "http://localhost:8072",
+            "url": "http://localhost:8000",
             "description": "API Server"
         }
     ],
@@ -416,6 +416,18 @@
                                         "message": {
                                             "type": "string",
                                             "example": "ایمیل با موفقیت تایید شد."
+                                        },
+                                        "data": {
+                                            "properties": {
+                                                "token": {
+                                                    "type": "string",
+                                                    "example": "eyJ0eXAiOiJKV1QiLCJhbGciOiJSUzI1NiJ9..."
+                                                },
+                                                "user": {
+                                                    "$ref": "#/components/schemas/UserResource"
+                                                }
+                                            },
+                                            "type": "object"
                                         }
                                     },
                                     "type": "object"
@@ -462,7 +474,16 @@
                                             "example": "شماره موبایل با موفقیت تایید شد."
                                         },
                                         "data": {
-                                            "$ref": "#/components/schemas/UserResource"
+                                            "properties": {
+                                                "token": {
+                                                    "type": "string",
+                                                    "example": "eyJ0eXAiOiJKV1QiLCJhbGciOiJSUzI1NiJ9..."
+                                                },
+                                                "user": {
+                                                    "$ref": "#/components/schemas/UserResource"
+                                                }
+                                            },
+                                            "type": "object"
                                         }
                                     },
                                     "type": "object"

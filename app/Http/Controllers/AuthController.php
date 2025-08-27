@@ -155,7 +155,11 @@ class AuthController extends Controller
      *         description="Email verified successfully",
      *         @OA\JsonContent(
      *             @OA\Property(property="success", type="boolean", example=true),
-     *             @OA\Property(property="message", type="string", example="ایمیل با موفقیت تایید شد.")
+     *             @OA\Property(property="message", type="string", example="ایمیل با موفقیت تایید شد."),
+     *             @OA\Property(property="data", type="object",
+     *                 @OA\Property(property="token", type="string", example="eyJ0eXAiOiJKV1QiLCJhbGciOiJSUzI1NiJ9..."),
+     *                 @OA\Property(property="user", ref="#/components/schemas/UserResource")
+     *             )
      *         )
      *     ),
      *     @OA\Response(
@@ -179,11 +183,23 @@ class AuthController extends Controller
         if (now()->greaterThan($user->email_verification_expires_at)) {
             return ApiResponse::error(trans('auth.verification_code_expired'), null, 422);
         }
+        
+        // Verify the user
         $user->email_verified_at = now();
         $user->verification_code = null;
         $user->email_verification_expires_at = null;
         $user->save();
-        return ApiResponse::success(null, trans('auth.email_verified_success'));
+        
+        // Login the user
+        Auth::login($user);
+        
+        // Generate token
+        $token = $user->createToken('api_token')->accessToken;
+        
+        return ApiResponse::success([
+            'token' => $token,
+            'user' => new UserResource($user),
+        ], trans('auth.email_verified_success'))->cookie('browser_id', $token, 60 * 24 * 30, '/', 'rdst.ca', true, true, false, 'None');
     }
 
     /**
@@ -201,7 +217,10 @@ class AuthController extends Controller
      *         @OA\JsonContent(
      *             @OA\Property(property="success", type="boolean", example=true),
      *             @OA\Property(property="message", type="string", example="شماره موبایل با موفقیت تایید شد."),
-     *             @OA\Property(property="data", ref="#/components/schemas/UserResource")
+     *             @OA\Property(property="data", type="object",
+     *                 @OA\Property(property="token", type="string", example="eyJ0eXAiOiJKV1QiLCJhbGciOiJSUzI1NiJ9..."),
+     *                 @OA\Property(property="user", ref="#/components/schemas/UserResource")
+     *             )
      *         )
      *     ),
      *     @OA\Response(
@@ -236,12 +255,22 @@ class AuthController extends Controller
             return ApiResponse::error(trans('auth.verification_code_expired'), null, 422);
         }
 
+        // Verify the user
         $user->email_verified_at = now();
         $user->verification_code = null;
         $user->email_verification_expires_at = null;
         $user->save();
 
-        return ApiResponse::success(new UserResource($user), trans('auth.sms_verified_success'));
+        // Login the user
+        Auth::login($user);
+        
+        // Generate token
+        $token = $user->createToken('api_token')->accessToken;
+
+        return ApiResponse::success([
+            'token' => $token,
+            'user' => new UserResource($user),
+        ], trans('auth.sms_verified_success'))->cookie('browser_id', $token, 60 * 24 * 30, '/', 'rdst.ca', true, true, false, 'None');
     }
 
     /**
