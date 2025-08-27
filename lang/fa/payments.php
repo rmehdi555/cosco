@@ -6,7 +6,7 @@ return [
 
     // Success Messages
     'payments_retrieved' => 'لیست پرداخت‌ها با موفقیت دریافت شد',
-    'payment_retrieved' => 'جزئیات پرداخت با موفقیت دریافت شد',
+    'payment_retrieved' => 'جزئیات پرداخت دریافت شد',
     'list_retrieved_success' => 'لیست با موفقیت بازیابی شد.',
     'gateway_request_sent_success' => 'درخواست ادرس درگاه با موفقیت ارسال شد.',
 

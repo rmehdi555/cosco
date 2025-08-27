@@ -4,6 +4,7 @@ namespace App\Http\Resources;
 
 use Illuminate\Http\Request;
 use Illuminate\Http\Resources\Json\JsonResource;
+use function Termwind\parse;
 
 /**
  * @OA\Schema(
@@ -42,6 +43,11 @@ class OrderResource extends JsonResource
      */
     public function toArray(Request $request): array
     {
+        if ($this->payment_status == 'paid')
+            $is_pay = true;
+        else
+            $is_pay = false;
+
         return [
             'id' => $this->id,
             'status' => $this->status?->getLabel(),
@@ -51,6 +57,7 @@ class OrderResource extends JsonResource
             'payment_status' => $this->payment_status?->getLabel(),
             'payment_status_english' => $this->payment_status,
             'description' => $this->description,
+            'is_pay' => $is_pay,
             'shipping_address' => new AddressResource($this->shippingAddress),
             'order_items' => OrderItemResource::collection($this->whenLoaded('orderItems')),
             'received_at' => config('general.show_date')($this->received_at) ?? '',

@@ -249,7 +249,7 @@ class OrderController extends Controller
         $items = $request->validated('items');
         $shippingAddressId = $request->validated('shipping_address_id');
         $description = $request->validated('description');
-        $received_at = $request->validated('received_at');
+        $received_at = config('general.show_gregorian')($request->validated('received_at'));
 
         // Check if shipping address belongs to the user
         $shippingAddress = Address::where('id', $shippingAddressId)

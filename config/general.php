@@ -38,12 +38,12 @@ return [
         if ($price === null || $price === '') {
             return 0;
         }
-        
+
         // Convert Rial to Toman by dividing by 10 (removing one zero)
         $tomanPrice = $price / 10;
-        
+
         // Return formatted price as integer if it's a whole number, otherwise with decimals
-        return $tomanPrice == floor($tomanPrice) ? (int) $tomanPrice : $tomanPrice;
+        return $tomanPrice == floor($tomanPrice) ? (int)$tomanPrice : $tomanPrice;
     },
 
     /*
@@ -57,7 +57,7 @@ return [
     'format_price' => function ($price, $showUnit = true) {
         $tomanPrice = config('general.show_price')($price);
         $formatted = number_format($tomanPrice);
-        
+
         return $showUnit ? $formatted . ' تومان' : $formatted;
     },
 
@@ -73,7 +73,7 @@ return [
         if ($tomanPrice === null || $tomanPrice === '') {
             return 0;
         }
-        
+
         // Convert Toman to Rial by multiplying by 10 (adding one zero)
         return $tomanPrice * 10;
     },
@@ -90,16 +90,16 @@ return [
         if ($date === null || $date === '') {
             return null;
         }
-        
+
         try {
             // Convert to Carbon instance if it's a string
             if (is_string($date)) {
                 $date = \Carbon\Carbon::parse($date);
             }
-            
+
             // Convert to Verta (Persian date)
             $verta = \Hekmatinasser\Verta\Verta::instance($date);
-            
+
             return $verta->format($format);
         } catch (\Exception $e) {
             return null;
@@ -130,19 +130,46 @@ return [
         if ($date === null || $date === '') {
             return null;
         }
-        
+
         try {
             // Convert to Carbon instance if it's a string
             if (is_string($date)) {
                 $date = \Carbon\Carbon::parse($date);
             }
-            
+
             // Convert to Verta (Persian date)
             $verta = \Hekmatinasser\Verta\Verta::instance($date);
-            
+
             return $verta->format('d F Y');
         } catch (\Exception $e) {
             return null;
         }
     },
+
+    /*
+    |--------------------------------------------------------------------------
+    | Date Conversion Functions
+    |--------------------------------------------------------------------------
+    |
+    | Convert Persian (Shamsi) dates to Gregorian dates using Verta
+    |
+    */
+    'show_gregorian' => function ($date, $format = 'Y-m-d') {
+        if ($date === null || $date === '') {
+            return null;
+        }
+
+        try {
+            // تبدیل به Verta (شمسی)
+            $verta = \Hekmatinasser\Verta\Verta::parse($date);
+
+            // تبدیل به Carbon (میلادی)
+            $carbon = $verta->datetime();
+
+            return $carbon->format($format);
+        } catch (\Exception $e) {
+            return null;
+        }
+    },
+
 ];
