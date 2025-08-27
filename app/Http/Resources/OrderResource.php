@@ -43,7 +43,7 @@ class OrderResource extends JsonResource
      */
     public function toArray(Request $request): array
     {
-        if ($this->payment_status == 'paid')
+        if ( $this->payment_status->value == 'paid')
             $is_pay = true;
         else
             $is_pay = false;

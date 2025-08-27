@@ -284,6 +284,7 @@ class OrderController extends Controller
                     'order_id' => $order->id,
                     'product_id' => $product->id,
                     'quantity' => $item['quantity'],
+                    'description' => $item['description'],
                     'price' => $product->price,
                 ]);
 

@@ -76,6 +76,7 @@ class CreateOrderRequest extends FormRequest
             'items' => 'required|array|min:1',
             'items.*.product_slug' => 'required|string|exists:products,slug',
             'items.*.quantity' => 'required|integer|min:1|max:100000',
+            'items.*.description' => 'nullable|string|max:1000',
             'received_at' => 'required|string',
             'shipping_address_id' => 'required|integer|exists:addresses,id',
             'description' => 'nullable|string|max:1000',

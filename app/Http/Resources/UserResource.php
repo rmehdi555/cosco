@@ -28,8 +28,8 @@ class UserResource extends JsonResource
     public function toArray($request)
     {
         return [
-            'first_name' => $this->first_name,
-            'last_name' => $this->last_name,
+            'first_name' => $this->first_name ?? '',
+            'last_name' => $this->last_name ?? '',
             'email' => $this->email,
             'cell_phone' => $this->cell_phone,
             'avatar_image_url' => $this->avatar_image ? asset('storage/' . $this->avatar_image) : '/assets/images/icons/user-default-icon.jpg',

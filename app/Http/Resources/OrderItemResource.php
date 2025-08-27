@@ -30,7 +30,7 @@ class OrderItemResource extends JsonResource
     {
         return [
             'quantity' => $this->quantity,
-            'description' => $this->description,
+            'description' => $this->description ?? '',
             'price' => config('general.format_price')($this->price),
             'total_price' => config('general.format_price')($this->total_price),
             'product_name' => $this->product?->name,
