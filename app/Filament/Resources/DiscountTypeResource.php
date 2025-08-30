@@ -97,6 +97,7 @@ class DiscountTypeResource extends Resource
 
                         Forms\Components\TextInput::make('ads_link')
                             ->label('لینک تبلیغات')
+                            ->required()
                             ->url()
                             ->maxLength(255),
 
