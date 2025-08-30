@@ -22,7 +22,8 @@ class MemeberShipStoreRequest extends FormRequest
     public function rules(): array
     {
         return [
-
+            'membership_type_id' => 'required|int',
+            'gateway' => 'nullable|string',
         ];
     }
 }

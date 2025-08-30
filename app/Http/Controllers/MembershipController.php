@@ -2,14 +2,20 @@
 
 namespace App\Http\Controllers;
 
+use App\Enums\OrderPaymentStatus;
+use App\Enums\OrderStatus;
+use App\Enums\PaymentMethod;
+use App\Enums\PaymentStatus;
 use App\Http\Requests\MemeberShipStoreRequest;
 use App\Http\Resources\MembershipResource;
 use App\Models\Membership;
-use App\Models\User;
+use App\Models\MembershipType;
+use App\Services\OnlinePaymentMembershipService;
 use Illuminate\Http\Request;
-use Illuminate\Http\Resources\Json\AnonymousResourceCollection;
-use Illuminate\Http\JsonResponse;
 use App\Http\Responses\ApiResponse;
+use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Str;
 
 /**
  * @OA\Tag(
@@ -19,6 +25,13 @@ use App\Http\Responses\ApiResponse;
  */
 class MembershipController extends Controller
 {
+    protected OnlinePaymentMembershipService $paymentMembershipService;
+
+    public function __construct(OnlinePaymentMembershipService $paymentMembershipService)
+    {
+        $this->paymentMembershipService = $paymentMembershipService;
+    }
+
     /**
      * Display user's memberships
      *
@@ -199,6 +212,49 @@ class MembershipController extends Controller
 
     public function store(MemeberShipStoreRequest $request)
     {
+        $membershipType = MembershipType::whereId($request->membership_type_id)->firstOrFail();
+        $user_id = Auth::id();
+        $serialNumber = Str::uuid()->toString();
+        $dayCycle = $membershipType->day_cycle;
 
+        $startDate = now()->format('Y-m-d');
+        $endDate = now()->addDays($dayCycle)->format('Y-m-d');
+
+        try {
+            DB::beginTransaction();
+            $membership = Membership::create([
+                'user_id' => $user_id,
+                'serial_number' => $serialNumber,
+                'start_date' => $startDate,
+                'end_date' => $endDate,
+                'membership_type_id' => $membershipType->id,
+                'status' => OrderStatus::PENDING,
+                'payment_status' => OrderPaymentStatus::UNPAID,
+            ]);
+
+            // بررسی وضعیت پرداخت
+            if ($membership->payment_status === 'paid') {
+                return ApiResponse::error(trans('payments.order_already_paid'), null, 400);
+            }
+
+            $gateway = 'zarinpal_test';
+
+            $result = $this->paymentMembershipService->sendToGateway($membership, $gateway);
+            DB::commit();
+
+            if ($result['success']) {
+                return ApiResponse::success($result, trans('payments.gateway_request_sent_success'));
+            } else {
+                return ApiResponse::error($result['message'] ?? trans('payments.gateway_request_failed'), null, 500);
+            }
+
+        } catch (\Exception $e) {
+            DB::rollBack();
+
+            return ApiResponse::serverError(
+                __('orders.creation_failed'),
+                $e->getMessage()
+            );
+        }
     }
 }

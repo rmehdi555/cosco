@@ -39,7 +39,7 @@ Route::middleware('auth:api')->group(function () {
     Route::get('memberships', [MembershipController::class, 'index']);
     Route::get('memberships/status', [MembershipController::class, 'status']);
     Route::get('memberships/{membership}', [MembershipController::class, 'show']);
-    Route::post('membership/', [MembershipController::class, 'store']);
+    Route::post('membership', [MembershipController::class, 'store']);
 
     // Order routes
     Route::get('orders', [OrderController::class, 'index']);
@@ -55,6 +55,7 @@ Route::middleware('auth:api')->group(function () {
     Route::get('payment/gateways', [PaymentController::class, 'getGateways']);
     Route::get('payments', [PaymentController::class, 'index']);
     Route::get('payments/{payment}', [PaymentController::class, 'show']);
+    Route::get('payment-membership/status/{membership_id}', [PaymentController::class, 'getPaymentMembershipStatus']);
 
     // Cart routes
     Route::get('carts', [CartController::class, 'index']);
@@ -91,4 +92,5 @@ Route::get('sitemap', [SitemapController::class, 'index']);
 Route::get('robots', [SitemapController::class, 'robots']);
 
 Route::get('/payment/callback/verify', [PaymentController::class, 'callbackVerify'])->name('payment.callback.api');
+Route::get('/payment/callback/verify-membership', [PaymentController::class, 'callbackVerifyMembership'])->name('payment.callback.membership');
 

@@ -2,8 +2,9 @@
 
 namespace App\Http\Controllers;
 
-use App\Http\Controllers\Controller;
 use App\Http\Requests\PaymentIndexRequest;
+use App\Models\Membership;
+use App\Services\OnlinePaymentMembershipService;
 use App\Services\OnlinePaymentService;
 use App\Models\Order;
 use Illuminate\Http\Request;
@@ -11,7 +12,6 @@ use Illuminate\Http\JsonResponse;
 use Illuminate\View\View;
 use App\Http\Resources\PaymentResource;
 use App\Models\Payment;
-use Illuminate\Http\Resources\Json\AnonymousResourceCollection;
 use Illuminate\Support\Facades\Log;
 use App\Http\Responses\ApiResponse;
 use App\Enums\PaymentStatus;
@@ -26,12 +26,14 @@ use App\Enums\PaymentMethod;
 class PaymentController extends Controller
 {
     protected OnlinePaymentService $paymentService;
+    protected OnlinePaymentMembershipService $paymentMembershipService;
 
-    public function __construct(OnlinePaymentService $paymentService)
+
+    public function __construct(OnlinePaymentService $paymentService, OnlinePaymentMembershipService $paymentMembershipService)
     {
         $this->paymentService = $paymentService;
+        $this->paymentMembershipService = $paymentMembershipService;
     }
-
 
     /**
      * @OA\Get(
@@ -530,7 +532,7 @@ class PaymentController extends Controller
                     'transaction_id' => $latestPayment->bank_transaction_id,
                     'reference_id' => $latestPayment->bank_reference_id,
                     'paid_at' => config('general.show_date')($latestPayment->paid_at),
-                    'created_at' => config('general.show_date')($latestPayment->created_at,)
+                    'created_at' => config('general.show_date')($latestPayment->created_at)
                 ];
             }
 
@@ -711,4 +713,81 @@ class PaymentController extends Controller
         return redirect()->away('https://rdst.ca/callback-zarinpal-result/' . $result['order_id']);
     }
 
+    public function callbackVerifyMembership(Request $request)
+    {
+        $callbackData = $request->all();
+        $gateway = $request->get('gateway');
+
+        $result = $this->paymentMembershipService->verifyPayment($callbackData, $gateway);
+
+        return redirect()->away('https://rdst.ca/callback-membership-zarinpal-result/' . $result['membership_id']);
+    }
+
+    public function getPaymentMembershipStatus(int $membershipId): JsonResponse
+    {
+        try {
+            // دریافت سفارش با اطلاعات مرتبط
+            $membership = Membership::with(['user', 'membership' => function ($query) {
+                $query->latest()->first();
+            }])->find($membershipId);
+
+            if (!$membership) {
+                return ApiResponse::error(trans('orders.not_found'), null, 404);
+            }
+
+            // دریافت آخرین پرداخت
+            $latestPayment = $membership->$membership->first();
+
+            // آماده‌سازی اطلاعات کاربر
+            $userInfo = null;
+            if ($membership->user) {
+                $userInfo = [
+                    'user_id' => $membership->user->id,
+                    'name' => $membership->user->name,
+                    'cell_phone' => $membership->user->cell_phone,
+                    'email' => $membership->user->email,
+                ];
+            }
+
+            // آماده‌سازی اطلاعات پرداخت
+            $paymentInfo = null;
+            if ($latestPayment) {
+                $paymentInfo = [
+                    'payment_id' => $latestPayment->id,
+                    'method' => $latestPayment->method?->label(),
+                    'status' => $latestPayment->status?->label(),
+                    'amount' => config('general.show_price')($latestPayment->amount),
+                    'transaction_id' => $latestPayment->bank_transaction_id,
+                    'reference_id' => $latestPayment->bank_reference_id,
+                    'paid_at' => config('general.show_date')($latestPayment->paid_at),
+                    'created_at' => config('general.show_date')($latestPayment->created_at)
+                ];
+            }
+
+            return ApiResponse::success([
+                'order_id' => $membership->id,
+                'payment_status' => $membership->payment_status,
+                'order_status' => $membership->status,
+                'total_amount' => config('general.show_price')($membership->total_amount),
+                'user_info' => $userInfo,
+                'payment_info' => $paymentInfo,
+                'created_at' => config('general.show_date')($membership->created_at),
+                'updated_at' => config('general.show_date')($membership->updated_at),
+                'status_summary' => [
+                    'is_paid' => $membership->payment_status === 'paid',
+                    'is_pending' => $membership->payment_status === 'pending',
+                    'is_failed' => $membership->payment_status === 'failed',
+                    'can_retry_payment' => $membership->payment_status === 'failed' || $membership->payment_status === 'pending',
+                ]
+            ], trans('payments.payment_retrieved'));
+
+        } catch (\Exception $e) {
+            Log::error('Payment Status Error: ' . $e->getMessage(), [
+                'membership_id' => $membershipId,
+                'trace' => $e->getTraceAsString()
+            ]);
+
+            return ApiResponse::error(trans('payments.error_retrieving_information'), null, 500);
+        }
+    }
 }

@@ -14,6 +14,7 @@ return new class extends Migration
             $table->unsignedBigInteger('user_id');
             $table->date('start_date');
             $table->date('end_date');
+            $table->enum('payment_status', ['unpaid', 'paid', 'refunded']);
             $table->boolean('is_active')->default(true);
             $table->unsignedBigInteger('membership_type_id');
             $table->timestamps();
@@ -28,4 +29,4 @@ return new class extends Migration
     {
         Schema::dropIfExists('memberships');
     }
-}; 
+};
