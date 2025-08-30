@@ -210,6 +210,98 @@ class MembershipController extends Controller
         return ApiResponse::success(new MembershipResource($membership));
     }
 
+    /**
+     * Create a new membership
+     *
+     * @OA\Post(
+     *     path="/api/membership",
+     *     operationId="createMembership",
+     *     tags={"Memberships"},
+     *     summary="Create a new membership",
+     *     description="Creates a new membership for the authenticated user and sends payment request to gateway",
+     *     security={{"bearerAuth":{}}},
+     *     @OA\RequestBody(
+     *         required=true,
+     *         @OA\JsonContent(
+     *             required={"membership_type_id"},
+     *             @OA\Property(
+     *                 property="membership_type_id",
+     *                 type="integer",
+     *                 description="ID of the membership type",
+     *                 example=1
+     *             ),
+     *             @OA\Property(
+     *                 property="gateway",
+     *                 type="string",
+     *                 description="Payment gateway to use (optional)",
+     *                 example="zarinpal_test"
+     *             )
+     *         )
+     *     ),
+     *     @OA\Response(
+     *         response=200,
+     *         description="Membership created successfully and payment gateway request sent",
+     *         @OA\JsonContent(
+     *             type="object",
+     *             @OA\Property(property="success", type="boolean", example=true),
+     *             @OA\Property(property="message", type="string", example="درخواست درگاه پرداخت با موفقیت ارسال شد"),
+     *             @OA\Property(
+     *                 property="data",
+     *                 type="object",
+     *                 @OA\Property(property="success", type="boolean", example=true),
+     *                 @OA\Property(property="payment_id", type="integer", example=123),
+     *                 @OA\Property(property="gateway_url", type="string", example="https://www.zarinpal.com/pg/StartPay/123456789"),
+     *                 @OA\Property(property="transaction_id", type="string", example="123456789"),
+     *                 @OA\Property(property="message", type="string", example="درخواست پرداخت با موفقیت ارسال شد")
+     *             )
+     *         )
+     *     ),
+     *     @OA\Response(
+     *         response=400,
+     *         description="Bad request - Order already paid or validation error",
+     *         @OA\JsonContent(
+     *             type="object",
+     *             @OA\Property(property="success", type="boolean", example=false),
+     *             @OA\Property(property="message", type="string", example="سفارش قبلاً پرداخت شده است"),
+     *             @OA\Property(property="data", type="null")
+     *         )
+     *     ),
+     *     @OA\Response(
+     *         response=401,
+     *         description="Unauthenticated"
+     *     ),
+     *     @OA\Response(
+     *         response=404,
+     *         description="Membership type not found",
+     *         @OA\JsonContent(
+     *             type="object",
+     *             @OA\Property(property="success", type="boolean", example=false),
+     *             @OA\Property(property="message", type="string", example="نوع عضویت یافت نشد"),
+     *             @OA\Property(property="data", type="null")
+     *         )
+     *     ),
+     *     @OA\Response(
+     *         response=422,
+     *         description="Validation error",
+     *         @OA\JsonContent(
+     *             type="object",
+     *             @OA\Property(property="success", type="boolean", example=false),
+     *             @OA\Property(property="message", type="string", example="The membership type id field is required."),
+     *             @OA\Property(property="data", type="null")
+     *         )
+     *     ),
+     *     @OA\Response(
+     *         response=500,
+     *         description="Server error",
+     *         @OA\JsonContent(
+     *             type="object",
+     *             @OA\Property(property="success", type="boolean", example=false),
+     *             @OA\Property(property="message", type="string", example="خطا در ایجاد سفارش"),
+     *             @OA\Property(property="data", type="string", example="Error details")
+     *         )
+     *     )
+     * )
+     */
     public function store(MemeberShipStoreRequest $request)
     {
         $membershipType = MembershipType::whereId($request->membership_type_id)->firstOrFail();
