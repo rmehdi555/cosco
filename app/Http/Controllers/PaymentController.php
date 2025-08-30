@@ -713,6 +713,65 @@ class PaymentController extends Controller
         return redirect()->away('https://rdst.ca/callback-zarinpal-result/' . $result['order_id']);
     }
 
+    /**
+     * Verify membership payment callback
+     *
+     * @OA\Get(
+     *     path="/api/payment/callback/verify-membership",
+     *     operationId="callbackVerifyMembership",
+     *     tags={"Payment"},
+     *     summary="Verify membership payment callback",
+     *     description="Handles payment gateway callback for membership payments and redirects to result page",
+     *     @OA\Parameter(
+     *         name="gateway",
+     *         in="query",
+     *         description="Payment gateway name",
+     *         required=false,
+     *         @OA\Schema(type="string", example="zarinpal_test")
+     *     ),
+     *     @OA\Parameter(
+     *         name="Authority",
+     *         in="query",
+     *         description="Payment authority ID - Zarinpal only",
+     *         required=false,
+     *         @OA\Schema(type="string", example="123456789")
+     *     ),
+     *     @OA\Parameter(
+     *         name="Status",
+     *         in="query",
+     *         description="Payment status - Zarinpal only",
+     *         required=false,
+     *         @OA\Schema(type="string", example="OK")
+     *     ),
+     *     @OA\Parameter(
+     *         name="Token",
+     *         in="query",
+     *         description="Payment token - Melli Bank only",
+     *         required=false,
+     *         @OA\Schema(type="string", example="123456789")
+     *     ),
+     *     @OA\Parameter(
+     *         name="ResCod",
+     *         in="query",
+     *         description="Response code - Melli Bank only",
+     *         required=false,
+     *         @OA\Schema(type="string", example="0")
+     *     ),
+     *     @OA\Response(
+     *         response=302,
+     *         description="Redirect to result page",
+     *         @OA\Header(
+     *             header="Location",
+     *             description="Destination URL containing membership identifier",
+     *             @OA\Schema(type="string", example="https://rdst.ca/callback-membership-zarinpal-result/123")
+     *         )
+     *     ),
+     *     @OA\Response(
+     *         response=500,
+     *         description="Server error while verifying payment"
+     *     )
+     * )
+     */
     public function callbackVerifyMembership(Request $request)
     {
         $callbackData = $request->all();
@@ -723,6 +782,93 @@ class PaymentController extends Controller
         return redirect()->away('https://rdst.ca/callback-membership-zarinpal-result/' . $result['membership_id']);
     }
 
+    /**
+     * Get membership payment status
+     *
+     * @OA\Get(
+     *     path="/api/payment-membership/status/{membership_id}",
+     *     operationId="getPaymentMembershipStatus",
+     *     tags={"Payment"},
+     *     summary="Get membership payment status",
+     *     description="Retrieves detailed payment status information for a specific membership",
+     *     @OA\Parameter(
+     *         name="membership_id",
+     *         in="path",
+     *         description="Membership ID",
+     *         required=true,
+     *         @OA\Schema(type="integer", example=123)
+     *     ),
+     *     @OA\Response(
+     *         response=200,
+     *         description="Payment status retrieved successfully",
+     *         @OA\JsonContent(
+     *             type="object",
+     *             @OA\Property(property="success", type="boolean", example=true),
+     *             @OA\Property(property="message", type="string", example="اطلاعات پرداخت با موفقیت دریافت شد"),
+     *             @OA\Property(
+     *                 property="data",
+     *                 type="object",
+     *                 @OA\Property(property="order_id", type="integer", example=123),
+     *                 @OA\Property(property="payment_status", type="string", example="paid"),
+     *                 @OA\Property(property="order_status", type="string", example="completed"),
+     *                 @OA\Property(property="total_amount", type="string", example="1,000,000 تومان"),
+     *                 @OA\Property(
+     *                     property="user_info",
+     *                     type="object",
+     *                     nullable=true,
+     *                     @OA\Property(property="user_id", type="integer", example=1),
+     *                     @OA\Property(property="name", type="string", example="علی احمدی"),
+     *                     @OA\Property(property="cell_phone", type="string", example="09123456789"),
+     *                     @OA\Property(property="email", type="string", example="ali@example.com")
+     *                 ),
+     *                 @OA\Property(
+     *                     property="payment_info",
+     *                     type="object",
+     *                     nullable=true,
+     *                     @OA\Property(property="payment_id", type="integer", example=456),
+     *                     @OA\Property(property="method", type="string", example="آنلاین"),
+     *                     @OA\Property(property="status", type="string", example="تکمیل شده"),
+     *                     @OA\Property(property="amount", type="string", example="1,000,000 تومان"),
+     *                     @OA\Property(property="transaction_id", type="string", example="123456789"),
+     *                     @OA\Property(property="reference_id", type="string", example="987654321"),
+     *                     @OA\Property(property="paid_at", type="string", example="1402/01/15 14:30:00"),
+     *                     @OA\Property(property="created_at", type="string", example="1402/01/15 10:00:00")
+     *                 ),
+     *                 @OA\Property(property="created_at", type="string", example="1402/01/15 10:00:00"),
+     *                 @OA\Property(property="updated_at", type="string", example="1402/01/15 14:30:00"),
+     *                 @OA\Property(
+     *                     property="status_summary",
+     *                     type="object",
+     *                     @OA\Property(property="is_paid", type="boolean", example=true),
+     *                     @OA\Property(property="is_pending", type="boolean", example=false),
+     *                     @OA\Property(property="is_failed", type="boolean", example=false),
+     *                     @OA\Property(property="can_retry_payment", type="boolean", example=false)
+     *                 )
+     *             )
+     *         )
+     *     ),
+     *     @OA\Response(
+     *         response=404,
+     *         description="Membership not found",
+     *         @OA\JsonContent(
+     *             type="object",
+     *             @OA\Property(property="success", type="boolean", example=false),
+     *             @OA\Property(property="message", type="string", example="عضویت یافت نشد"),
+     *             @OA\Property(property="data", type="null")
+     *         )
+     *     ),
+     *     @OA\Response(
+     *         response=500,
+     *         description="Server error",
+     *         @OA\JsonContent(
+     *             type="object",
+     *             @OA\Property(property="success", type="boolean", example=false),
+     *             @OA\Property(property="message", type="string", example="خطا در دریافت اطلاعات پرداخت"),
+     *             @OA\Property(property="data", type="null")
+     *         )
+     *     )
+     * )
+     */
     public function getPaymentMembershipStatus(int $membershipId): JsonResponse
     {
         try {

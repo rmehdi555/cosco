@@ -10,7 +10,7 @@
     },
     "servers": [
         {
-            "url": "http://localhost:8000",
+            "url": "http://localhost:8072",
             "description": "API Server"
         }
     ],
@@ -1414,6 +1414,189 @@
                     },
                     "404": {
                         "description": "Membership not found"
+                    }
+                },
+                "security": [
+                    {
+                        "bearerAuth": []
+                    }
+                ]
+            }
+        },
+        "/api/membership": {
+            "post": {
+                "tags": [
+                    "Memberships"
+                ],
+                "summary": "Create a new membership",
+                "description": "Creates a new membership for the authenticated user and sends payment request to gateway",
+                "operationId": "createMembership",
+                "requestBody": {
+                    "required": true,
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "required": [
+                                    "membership_type_id"
+                                ],
+                                "properties": {
+                                    "membership_type_id": {
+                                        "description": "ID of the membership type",
+                                        "type": "integer",
+                                        "example": 1
+                                    },
+                                    "gateway": {
+                                        "description": "Payment gateway to use (optional)",
+                                        "type": "string",
+                                        "example": "zarinpal_test"
+                                    }
+                                },
+                                "type": "object"
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "200": {
+                        "description": "Membership created successfully and payment gateway request sent",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "success": {
+                                            "type": "boolean",
+                                            "example": true
+                                        },
+                                        "message": {
+                                            "type": "string",
+                                            "example": "درخواست درگاه پرداخت با موفقیت ارسال شد"
+                                        },
+                                        "data": {
+                                            "properties": {
+                                                "success": {
+                                                    "type": "boolean",
+                                                    "example": true
+                                                },
+                                                "payment_id": {
+                                                    "type": "integer",
+                                                    "example": 123
+                                                },
+                                                "gateway_url": {
+                                                    "type": "string",
+                                                    "example": "https://www.zarinpal.com/pg/StartPay/123456789"
+                                                },
+                                                "transaction_id": {
+                                                    "type": "string",
+                                                    "example": "123456789"
+                                                },
+                                                "message": {
+                                                    "type": "string",
+                                                    "example": "درخواست پرداخت با موفقیت ارسال شد"
+                                                }
+                                            },
+                                            "type": "object"
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    },
+                    "400": {
+                        "description": "Bad request - Order already paid or validation error",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "success": {
+                                            "type": "boolean",
+                                            "example": false
+                                        },
+                                        "message": {
+                                            "type": "string",
+                                            "example": "سفارش قبلاً پرداخت شده است"
+                                        },
+                                        "data": {
+                                            "type": "null"
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    },
+                    "401": {
+                        "description": "Unauthenticated"
+                    },
+                    "404": {
+                        "description": "Membership type not found",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "success": {
+                                            "type": "boolean",
+                                            "example": false
+                                        },
+                                        "message": {
+                                            "type": "string",
+                                            "example": "نوع عضویت یافت نشد"
+                                        },
+                                        "data": {
+                                            "type": "null"
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    },
+                    "422": {
+                        "description": "Validation error",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "success": {
+                                            "type": "boolean",
+                                            "example": false
+                                        },
+                                        "message": {
+                                            "type": "string",
+                                            "example": "The membership type id field is required."
+                                        },
+                                        "data": {
+                                            "type": "null"
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    },
+                    "500": {
+                        "description": "Server error",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "success": {
+                                            "type": "boolean",
+                                            "example": false
+                                        },
+                                        "message": {
+                                            "type": "string",
+                                            "example": "خطا در ایجاد سفارش"
+                                        },
+                                        "data": {
+                                            "type": "string",
+                                            "example": "Error details"
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
                     }
                 },
                 "security": [
@@ -2835,6 +3018,285 @@
                     },
                     "500": {
                         "description": "Server error while verifying payment"
+                    }
+                }
+            }
+        },
+        "/api/payment/callback/verify-membership": {
+            "get": {
+                "tags": [
+                    "Payment"
+                ],
+                "summary": "Verify membership payment callback",
+                "description": "Handles payment gateway callback for membership payments and redirects to result page",
+                "operationId": "callbackVerifyMembership",
+                "parameters": [
+                    {
+                        "name": "gateway",
+                        "in": "query",
+                        "description": "Payment gateway name",
+                        "required": false,
+                        "schema": {
+                            "type": "string",
+                            "example": "zarinpal_test"
+                        }
+                    },
+                    {
+                        "name": "Authority",
+                        "in": "query",
+                        "description": "Payment authority ID - Zarinpal only",
+                        "required": false,
+                        "schema": {
+                            "type": "string",
+                            "example": "123456789"
+                        }
+                    },
+                    {
+                        "name": "Status",
+                        "in": "query",
+                        "description": "Payment status - Zarinpal only",
+                        "required": false,
+                        "schema": {
+                            "type": "string",
+                            "example": "OK"
+                        }
+                    },
+                    {
+                        "name": "Token",
+                        "in": "query",
+                        "description": "Payment token - Melli Bank only",
+                        "required": false,
+                        "schema": {
+                            "type": "string",
+                            "example": "123456789"
+                        }
+                    },
+                    {
+                        "name": "ResCod",
+                        "in": "query",
+                        "description": "Response code - Melli Bank only",
+                        "required": false,
+                        "schema": {
+                            "type": "string",
+                            "example": "0"
+                        }
+                    }
+                ],
+                "responses": {
+                    "302": {
+                        "description": "Redirect to result page",
+                        "headers": {
+                            "Location": {
+                                "description": "Destination URL containing membership identifier",
+                                "schema": {
+                                    "type": "string",
+                                    "example": "https://rdst.ca/callback-membership-zarinpal-result/123"
+                                }
+                            }
+                        }
+                    },
+                    "500": {
+                        "description": "Server error while verifying payment"
+                    }
+                }
+            }
+        },
+        "/api/payment-membership/status/{membership_id}": {
+            "get": {
+                "tags": [
+                    "Payment"
+                ],
+                "summary": "Get membership payment status",
+                "description": "Retrieves detailed payment status information for a specific membership",
+                "operationId": "getPaymentMembershipStatus",
+                "parameters": [
+                    {
+                        "name": "membership_id",
+                        "in": "path",
+                        "description": "Membership ID",
+                        "required": true,
+                        "schema": {
+                            "type": "integer",
+                            "example": 123
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Payment status retrieved successfully",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "success": {
+                                            "type": "boolean",
+                                            "example": true
+                                        },
+                                        "message": {
+                                            "type": "string",
+                                            "example": "اطلاعات پرداخت با موفقیت دریافت شد"
+                                        },
+                                        "data": {
+                                            "properties": {
+                                                "order_id": {
+                                                    "type": "integer",
+                                                    "example": 123
+                                                },
+                                                "payment_status": {
+                                                    "type": "string",
+                                                    "example": "paid"
+                                                },
+                                                "order_status": {
+                                                    "type": "string",
+                                                    "example": "completed"
+                                                },
+                                                "total_amount": {
+                                                    "type": "string",
+                                                    "example": "1,000,000 تومان"
+                                                },
+                                                "user_info": {
+                                                    "properties": {
+                                                        "user_id": {
+                                                            "type": "integer",
+                                                            "example": 1
+                                                        },
+                                                        "name": {
+                                                            "type": "string",
+                                                            "example": "علی احمدی"
+                                                        },
+                                                        "cell_phone": {
+                                                            "type": "string",
+                                                            "example": "09123456789"
+                                                        },
+                                                        "email": {
+                                                            "type": "string",
+                                                            "example": "ali@example.com"
+                                                        }
+                                                    },
+                                                    "type": "object",
+                                                    "nullable": true
+                                                },
+                                                "payment_info": {
+                                                    "properties": {
+                                                        "payment_id": {
+                                                            "type": "integer",
+                                                            "example": 456
+                                                        },
+                                                        "method": {
+                                                            "type": "string",
+                                                            "example": "آنلاین"
+                                                        },
+                                                        "status": {
+                                                            "type": "string",
+                                                            "example": "تکمیل شده"
+                                                        },
+                                                        "amount": {
+                                                            "type": "string",
+                                                            "example": "1,000,000 تومان"
+                                                        },
+                                                        "transaction_id": {
+                                                            "type": "string",
+                                                            "example": "123456789"
+                                                        },
+                                                        "reference_id": {
+                                                            "type": "string",
+                                                            "example": "987654321"
+                                                        },
+                                                        "paid_at": {
+                                                            "type": "string",
+                                                            "example": "1402/01/15 14:30:00"
+                                                        },
+                                                        "created_at": {
+                                                            "type": "string",
+                                                            "example": "1402/01/15 10:00:00"
+                                                        }
+                                                    },
+                                                    "type": "object",
+                                                    "nullable": true
+                                                },
+                                                "created_at": {
+                                                    "type": "string",
+                                                    "example": "1402/01/15 10:00:00"
+                                                },
+                                                "updated_at": {
+                                                    "type": "string",
+                                                    "example": "1402/01/15 14:30:00"
+                                                },
+                                                "status_summary": {
+                                                    "properties": {
+                                                        "is_paid": {
+                                                            "type": "boolean",
+                                                            "example": true
+                                                        },
+                                                        "is_pending": {
+                                                            "type": "boolean",
+                                                            "example": false
+                                                        },
+                                                        "is_failed": {
+                                                            "type": "boolean",
+                                                            "example": false
+                                                        },
+                                                        "can_retry_payment": {
+                                                            "type": "boolean",
+                                                            "example": false
+                                                        }
+                                                    },
+                                                    "type": "object"
+                                                }
+                                            },
+                                            "type": "object"
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    },
+                    "404": {
+                        "description": "Membership not found",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "success": {
+                                            "type": "boolean",
+                                            "example": false
+                                        },
+                                        "message": {
+                                            "type": "string",
+                                            "example": "عضویت یافت نشد"
+                                        },
+                                        "data": {
+                                            "type": "null"
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    },
+                    "500": {
+                        "description": "Server error",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "success": {
+                                            "type": "boolean",
+                                            "example": false
+                                        },
+                                        "message": {
+                                            "type": "string",
+                                            "example": "خطا در دریافت اطلاعات پرداخت"
+                                        },
+                                        "data": {
+                                            "type": "null"
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
                     }
                 }
             }
@@ -5944,6 +6406,10 @@
         {
             "name": "Order Items",
             "description": "API endpoints for order items"
+        },
+        {
+            "name": "Payment",
+            "description": "API endpoints for payment operations"
         },
         {
             "name": "Sitemap",
