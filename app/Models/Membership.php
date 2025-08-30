@@ -2,9 +2,12 @@
 
 namespace App\Models;
 
+use App\Enums\OrderPaymentStatus;
+use App\Enums\OrderStatus;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
+use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Database\Eloquent\SoftDeletes;
 
 class Membership extends Model
@@ -19,12 +22,15 @@ class Membership extends Model
         'end_date',
         'is_active',
         'membership_type_id',
+        'payment_status',
     ];
 
     protected $casts = [
         'start_date' => 'date',
         'end_date' => 'date',
         'is_active' => 'boolean',
+        'status' => OrderStatus::class,
+        'payment_status' => OrderPaymentStatus::class,
     ];
 
     public function user(): BelongsTo
@@ -42,15 +48,15 @@ class Membership extends Model
         if (!$this->is_active) {
             return 'غیرفعال';
         }
-        
+
         if ($this->end_date->isPast()) {
             return 'منقضی شده';
         }
-        
+
         if ($this->start_date->isFuture()) {
             return 'در انتظار شروع';
         }
-        
+
         return 'فعال';
     }
 
@@ -63,4 +69,9 @@ class Membership extends Model
     {
         return max(0, now()->diffInDays($this->end_date, false));
     }
-} 
+
+    public function paymentMembership(): HasMany
+    {
+        return $this->hasMany(PaymentMembership::class);
+    }
+}
