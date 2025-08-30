@@ -39,6 +39,7 @@ class DatabaseSeeder extends Seeder
             RefahSeeder::class,
             DiscountTyeSeeder::class,
             SliderSeeder::class,
+            ContactUsSeeder::class,
         ]);
     }
 }

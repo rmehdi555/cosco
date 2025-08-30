@@ -1163,6 +1163,79 @@
                 ]
             }
         },
+        "/api/contact-us": {
+            "post": {
+                "tags": [
+                    "Contact Us"
+                ],
+                "summary": "Submit contact us form",
+                "operationId": "70d05d6703b2b0449cca923cd3afa55a",
+                "requestBody": {
+                    "required": true,
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "required": [
+                                    "body"
+                                ],
+                                "properties": {
+                                    "first_name": {
+                                        "type": "string",
+                                        "example": "علی"
+                                    },
+                                    "last_name": {
+                                        "type": "string",
+                                        "example": "احمدی"
+                                    },
+                                    "email": {
+                                        "type": "string",
+                                        "format": "email",
+                                        "example": "ali@example.com"
+                                    },
+                                    "phone": {
+                                        "type": "string",
+                                        "example": "09123456789"
+                                    },
+                                    "body": {
+                                        "type": "string",
+                                        "example": "سلام، من سوالی در مورد محصولات شما دارم."
+                                    }
+                                },
+                                "type": "object"
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "201": {
+                        "description": "Contact message submitted successfully",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "success": {
+                                            "type": "boolean",
+                                            "example": true
+                                        },
+                                        "message": {
+                                            "type": "string",
+                                            "example": "پیام شما با موفقیت ارسال شد."
+                                        },
+                                        "data": {
+                                            "$ref": "#/components/schemas/ContactUsResource"
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    },
+                    "422": {
+                        "description": "Validation error"
+                    }
+                }
+            }
+        },
         "/api/countries/tree": {
             "get": {
                 "tags": [
@@ -4183,6 +4256,54 @@
     },
     "components": {
         "schemas": {
+            "ContactUsResource": {
+                "properties": {
+                    "id": {
+                        "type": "integer",
+                        "example": 1
+                    },
+                    "first_name": {
+                        "type": "string",
+                        "example": "علی"
+                    },
+                    "last_name": {
+                        "type": "string",
+                        "example": "احمدی"
+                    },
+                    "full_name": {
+                        "type": "string",
+                        "example": "علی احمدی"
+                    },
+                    "email": {
+                        "type": "string",
+                        "format": "email",
+                        "example": "ali@example.com"
+                    },
+                    "phone": {
+                        "type": "string",
+                        "example": "09123456789"
+                    },
+                    "body": {
+                        "type": "string",
+                        "example": "سلام، من سوالی در مورد محصولات شما دارم."
+                    },
+                    "is_answered": {
+                        "type": "boolean",
+                        "example": false
+                    },
+                    "created_at": {
+                        "type": "string",
+                        "format": "date-time",
+                        "example": "2024-12-19 10:30:00"
+                    },
+                    "updated_at": {
+                        "type": "string",
+                        "format": "date-time",
+                        "example": "2024-12-19 10:30:00"
+                    }
+                },
+                "type": "object"
+            },
             "CreateCartRequest": {
                 "title": "Create Cart Request",
                 "description": "Request schema for creating a new cart",
@@ -5928,6 +6049,10 @@
         {
             "name": "Carts",
             "description": "API endpoints for user carts"
+        },
+        {
+            "name": "Contact Us",
+            "description": "Contact Us API endpoints"
         },
         {
             "name": "Memberships",

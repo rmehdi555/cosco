@@ -10,6 +10,7 @@ use App\Http\Controllers\OrderController;
 use App\Http\Controllers\OrderItemController;
 use App\Http\Controllers\PaymentController;
 use App\Http\Controllers\CartController;
+use App\Http\Controllers\ContactUsController;
 
 Route::post('register', [AuthController::class, 'register']);
 Route::post('login', [AuthController::class, 'login']);
@@ -89,6 +90,9 @@ Route::get('search-all', [\App\Http\Controllers\SearchController::class, 'search
 //sitemap
 Route::get('sitemap', [SitemapController::class, 'index']);
 Route::get('robots', [SitemapController::class, 'robots']);
+
+// Contact Us routes
+Route::post('contact-us', [ContactUsController::class, 'store']);
 
 Route::get('/payment/callback/verify', [PaymentController::class, 'callbackVerify'])->name('payment.callback.api');
 
