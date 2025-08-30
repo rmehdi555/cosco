@@ -10,7 +10,7 @@
     },
     "servers": [
         {
-            "url": "http://localhost:8072",
+            "url": "http://localhost:8000",
             "description": "API Server"
         }
     ],
@@ -3177,7 +3177,7 @@
         "/api/payment-membership/status/{membership_id}": {
             "get": {
                 "tags": [
-                    "Payment"
+                    "Payments"
                 ],
                 "summary": "Get membership payment status",
                 "description": "Retrieves detailed payment status information for a specific membership",
@@ -3325,6 +3325,9 @@
                             }
                         }
                     },
+                    "401": {
+                        "description": "Unauthenticated"
+                    },
                     "404": {
                         "description": "Membership not found",
                         "content": {
@@ -3371,7 +3374,12 @@
                             }
                         }
                     }
-                }
+                },
+                "security": [
+                    {
+                        "bearerAuth": []
+                    }
+                ]
             }
         },
         "/api/product-categories/tree": {

@@ -788,9 +788,10 @@ class PaymentController extends Controller
      * @OA\Get(
      *     path="/api/payment-membership/status/{membership_id}",
      *     operationId="getPaymentMembershipStatus",
-     *     tags={"Payment"},
+     *     tags={"Payments"},
      *     summary="Get membership payment status",
      *     description="Retrieves detailed payment status information for a specific membership",
+     *     security={{"bearerAuth":{}}},
      *     @OA\Parameter(
      *         name="membership_id",
      *         in="path",
@@ -848,6 +849,10 @@ class PaymentController extends Controller
      *         )
      *     ),
      *     @OA\Response(
+     *         response=401,
+     *         description="Unauthenticated"
+     *     ),
+     *     @OA\Response(
      *         response=404,
      *         description="Membership not found",
      *         @OA\JsonContent(
@@ -873,7 +878,7 @@ class PaymentController extends Controller
     {
         try {
             // دریافت سفارش با اطلاعات مرتبط
-            $membership = Membership::with(['user', 'membership' => function ($query) {
+            $membership = Membership::with(['user', 'paymentMembership' => function ($query) {
                 $query->latest()->first();
             }])->find($membershipId);
 
@@ -882,7 +887,7 @@ class PaymentController extends Controller
             }
 
             // دریافت آخرین پرداخت
-            $latestPayment = $membership->$membership->first();
+            $latestPayment = $membership->paymentMembership->first();
 
             // آماده‌سازی اطلاعات کاربر
             $userInfo = null;
