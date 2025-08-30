@@ -49,14 +49,10 @@ class SliderResource extends Resource
                             ->disk('public')
                             ->directory('sliders'),
 
-                        Forms\Components\Select::make('type')
+                        Forms\Components\TextInput::make('type')
                             ->label('نوع')
-                            ->options([
-                                'main' => 'اصلی',
-                                'secondary' => 'فرعی',
-                                'banner' => 'بنر',
-                            ])
-                            ->required(),
+                            ->required()
+                            ->maxLength(255),
 
                         Forms\Components\Toggle::make('is_show')
                             ->label('نمایش')
