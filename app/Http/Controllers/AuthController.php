@@ -183,19 +183,19 @@ class AuthController extends Controller
         if (now()->greaterThan($user->email_verification_expires_at)) {
             return ApiResponse::error(trans('auth.verification_code_expired'), null, 422);
         }
-        
+
         // Verify the user
         $user->email_verified_at = now();
         $user->verification_code = null;
         $user->email_verification_expires_at = null;
         $user->save();
-        
+
         // Login the user
         Auth::login($user);
-        
+
         // Generate token
         $token = $user->createToken('api_token')->accessToken;
-        
+
         return ApiResponse::success([
             'token' => $token,
             'user' => new UserResource($user),
@@ -263,7 +263,7 @@ class AuthController extends Controller
 
         // Login the user
         Auth::login($user);
-        
+
         // Generate token
         $token = $user->createToken('api_token')->accessToken;
 
@@ -678,10 +678,11 @@ class AuthController extends Controller
     public function logout()
     {
         $user = Auth::user();
-        
+
         if ($user) {
             // Revoke all tokens for the current user
-            $user->tokens()->delete();
+//            $user->tokens()->delete();
+            $user->token()->revoke();
         }
 
         return ApiResponse::success(null, trans('auth.logout_success'))

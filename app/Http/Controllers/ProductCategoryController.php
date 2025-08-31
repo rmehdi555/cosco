@@ -50,14 +50,14 @@ class ProductCategoryController extends Controller
      *     in="query",
      *     required=false,
      *     description="حداقل قیمت محصول",
-     *     @OA\Schema(type="integer")
+     *     @OA\Schema(type="integer", example=1000000)
      *   ),
      *   @OA\Parameter(
      *     name="max_price",
      *     in="query",
      *     required=false,
      *     description="حداکثر قیمت محصول",
-     *     @OA\Schema(type="integer")
+     *     @OA\Schema(type="integer", example=5000000)
      *   ),
      *   @OA\Parameter(
      *     name="sort_by",
@@ -71,14 +71,14 @@ class ProductCategoryController extends Controller
      *     in="query",
      *     required=false,
      *     description="شماره صفحه نتایج",
-     *     @OA\Schema(type="integer")
+     *     @OA\Schema(type="integer", example=1)
      *   ),
      *   @OA\Parameter(
      *     name="count",
      *     in="query",
      *     required=false,
      *     description="تعداد نتایج در هر صفحه",
-     *     @OA\Schema(type="integer")
+     *     @OA\Schema(type="integer", example=12)
      *   ),
      *   @OA\Parameter(
      *     name="category",
@@ -92,7 +92,14 @@ class ProductCategoryController extends Controller
      *     in="query",
      *     required=false,
      *     description="فیلتر برند بر اساس اسلاگ",
-     *     @OA\Schema(type="string")
+     *     @OA\Schema(type="string", example="apple")
+     *   ),
+     *   @OA\Parameter(
+     *     name="rating",
+     *     in="query",
+     *     required=false,
+     *     description="حداقل امتیاز محصول (1 تا 5)",
+     *     @OA\Schema(type="integer", minimum=1, maximum=5, example=4)
      *   ),
      *   @OA\Response(
      *     response=200,
@@ -190,6 +197,10 @@ class ProductCategoryController extends Controller
             ->when(
                 isset($request->brand),
                 fn($q) => $q->whereHas('brand', fn($brandQuery) => $brandQuery->where('slug', $request->brand))
+            )
+            ->when(
+                isset($request->rating),
+                fn($q) => $q->whereHas('reviews', fn($rating) => $rating->where('rating', '>=', $request->rating))
             )
             ->latest()->paginate($request->count ?? 12);
 

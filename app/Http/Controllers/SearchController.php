@@ -140,61 +140,68 @@ class SearchController extends Controller
     /**
      * @OA\Get(
      *     path="/api/search-all",
-     *     summary="جستجوی محصولات با صفحه‌بندی و مرتب‌سازی",
-     *     description="جستجوی محصولات با پارامترهای صفحه‌بندی و مرتب‌سازی. خروجی شامل محصولات، برندها، اسلایدرها و دسته‌بندی‌ها است.",
+     *     summary="جستجوی جامع در محصولات، دسته‌بندی‌ها، برندها و اسلایدرها",
+     *     description="جستجوی جامع با فیلترهای پیشرفته شامل قیمت، برند، امتیاز و مرتب‌سازی",
      *     tags={"Search"},
      *     @OA\Parameter(
      *         name="q",
      *         in="query",
      *         required=true,
      *         description="عبارت جستجو (حداقل 2 کاراکتر)",
-     *         @OA\Schema(type="string", minLength=2, example="iphone")
-     *     ),
-     *     @OA\Parameter(
-     *         name="page",
-     *         in="query",
-     *         required=false,
-     *         description="شماره صفحه",
-     *         @OA\Schema(type="integer", example=1)
-     *     ),
-     *     @OA\Parameter(
-     *         name="count",
-     *         in="query",
-     *         required=false,
-     *         description="تعداد آیتم‌ها در هر صفحه",
-     *         @OA\Schema(type="integer", example=12)
+     *         @OA\Schema(
+     *             type="string",
+     *             minLength=2,
+     *             example="iPhone"
+     *         )
      *     ),
      *     @OA\Parameter(
      *         name="sortby",
      *         in="query",
      *         required=false,
-     *         description="مرتب‌سازی نتایج بر اساس: ارزان‌ترین، گران‌ترین، جدیدترین",
-     *         @OA\Schema(type="string", enum={"cheapest","expensive","newest"}, example="newest")
+     *         description="مرتب‌سازی محصولات: ارزان‌ترین، گران‌ترین، جدیدترین",
+     *         @OA\Schema(
+     *             type="string",
+     *             enum={"cheapest", "expensive", "newest"}
+     *         )
      *     ),
      *     @OA\Parameter(
      *         name="min_price",
      *         in="query",
      *         required=false,
-     *         description="حداقل قیمت محصول (به تومان)",
-     *         @OA\Schema(type="integer")
+     *         description="حداقل قیمت محصول",
+     *         @OA\Schema(type="integer", example=1000000)
      *     ),
      *     @OA\Parameter(
      *         name="max_price",
      *         in="query",
      *         required=false,
-     *         description="حداکثر قیمت محصول (به تومان)",
-     *         @OA\Schema(type="integer")
+     *         description="حداکثر قیمت محصول",
+     *         @OA\Schema(type="integer", example=5000000)
      *     ),
      *     @OA\Parameter(
      *         name="brand",
      *         in="query",
      *         required=false,
      *         description="فیلتر برند بر اساس اسلاگ",
-     *         @OA\Schema(type="string")
+     *         @OA\Schema(type="string", example="apple")
+     *     ),
+     *     @OA\Parameter(
+     *         name="rating",
+     *         in="query",
+     *         required=false,
+     *         description="حداقل امتیاز محصول (1 تا 5)",
+     *         @OA\Schema(type="integer", minimum=1, maximum=5, example=4)
+     *     ),
+     *     @OA\Parameter(
+     *         name="count",
+     *         in="query",
+     *         required=false,
+     *         description="تعداد نتایج در هر صفحه",
+     *         @OA\Schema(type="integer", example=12)
      *     ),
      *     @OA\Response(
      *         response=200,
-     *         description="لیست نتایج جستجو",
+     *         description="نتایج جستجو شامل محصولات، دسته‌بندی‌ها، برندها و اسلایدرها",
      *         @OA\JsonContent(
      *             type="object",
      *             @OA\Property(property="status", type="boolean", example=true),
@@ -240,7 +247,7 @@ class SearchController extends Controller
             ->with(['images', 'brand'])
             ->where(function ($query) use ($q) {
                 $query->where('name', 'like', "%$q%")
-                      ->orWhere('slug', 'like', "%$q%");
+                    ->orWhere('slug', 'like', "%$q%");
             })
             ->when(isset($request->sortby), function ($q) use ($request) {
                 if ($request->sortby == 'cheapest') {
@@ -266,7 +273,12 @@ class SearchController extends Controller
             ->when(
                 isset($request->brand),
                 fn($q) => $q->whereHas('brand', fn($brandQuery) => $brandQuery->where('slug', $request->brand))
-            )->latest()->paginate($request->count ?? 12);
+            )
+            ->when(
+                isset($request->rating),
+                fn($q) => $q->whereHas('reviews', fn($rating) => $rating->where('rating', '>=', $request->rating))
+            )
+            ->latest()->paginate($request->count ?? 12);
 
         $categories = ProductCategory::
 //            where('is_active', true)
