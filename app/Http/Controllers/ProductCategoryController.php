@@ -149,9 +149,8 @@ class ProductCategoryController extends Controller
             $categories = ProductCategory::
 //            where('is_active', true)
             where('parent_id', null)->with('sliders')->get();
-            foreach ($categories as $category) {
-                $categoryIds[] = $category->id;
-            }
+
+            $categoryIds = ProductCategory::pluck('id')->toArray();
             $sliders = $categories->flatMap(function ($category) {
                 return $category->sliders;
             })->take(4);

@@ -64,6 +64,8 @@ Route::middleware('auth:api')->group(function () {
 
     // Comment routes
     Route::post('product-comment', [ProductController::class, 'comment']);
+
+    Route::get('recent-products', [ProductController::class, 'recentProducts']);
 });
 
 // Public routes

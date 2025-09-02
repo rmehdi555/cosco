@@ -9,6 +9,7 @@ use App\Models\Product;
 use App\Http\Resources\ProductResource;
 use App\Models\ProductReview;
 use App\Models\ProductReviewFile;
+use App\Models\ProductView;
 use App\Services\ProductViewService;
 use Illuminate\Http\Request;
 use App\Http\Responses\ApiResponse;
@@ -75,12 +76,12 @@ class ProductController extends Controller
 
             // Get recent products
             if ($result['status']) {
-                $recentProducts = $viewService->getRecentProducts(20, $product, $result['user_id']);
+                $recentProducts = $viewService->getRecentProducts(10, $product, $result['user_id']);
                 $recentProductsCollection = ProductSlidersResource::collection($recentProducts);
             } else
                 $recentProductsCollection = [];
 
-            $similarProducts = $viewService->getRelatedProducts($product, 20);
+            $similarProducts = $viewService->getRelatedProducts($product, 10);
 
             $response = [
                 'product' => new ProductResource($product),
@@ -95,9 +96,6 @@ class ProductController extends Controller
         }
     }
 
-///        $recentSlugs = request()->cookie('browser_id');
-//
-//        return response()->json($recentSlugs);
     /**
      * @OA\Post(
      *   path="/api/product-comment",
@@ -201,7 +199,6 @@ class ProductController extends Controller
      */
     public function comment(ProductCommentRequest $request)
     {
-//        return response()->json($request->validated());
         try {
             DB::beginTransaction();
             $product = Product::whereSlug($request->product_slug)->firstOrFail();
@@ -321,6 +318,72 @@ class ProductController extends Controller
         }
 
         return ApiResponse::success($list, __('messages.item_refresh_success'));
+    }
+
+    /**
+     * @OA\Get(
+     *   path="/api/recent-products",
+     *   summary="لیست محصولات اخیراً مشاهده‌شده کاربر",
+     *   description="محصولاتی که کاربر واردشده اخیراً مشاهده کرده است به‌صورت صفحه‌بندی",
+     *   tags={"Product"},
+     *   security={{"bearerAuth":{}}},
+     *   @OA\Parameter(
+     *     name="per_page",
+     *     in="query",
+     *     required=false,
+     *     description="تعداد آیتم در هر صفحه",
+     *     @OA\Schema(type="integer", default=10, minimum=1)
+     *   ),
+     *   @OA\Response(
+     *     response=200,
+     *     description="لیست محصولات اخیر",
+     *     @OA\JsonContent(
+     *       type="object",
+     *       @OA\Property(property="status", type="integer", example=200),
+     *       @OA\Property(property="message", type="string", example="محصولات"),
+     *       @OA\Property(
+     *         property="data",
+     *         type="object",
+     *         @OA\Property(
+     *           property="recent_products",
+     *           type="object",
+     *           @OA\Property(
+     *             property="data",
+     *             type="array",
+     *             @OA\Items(ref="#/components/schemas/ProductSlidersResource")
+     *           ),
+     *           @OA\Property(property="total", type="integer", example=25),
+     *           @OA\Property(property="perPage", type="integer", example=10),
+     *           @OA\Property(property="currentPage", type="integer", example=1),
+     *           @OA\Property(property="lastPage", type="integer", example=3)
+     *         )
+     *       ),
+     *       @OA\Property(property="errors", type="object", nullable=true, example=null)
+     *     )
+     *   ),
+     *   @OA\Response(
+     *     response=401,
+     *     description="نیاز به احراز هویت",
+     *     @OA\JsonContent(ref="#/components/schemas/ErrorResponse")
+     *   )
+     * )
+     */
+    public function recentProducts(Request $request)
+    {
+        $userId = Auth::id();
+        $recentProducts = Product::whereHas('views', function ($query) use ($userId) {
+            $query->where('user_id', $userId);
+        })->paginate($request->per_page);
+
+        return ApiResponse::success([
+            'recent_products' => [
+                'data' => ProductSlidersResource::collection($recentProducts),
+                'total' => $recentProducts->total(),
+                'perPage' => $recentProducts->perPage(),
+                'currentPage' => $recentProducts->currentPage(),
+                'lastPage' => $recentProducts->lastPage(),
+            ],
+        ], __('messages.products'));
     }
 
 }

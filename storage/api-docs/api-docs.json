@@ -3429,7 +3429,8 @@
                         "description": "حداقل قیمت محصول",
                         "required": false,
                         "schema": {
-                            "type": "integer"
+                            "type": "integer",
+                            "example": 1000000
                         }
                     },
                     {
@@ -3438,7 +3439,8 @@
                         "description": "حداکثر قیمت محصول",
                         "required": false,
                         "schema": {
-                            "type": "integer"
+                            "type": "integer",
+                            "example": 5000000
                         }
                     },
                     {
@@ -3461,7 +3463,8 @@
                         "description": "شماره صفحه نتایج",
                         "required": false,
                         "schema": {
-                            "type": "integer"
+                            "type": "integer",
+                            "example": 1
                         }
                     },
                     {
@@ -3470,7 +3473,8 @@
                         "description": "تعداد نتایج در هر صفحه",
                         "required": false,
                         "schema": {
-                            "type": "integer"
+                            "type": "integer",
+                            "example": 12
                         }
                     },
                     {
@@ -3488,7 +3492,20 @@
                         "description": "فیلتر برند بر اساس اسلاگ",
                         "required": false,
                         "schema": {
-                            "type": "string"
+                            "type": "string",
+                            "example": "apple"
+                        }
+                    },
+                    {
+                        "name": "rating",
+                        "in": "query",
+                        "description": "حداقل امتیاز محصول (1 تا 5)",
+                        "required": false,
+                        "schema": {
+                            "type": "integer",
+                            "maximum": 5,
+                            "minimum": 1,
+                            "example": 4
                         }
                     }
                 ],
@@ -3955,6 +3972,103 @@
                 }
             }
         },
+        "/api/recent-products": {
+            "get": {
+                "tags": [
+                    "Product"
+                ],
+                "summary": "لیست محصولات اخیراً مشاهده‌شده کاربر",
+                "description": "محصولاتی که کاربر واردشده اخیراً مشاهده کرده است به‌صورت صفحه‌بندی",
+                "operationId": "0e4a636b68631525d2f11e5772035436",
+                "parameters": [
+                    {
+                        "name": "per_page",
+                        "in": "query",
+                        "description": "تعداد آیتم در هر صفحه",
+                        "required": false,
+                        "schema": {
+                            "type": "integer",
+                            "default": 10,
+                            "minimum": 1
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "لیست محصولات اخیر",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "status": {
+                                            "type": "integer",
+                                            "example": 200
+                                        },
+                                        "message": {
+                                            "type": "string",
+                                            "example": "محصولات"
+                                        },
+                                        "data": {
+                                            "properties": {
+                                                "recent_products": {
+                                                    "properties": {
+                                                        "data": {
+                                                            "type": "array",
+                                                            "items": {
+                                                                "$ref": "#/components/schemas/ProductSlidersResource"
+                                                            }
+                                                        },
+                                                        "total": {
+                                                            "type": "integer",
+                                                            "example": 25
+                                                        },
+                                                        "perPage": {
+                                                            "type": "integer",
+                                                            "example": 10
+                                                        },
+                                                        "currentPage": {
+                                                            "type": "integer",
+                                                            "example": 1
+                                                        },
+                                                        "lastPage": {
+                                                            "type": "integer",
+                                                            "example": 3
+                                                        }
+                                                    },
+                                                    "type": "object"
+                                                }
+                                            },
+                                            "type": "object"
+                                        },
+                                        "errors": {
+                                            "type": "object",
+                                            "example": null,
+                                            "nullable": true
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    },
+                    "401": {
+                        "description": "نیاز به احراز هویت",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/ErrorResponse"
+                                }
+                            }
+                        }
+                    }
+                },
+                "security": [
+                    {
+                        "bearerAuth": []
+                    }
+                ]
+            }
+        },
         "/api/search": {
             "get": {
                 "tags": [
@@ -4078,8 +4192,8 @@
                 "tags": [
                     "Search"
                 ],
-                "summary": "جستجوی محصولات با صفحه‌بندی و مرتب‌سازی",
-                "description": "جستجوی محصولات با پارامترهای صفحه‌بندی و مرتب‌سازی. خروجی شامل محصولات، برندها، اسلایدرها و دسته‌بندی‌ها است.",
+                "summary": "جستجوی جامع در محصولات، دسته‌بندی‌ها، برندها و اسلایدرها",
+                "description": "جستجوی جامع با فیلترهای پیشرفته شامل قیمت، برند، امتیاز و مرتب‌سازی",
                 "operationId": "d26eb938229bbd4ce857fa408e9117a4",
                 "parameters": [
                     {
@@ -4090,33 +4204,13 @@
                         "schema": {
                             "type": "string",
                             "minLength": 2,
-                            "example": "iphone"
-                        }
-                    },
-                    {
-                        "name": "page",
-                        "in": "query",
-                        "description": "شماره صفحه",
-                        "required": false,
-                        "schema": {
-                            "type": "integer",
-                            "example": 1
-                        }
-                    },
-                    {
-                        "name": "count",
-                        "in": "query",
-                        "description": "تعداد آیتم‌ها در هر صفحه",
-                        "required": false,
-                        "schema": {
-                            "type": "integer",
-                            "example": 12
+                            "example": "iPhone"
                         }
                     },
                     {
                         "name": "sortby",
                         "in": "query",
-                        "description": "مرتب‌سازی نتایج بر اساس: ارزان‌ترین، گران‌ترین، جدیدترین",
+                        "description": "مرتب‌سازی محصولات: ارزان‌ترین، گران‌ترین، جدیدترین",
                         "required": false,
                         "schema": {
                             "type": "string",
@@ -4124,26 +4218,27 @@
                                 "cheapest",
                                 "expensive",
                                 "newest"
-                            ],
-                            "example": "newest"
+                            ]
                         }
                     },
                     {
                         "name": "min_price",
                         "in": "query",
-                        "description": "حداقل قیمت محصول (به تومان)",
+                        "description": "حداقل قیمت محصول",
                         "required": false,
                         "schema": {
-                            "type": "integer"
+                            "type": "integer",
+                            "example": 1000000
                         }
                     },
                     {
                         "name": "max_price",
                         "in": "query",
-                        "description": "حداکثر قیمت محصول (به تومان)",
+                        "description": "حداکثر قیمت محصول",
                         "required": false,
                         "schema": {
-                            "type": "integer"
+                            "type": "integer",
+                            "example": 5000000
                         }
                     },
                     {
@@ -4152,13 +4247,36 @@
                         "description": "فیلتر برند بر اساس اسلاگ",
                         "required": false,
                         "schema": {
-                            "type": "string"
+                            "type": "string",
+                            "example": "apple"
+                        }
+                    },
+                    {
+                        "name": "rating",
+                        "in": "query",
+                        "description": "حداقل امتیاز محصول (1 تا 5)",
+                        "required": false,
+                        "schema": {
+                            "type": "integer",
+                            "maximum": 5,
+                            "minimum": 1,
+                            "example": 4
+                        }
+                    },
+                    {
+                        "name": "count",
+                        "in": "query",
+                        "description": "تعداد نتایج در هر صفحه",
+                        "required": false,
+                        "schema": {
+                            "type": "integer",
+                            "example": 12
                         }
                     }
                 ],
                 "responses": {
                     "200": {
-                        "description": "لیست نتایج جستجو",
+                        "description": "نتایج جستجو شامل محصولات، دسته‌بندی‌ها، برندها و اسلایدرها",
                         "content": {
                             "application/json": {
                                 "schema": {
