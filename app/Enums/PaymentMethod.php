@@ -26,6 +26,16 @@ enum PaymentMethod: string
         };
     }
 
+    public function getLabel(): string
+    {
+        return $this->label();
+    }
+
+    public function getColor(): string
+    {
+        return $this->color();
+    }
+
     public static function options(): array
     {
         return [
@@ -33,5 +43,10 @@ enum PaymentMethod: string
             self::CASH->value => self::CASH->label(),
             self::BANK_TRANSFER->value => self::BANK_TRANSFER->label(),
         ];
+    }
+
+    public static function getOptions(): array
+    {
+        return self::options();
     }
 } 

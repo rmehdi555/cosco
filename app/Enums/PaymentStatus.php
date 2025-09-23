@@ -26,6 +26,16 @@ enum PaymentStatus: string
         };
     }
 
+    public function getLabel(): string
+    {
+        return $this->label();
+    }
+
+    public function getColor(): string
+    {
+        return $this->color();
+    }
+
     public function icon(): string
     {
         return match ($this) {
@@ -42,5 +52,10 @@ enum PaymentStatus: string
             self::COMPLETED->value => self::COMPLETED->label(),
             self::FAILED->value => self::FAILED->label(),
         ];
+    }
+
+    public static function getOptions(): array
+    {
+        return self::options();
     }
 } 
