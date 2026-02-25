@@ -60,6 +60,14 @@ class ProductResource extends Resource
                                 }
                             }),
 
+                        TextInput::make('code')
+                            ->label('کد محصول')
+                            ->required()
+                            ->maxLength(255)
+                            ->unique(ignoreRecord: true)
+                            ->placeholder('کد یکتای محصول')
+                            ->helperText('کد منحصر به فرد محصول'),
+
                         TextInput::make('slug')
                             ->label('نامک')
                             ->required()
@@ -188,6 +196,13 @@ class ProductResource extends Resource
                     ->sortable()
                     ->searchable()
                     ->fontFamily('mono'),
+
+                TextColumn::make('code')
+                    ->label('کد محصول')
+                    ->searchable()
+                    ->sortable()
+                    ->fontFamily('mono')
+                    ->copyable(),
 
                 ImageColumn::make('main_image')
                     ->label('تصویر اصلی')

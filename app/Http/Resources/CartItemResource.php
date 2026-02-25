@@ -19,6 +19,7 @@ use Illuminate\Http\Resources\Json\JsonResource;
  *     @OA\Property(property="product_id", type="integer", example=1, description="Product ID"),
  *     @OA\Property(property="product_image", type="string", example="https://example.com/image.jpg", description="Product image URL"),
  *     @OA\Property(property="product_slug", type="string", example="sample-product", description="Product slug for URL"),
+ *     @OA\Property(property="product_code", type="string", example="PRD-001", description="کد یکتای محصول"),
  *     @OA\Property(property="count_for_user", type="integer", example=10, description="Count of the product for the user")
  * )
  */
@@ -40,6 +41,7 @@ class CartItemResource extends JsonResource
             'product_name' => $this->product?->name,
             'product_image' => $this->product?->images?->first()?->image_url ? asset('storage/' . $this->product->images->first()->image_url) : '',
             'product_slug' => $this->product?->slug,
+            'product_code' => $this->product?->code,
             'count_for_user' => $this->product?->stock,
         ];
     }

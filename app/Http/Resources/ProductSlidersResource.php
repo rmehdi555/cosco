@@ -12,6 +12,7 @@ use Illuminate\Http\Resources\Json\JsonResource;
  *   title="Product Sliders Resource",
  *   description="Product resource for sliders representation",
  *   @OA\Property(property="name", type="string", example="نام محصول"),
+ *   @OA\Property(property="code", type="string", example="PRD-001", description="کد یکتای محصول"),
  *   @OA\Property(property="slug", type="string", example="product-slug"),
  *   @OA\Property(property="description", type="string", example="توضیحات کوتاه محصول"),
  *   @OA\Property(property="price", type="integer", example=150000),
@@ -46,6 +47,7 @@ class ProductSlidersResource extends JsonResource
         return [
             'id' => $this->id,
             'name' => $this->name,
+            'code' => $this->code,
             'slug' => $this->slug,
             'description' => $this->description,
             'price' => config('general.show_price')($this->price),
