@@ -5,7 +5,7 @@ namespace App\Filament\Resources;
 use App\Filament\Resources\CountryResource\Pages;
 use App\Models\Country;
 use Filament\Forms\Components\TextInput;
-use Filament\Forms\Form;
+use Filament\Schemas\Schema;
 use Filament\Resources\Resource;
 use Filament\Tables\Columns\TextColumn;
 use Filament\Tables\Table;
@@ -14,7 +14,10 @@ class CountryResource extends Resource
 {
     protected static ?string $model = Country::class;
 
-    protected static ?string $navigationIcon = 'heroicon-o-flag';
+    public static function getNavigationIcon(): ?string
+    {
+        return 'heroicon-o-flag';
+    }
 
     protected static ?string $modelLabel = 'کشور';
 
@@ -22,13 +25,16 @@ class CountryResource extends Resource
 
     protected static ?string $slug = 'countries';
 
-    protected static ?string $navigationGroup = 'مدیریت جغرافیایی';
+    public static function getNavigationGroup(): ?string
+    {
+        return 'مدیریت جغرافیایی';
+    }
 
     protected static ?int $navigationSort = 1;
 
-    public static function form(Form $form): Form
+    public static function form(Schema $schema): Schema
     {
-        return $form->schema([
+        return $schema->components([
             TextInput::make('title_fa')
                 ->label('نام فارسی')
                 ->maxLength(255)

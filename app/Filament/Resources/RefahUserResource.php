@@ -12,13 +12,13 @@ use App\Models\RefahOrganization;
 use App\Filament\ExcelExport\RefahUserExport;
 use Hekmatinasser\Verta\Verta;
 use Filament\Forms\Components\DatePicker;
-use Filament\Forms\Components\Grid;
-use Filament\Forms\Components\Section;
+use Filament\Schemas\Components\Grid;
+use Filament\Schemas\Components\Section;
 use Filament\Forms\Components\Select;
 use Filament\Forms\Components\TextInput;
 use Filament\Forms\Components\Textarea;
-use Filament\Forms\Form;
-use Filament\Forms\Get;
+use Filament\Schemas\Schema;
+use Filament\Schemas\Components\Utilities\Get;
 use Filament\Resources\Resource;
 use Filament\Tables\Actions\BulkActionGroup;
 use Filament\Tables\Actions\DeleteAction;
@@ -35,7 +35,10 @@ class RefahUserResource extends Resource
 {
     protected static ?string $model = RefahUser::class;
 
-    protected static ?string $navigationIcon = 'heroicon-o-user-group';
+    public static function getNavigationIcon(): ?string
+    {
+        return 'heroicon-o-user-group';
+    }
 
     protected static ?string $modelLabel = 'کاربر رفاه';
 
@@ -43,12 +46,15 @@ class RefahUserResource extends Resource
 
     protected static ?int $navigationSort = 3;
 
-    protected static ?string $navigationGroup = 'مدیریت رفاه';
-
-    public static function form(Form $form): Form
+    public static function getNavigationGroup(): ?string
     {
-        return $form
-            ->schema([
+        return 'مدیریت رفاه';
+    }
+
+    public static function form(Schema $schema): Schema
+    {
+        return $schema
+            ->components([
                 Section::make('اطلاعات شخصی')
                     ->description('اطلاعات شخصی کاربر')
                     ->schema([

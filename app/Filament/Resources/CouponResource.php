@@ -5,11 +5,11 @@ namespace App\Filament\Resources;
 use App\Filament\Resources\CouponResource\Pages;
 use App\Models\Coupon;
 use Filament\Forms\Components\DateTimePicker;
-use Filament\Forms\Components\Grid;
-use Filament\Forms\Components\Section;
+use Filament\Schemas\Components\Grid;
+use Filament\Schemas\Components\Section;
 use Filament\Forms\Components\TextInput;
 use Filament\Forms\Components\Toggle;
-use Filament\Forms\Form;
+use Filament\Schemas\Schema;
 use Filament\Resources\Resource;
 use Filament\Tables;
 use Filament\Tables\Columns\TextColumn;
@@ -22,7 +22,10 @@ class CouponResource extends Resource
 {
     protected static ?string $model = Coupon::class;
 
-    protected static ?string $navigationIcon = 'heroicon-o-ticket';
+    public static function getNavigationIcon(): ?string
+    {
+        return 'heroicon-o-ticket';
+    }
 
     protected static ?string $modelLabel = 'کوپن تخفیف';
 
@@ -30,12 +33,15 @@ class CouponResource extends Resource
 
     protected static ?int $navigationSort = 1;
 
-    protected static ?string $navigationGroup = 'فروشگاه';
-
-    public static function form(Form $form): Form
+    public static function getNavigationGroup(): ?string
     {
-        return $form
-            ->schema([
+        return 'فروشگاه';
+    }
+
+    public static function form(Schema $schema): Schema
+    {
+        return $schema
+            ->components([
                 Grid::make(2)->schema([
                     Section::make('اطلاعات کوپن')->schema([
                         TextInput::make('code')

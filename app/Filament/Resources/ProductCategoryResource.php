@@ -5,13 +5,13 @@ namespace App\Filament\Resources;
 use App\Filament\Resources\ProductCategoryResource\Pages;
 use App\Models\ProductCategory;
 use Filament\Forms\Components\FileUpload;
-use Filament\Forms\Components\Grid;
-use Filament\Forms\Components\Section;
+use Filament\Schemas\Components\Grid;
+use Filament\Schemas\Components\Section;
 use Filament\Forms\Components\Select;
 use Filament\Forms\Components\Textarea;
 use Filament\Forms\Components\TextInput;
 use Filament\Forms\Components\Toggle;
-use Filament\Forms\Form;
+use Filament\Schemas\Schema;
 use Filament\Resources\Resource;
 use Filament\Tables;
 use Filament\Tables\Columns\IconColumn;
@@ -26,7 +26,10 @@ class ProductCategoryResource extends Resource
 {
     protected static ?string $model = ProductCategory::class;
 
-    protected static ?string $navigationIcon = 'heroicon-o-rectangle-stack';
+    public static function getNavigationIcon(): ?string
+    {
+        return 'heroicon-o-rectangle-stack';
+    }
 
     protected static ?string $modelLabel = 'دسته‌بندی محصولات';
 
@@ -34,12 +37,15 @@ class ProductCategoryResource extends Resource
 
     protected static ?int $navigationSort = 1;
 
-    protected static ?string $navigationGroup = 'محصولات';
-
-    public static function form(Form $form): Form
+    public static function getNavigationGroup(): ?string
     {
-        return $form
-            ->schema([
+        return 'محصولات';
+    }
+
+    public static function form(Schema $schema): Schema
+    {
+        return $schema
+            ->components([
                 Grid::make(3)->schema([
                     Grid::make(1)->schema([
                         Section::make('اطلاعات اصلی')->schema([

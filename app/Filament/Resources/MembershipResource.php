@@ -7,7 +7,7 @@ use App\Models\Membership;
 use App\Models\MembershipType;
 use App\Models\User;
 use Filament\Forms;
-use Filament\Forms\Form;
+use Filament\Schemas\Schema;
 use Filament\Resources\Resource;
 use Filament\Tables;
 use Filament\Tables\Table;
@@ -18,9 +18,15 @@ class MembershipResource extends Resource
 {
     protected static ?string $model = Membership::class;
 
-    protected static ?string $navigationIcon = 'heroicon-o-user-group';
+    public static function getNavigationIcon(): ?string
+    {
+        return 'heroicon-o-user-group';
+    }
 
-    protected static ?string $navigationGroup = 'مدیریت عضویت';
+    public static function getNavigationGroup(): ?string
+    {
+        return 'مدیریت عضویت';
+    }
 
     protected static ?string $navigationLabel = 'اعضا';
 
@@ -28,10 +34,10 @@ class MembershipResource extends Resource
 
     protected static ?string $pluralModelLabel = 'اعضا';
 
-    public static function form(Form $form): Form
+    public static function form(Schema $schema): Schema
     {
-        return $form
-            ->schema([
+        return $schema
+            ->components([
                 Forms\Components\Section::make('اطلاعات عضویت')
                     ->schema([
                         Forms\Components\TextInput::make('serial_number')

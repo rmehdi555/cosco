@@ -9,7 +9,7 @@ use Filament\Forms\Components\Select;
 use Illuminate\Database\Eloquent\Model;
 use Filament\Forms\Components\TextInput;
 use Filament\Forms\Components\Toggle;
-use Filament\Forms\Form;
+use Filament\Schemas\Schema;
 use Filament\Resources\Resource;
 use Filament\Tables\Columns\TextColumn;
 use Filament\Tables\Columns\IconColumn;
@@ -20,7 +20,10 @@ class UserResource extends Resource
 {
     protected static ?string $model = User::class;
 
-    protected static ?string $navigationIcon = 'heroicon-o-users';
+    public static function getNavigationIcon(): ?string
+    {
+        return 'heroicon-o-users';
+    }
 
     protected static ?string $modelLabel = 'کاربر';
 
@@ -28,13 +31,16 @@ class UserResource extends Resource
 
     protected static ?string $slug = 'users';
 
-    protected static ?string $navigationGroup = 'مدیریت کاربران';
+    public static function getNavigationGroup(): ?string
+    {
+        return 'مدیریت کاربران';
+    }
 
     protected static ?int $navigationSort = 1;
 
-    public static function form(Form $form): Form
+    public static function form(Schema $schema): Schema
     {
-        return $form->schema([
+        return $schema->components([
             TextInput::make('first_name')
                 ->label('نام')
                 ->required()

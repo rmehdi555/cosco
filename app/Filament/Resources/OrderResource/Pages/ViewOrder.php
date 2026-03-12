@@ -10,7 +10,7 @@ use Filament\Infolists\Components\Section;
 use Filament\Infolists\Components\Split;
 use Filament\Infolists\Components\TextEntry;
 use Filament\Infolists\Components\RepeatableEntry;
-use Filament\Infolists\Infolist;
+use Filament\Schemas\Schema;
 use Filament\Resources\Pages\ViewRecord;
 use Hekmatinasser\Verta\Verta;
 
@@ -26,10 +26,10 @@ class ViewOrder extends ViewRecord
         ];
     }
 
-    public function infolist(Infolist $infolist): Infolist
+    public function infolist(Schema $schema): Schema
     {
-        return $infolist
-            ->schema([
+        return $schema
+            ->components([
                 Split::make([
                     Grid::make(2)
                         ->schema([

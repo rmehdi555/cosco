@@ -6,12 +6,12 @@ use App\Filament\Resources\CartItemResource\Pages;
 use App\Models\CartItem;
 use App\Models\Cart;
 use App\Models\Product;
-use Filament\Forms\Components\Grid;
-use Filament\Forms\Components\Section;
+use Filament\Schemas\Components\Grid;
+use Filament\Schemas\Components\Section;
 use Filament\Forms\Components\Select;
 use Filament\Forms\Components\Textarea;
 use Filament\Forms\Components\TextInput;
-use Filament\Forms\Form;
+use Filament\Schemas\Schema;
 use Filament\Resources\Resource;
 use Filament\Tables;
 use Filament\Tables\Columns\TextColumn;
@@ -25,7 +25,10 @@ class CartItemResource extends Resource
 {
     protected static ?string $model = CartItem::class;
 
-    protected static ?string $navigationIcon = 'heroicon-o-shopping-cart';
+    public static function getNavigationIcon(): ?string
+    {
+        return 'heroicon-o-shopping-cart';
+    }
 
     protected static ?string $modelLabel = 'آیتم سبد خرید';
 
@@ -33,12 +36,15 @@ class CartItemResource extends Resource
 
     protected static ?int $navigationSort = 7;
 
-    protected static ?string $navigationGroup = 'فروشگاه';
-
-    public static function form(Form $form): Form
+    public static function getNavigationGroup(): ?string
     {
-        return $form
-            ->schema([
+        return 'فروشگاه';
+    }
+
+    public static function form(Schema $schema): Schema
+    {
+        return $schema
+            ->components([
                 Grid::make(2)->schema([
                     Section::make('اطلاعات سبد خرید')->schema([
                         Select::make('cart_id')

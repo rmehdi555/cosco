@@ -5,7 +5,7 @@ namespace App\Filament\Resources;
 use App\Filament\Resources\DiscountTypeResource\Pages;
 use App\Models\DiscountType;
 use Filament\Forms;
-use Filament\Forms\Form;
+use Filament\Schemas\Schema;
 use Filament\Resources\Resource;
 use Filament\Tables;
 use Filament\Tables\Table;
@@ -16,9 +16,15 @@ class DiscountTypeResource extends Resource
 {
     protected static ?string $model = DiscountType::class;
 
-    protected static ?string $navigationIcon = 'heroicon-o-tag';
+    public static function getNavigationIcon(): ?string
+    {
+        return 'heroicon-o-tag';
+    }
 
-    protected static ?string $navigationGroup = 'مدیریت سایت';
+    public static function getNavigationGroup(): ?string
+    {
+        return 'مدیریت سایت';
+    }
 
     protected static ?string $navigationLabel = 'طراحی صفحه اول';
 
@@ -26,10 +32,10 @@ class DiscountTypeResource extends Resource
 
     protected static ?string $pluralModelLabel = 'طرح صفحه اول';
 
-    public static function form(Form $form): Form
+    public static function form(Schema $schema): Schema
     {
-        return $form
-            ->schema([
+        return $schema
+            ->components([
                 Forms\Components\Section::make('اطلاعات اصلی')
                     ->schema([
                         Forms\Components\Select::make('product_category_id')

@@ -15,7 +15,7 @@ use Filament\Forms\Components\Select;
 use Filament\Forms\Components\TextInput;
 use Filament\Forms\Components\Textarea;
 use Filament\Forms\Components\DatePicker;
-use Filament\Forms\Form;
+use Filament\Schemas\Schema;
 use Filament\Resources\Resource;
 use Filament\Tables;
 use Filament\Tables\Columns\BadgeColumn;
@@ -29,7 +29,10 @@ class OrderResource extends Resource
 {
     protected static ?string $model = Order::class;
 
-    protected static ?string $navigationIcon = 'heroicon-o-shopping-bag';
+    public static function getNavigationIcon(): ?string
+    {
+        return 'heroicon-o-shopping-bag';
+    }
 
     protected static ?string $modelLabel = 'سفارش';
 
@@ -37,12 +40,15 @@ class OrderResource extends Resource
 
     protected static ?int $navigationSort = 4;
 
-    protected static ?string $navigationGroup = 'فروشگاه';
-
-    public static function form(Form $form): Form
+    public static function getNavigationGroup(): ?string
     {
-        return $form
-            ->schema([
+        return 'فروشگاه';
+    }
+
+    public static function form(Schema $schema): Schema
+    {
+        return $schema
+            ->components([
                 Select::make('user_id')
                     ->label('کاربر')
                     ->relationship('user', 'first_name')

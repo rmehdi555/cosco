@@ -8,7 +8,7 @@ use Filament\Resources\Pages\ViewRecord;
 use Filament\Infolists\Components\Section;
 use Filament\Infolists\Components\TextEntry;
 use Filament\Infolists\Components\IconEntry;
-use Filament\Infolists\Infolist;
+use Filament\Schemas\Schema;
 
 class ViewRefahOrganization extends ViewRecord
 {
@@ -27,10 +27,10 @@ class ViewRefahOrganization extends ViewRecord
         return 'مشاهده سازمان رفاه';
     }
 
-    public function infolist(Infolist $infolist): Infolist
+    public function infolist(Schema $schema): Schema
     {
-        return $infolist
-            ->schema([
+        return $schema
+            ->components([
                 Section::make('اطلاعات سازمان رفاه')
                     ->schema([
                         TextEntry::make('id')

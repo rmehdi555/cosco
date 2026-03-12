@@ -8,11 +8,11 @@ use App\Filament\Resources\PaymentResource\Pages;
 use App\Models\Payment;
 use App\Models\Order;
 use Filament\Forms\Components\DateTimePicker;
-use Filament\Forms\Components\Grid;
-use Filament\Forms\Components\Section;
+use Filament\Schemas\Components\Grid;
+use Filament\Schemas\Components\Section;
 use Filament\Forms\Components\Select;
 use Filament\Forms\Components\TextInput;
-use Filament\Forms\Form;
+use Filament\Schemas\Schema;
 use Filament\Resources\Resource;
 use Filament\Tables;
 use Filament\Tables\Columns\BadgeColumn;
@@ -26,7 +26,10 @@ class PaymentResource extends Resource
 {
     protected static ?string $model = Payment::class;
 
-    protected static ?string $navigationIcon = 'heroicon-o-credit-card';
+    public static function getNavigationIcon(): ?string
+    {
+        return 'heroicon-o-credit-card';
+    }
 
     protected static ?string $modelLabel = 'پرداخت';
 
@@ -34,12 +37,15 @@ class PaymentResource extends Resource
 
     protected static ?int $navigationSort = 5;
 
-    protected static ?string $navigationGroup = 'فروشگاه';
-
-    public static function form(Form $form): Form
+    public static function getNavigationGroup(): ?string
     {
-        return $form
-            ->schema([
+        return 'فروشگاه';
+    }
+
+    public static function form(Schema $schema): Schema
+    {
+        return $schema
+            ->components([
                 Grid::make(2)->schema([
                     Section::make('اطلاعات پرداخت')->schema([
                         Select::make('order_id')

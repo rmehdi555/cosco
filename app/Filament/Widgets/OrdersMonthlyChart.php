@@ -7,7 +7,7 @@ use App\Models\Order;
 
 class OrdersMonthlyChart extends LineChartWidget
 {
-    protected static ?string $heading = 'نمودار سفارشات ماهانه (سال جاری)';
+    protected ?string $heading = 'نمودار سفارشات ماهانه (سال جاری)';
 
     protected function getData(): array
     {

@@ -4,12 +4,12 @@ namespace App\Filament\Resources;
 
 use App\Filament\Resources\RefahCartResource\Pages;
 use App\Models\RefahCart;
-use Filament\Forms\Components\Grid;
-use Filament\Forms\Components\Section;
+use Filament\Schemas\Components\Grid;
+use Filament\Schemas\Components\Section;
 use Filament\Forms\Components\Textarea;
 use Filament\Forms\Components\TextInput;
 use Filament\Forms\Components\Toggle;
-use Filament\Forms\Form;
+use Filament\Schemas\Schema;
 use Filament\Resources\Resource;
 use Filament\Tables\Actions\BulkActionGroup;
 use Filament\Tables\Actions\DeleteAction;
@@ -25,7 +25,10 @@ class RefahCartResource extends Resource
 {
     protected static ?string $model = RefahCart::class;
 
-    protected static ?string $navigationIcon = 'heroicon-o-shopping-cart';
+    public static function getNavigationIcon(): ?string
+    {
+        return 'heroicon-o-shopping-cart';
+    }
 
     protected static ?string $modelLabel = 'بسته رفاهی';
 
@@ -33,12 +36,15 @@ class RefahCartResource extends Resource
 
     protected static ?int $navigationSort = 2;
 
-    protected static ?string $navigationGroup = 'مدیریت رفاه';
-
-    public static function form(Form $form): Form
+    public static function getNavigationGroup(): ?string
     {
-        return $form
-            ->schema([
+        return 'مدیریت رفاه';
+    }
+
+    public static function form(Schema $schema): Schema
+    {
+        return $schema
+            ->components([
                 Section::make('اطلاعات بسته رفاهی')
                     ->description('اطلاعات اصلی بسته رفاهی را وارد کنید')
                     ->schema([

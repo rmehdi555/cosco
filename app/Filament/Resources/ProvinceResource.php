@@ -7,7 +7,7 @@ use App\Models\Province;
 use App\Models\Country;
 use Filament\Forms\Components\TextInput;
 use Filament\Forms\Components\Select;
-use Filament\Forms\Form;
+use Filament\Schemas\Schema;
 use Filament\Resources\Resource;
 use Filament\Tables\Columns\TextColumn;
 use Filament\Tables\Table;
@@ -17,7 +17,10 @@ class ProvinceResource extends Resource
 {
     protected static ?string $model = Province::class;
 
-    protected static ?string $navigationIcon = 'heroicon-o-map';
+    public static function getNavigationIcon(): ?string
+    {
+        return 'heroicon-o-map';
+    }
 
     protected static ?string $modelLabel = 'استان';
 
@@ -25,13 +28,16 @@ class ProvinceResource extends Resource
 
     protected static ?string $slug = 'provinces';
 
-    protected static ?string $navigationGroup = 'مدیریت جغرافیایی';
+    public static function getNavigationGroup(): ?string
+    {
+        return 'مدیریت جغرافیایی';
+    }
 
     protected static ?int $navigationSort = 2;
 
-    public static function form(Form $form): Form
+    public static function form(Schema $schema): Schema
     {
-        return $form->schema([
+        return $schema->components([
             TextInput::make('title_fa')
                 ->label('نام فارسی')
                 ->maxLength(255)

@@ -4,10 +4,10 @@ namespace App\Filament\Resources;
 
 use App\Filament\Resources\RefahOrganizationResource\Pages;
 use App\Models\RefahOrganization;
-use Filament\Forms\Components\Section;
+use Filament\Schemas\Components\Section;
 use Filament\Forms\Components\TextInput;
 use Filament\Forms\Components\Toggle;
-use Filament\Forms\Form;
+use Filament\Schemas\Schema;
 use Filament\Resources\Resource;
 use Filament\Tables\Actions\BulkActionGroup;
 use Filament\Tables\Actions\DeleteAction;
@@ -23,7 +23,10 @@ class RefahOrganizationResource extends Resource
 {
     protected static ?string $model = RefahOrganization::class;
 
-    protected static ?string $navigationIcon = 'heroicon-o-building-office';
+    public static function getNavigationIcon(): ?string
+    {
+        return 'heroicon-o-building-office';
+    }
 
     protected static ?string $modelLabel = 'سازمان رفاه';
 
@@ -31,12 +34,15 @@ class RefahOrganizationResource extends Resource
 
     protected static ?int $navigationSort = 1;
 
-    protected static ?string $navigationGroup = 'مدیریت رفاه';
-
-    public static function form(Form $form): Form
+    public static function getNavigationGroup(): ?string
     {
-        return $form
-            ->schema([
+        return 'مدیریت رفاه';
+    }
+
+    public static function form(Schema $schema): Schema
+    {
+        return $schema
+            ->components([
                 Section::make('اطلاعات سازمان رفاه')
                     ->description('اطلاعات اصلی سازمان رفاه را وارد کنید')
                     ->schema([

@@ -7,7 +7,7 @@ use App\Models\User;
 
 class UsersMonthlyChart extends LineChartWidget
 {
-    protected static ?string $heading = 'نمودار ثبت‌نام کاربران (ماهانه)';
+    protected ?string $heading = 'نمودار ثبت‌نام کاربران (ماهانه)';
 
     protected function getData(): array
     {

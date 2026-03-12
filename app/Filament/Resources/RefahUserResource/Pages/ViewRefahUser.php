@@ -7,7 +7,7 @@ use Filament\Actions;
 use Filament\Resources\Pages\ViewRecord;
 use Filament\Infolists\Components\Section;
 use Filament\Infolists\Components\TextEntry;
-use Filament\Infolists\Infolist;
+use Filament\Schemas\Schema;
 use Hekmatinasser\Verta\Verta;
 
 class ViewRefahUser extends ViewRecord
@@ -27,10 +27,10 @@ class ViewRefahUser extends ViewRecord
         return 'مشاهده کاربر رفاه';
     }
 
-    public function infolist(Infolist $infolist): Infolist
+    public function infolist(Schema $schema): Schema
     {
-        return $infolist
-            ->schema([
+        return $schema
+            ->components([
                 Section::make('اطلاعات شخصی')
                     ->schema([
                         TextEntry::make('id')

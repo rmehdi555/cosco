@@ -10,7 +10,7 @@ use App\Models\Article;
 
 class StatsOverview extends Widget
 {
-    protected static string $view = 'filament.widgets.stats-overview';
+    protected string $view = 'filament.widgets.stats-overview';
 
     protected function getViewData(): array
     {

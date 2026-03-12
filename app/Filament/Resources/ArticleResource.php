@@ -7,13 +7,13 @@ use App\Models\Article;
 use App\Models\User;
 use App\Models\ArticleCategory;
 use Filament\Forms\Components\FileUpload;
-use Filament\Forms\Components\Grid;
-use Filament\Forms\Components\Section;
+use Filament\Schemas\Components\Grid;
+use Filament\Schemas\Components\Section;
 use Filament\Forms\Components\Select;
 use Filament\Forms\Components\Textarea;
 use Filament\Forms\Components\TextInput;
 use Filament\Forms\Components\Toggle;
-use Filament\Forms\Form;
+use Filament\Schemas\Schema;
 use Filament\Resources\Resource;
 use Filament\Tables;
 use Filament\Tables\Columns\IconColumn;
@@ -23,13 +23,16 @@ use Filament\Tables\Filters\SelectFilter;
 use Filament\Tables\Table;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Support\Facades\Auth;
-use Mohamedsabil83\FilamentFormsTinyeditor\Components\TinyEditor;
+use AmidEsfahani\FilamentTinyEditor\TinyEditor;
 
 class ArticleResource extends Resource
 {
     protected static ?string $model = Article::class;
 
-    protected static ?string $navigationIcon = 'heroicon-o-pencil-square';
+    public static function getNavigationIcon(): ?string
+    {
+        return 'heroicon-o-pencil-square';
+    }
 
     protected static ?string $modelLabel = 'مقاله';
 
@@ -37,12 +40,15 @@ class ArticleResource extends Resource
 
     protected static ?int $navigationSort = 1;
 
-    protected static ?string $navigationGroup = 'محتوا';
-
-    public static function form(Form $form): Form
+    public static function getNavigationGroup(): ?string
     {
-        return $form
-            ->schema([
+        return 'محتوا';
+    }
+
+    public static function form(Schema $schema): Schema
+    {
+        return $schema
+            ->components([
                 Grid::make(3)->schema([
 
                     Grid::make(1)->schema([
@@ -52,7 +58,7 @@ class ArticleResource extends Resource
 
                         Section::make()->schema([
                             Textarea::make('excerpt')->label('خلاصه')->maxLength(65535)->required(),
-                            TinyEditor::make('body')->label('متن')->fileAttachmentsDisk('public')->fileAttachmentsVisibility('public')->fileAttachmentsDirectory('uploads')->required()->maxHeight(500),
+                            TinyEditor::make('body')->label('متن')->fileAttachmentsDisk('public')->fileAttachmentsVisibility('public')->fileAttachmentsDirectory('uploads')->required()->resize('vertical')->columnSpanFull(),
                         ]),
 
                         Section::make('سئو')->schema([

@@ -7,7 +7,7 @@ use App\Models\User;
 
 class UsersDailyChart extends LineChartWidget
 {
-    protected static ?string $heading = 'نمودار ثبت‌نام کاربران (روزانه - ۳۰ روز گذشته)';
+    protected ?string $heading = 'نمودار ثبت‌نام کاربران (روزانه - ۳۰ روز گذشته)';
 
     protected function getData(): array
     {

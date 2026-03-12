@@ -8,7 +8,7 @@ use App\Enums\PaymentStatus;
 
 class PaymentsStatusPieChart extends PieChartWidget
 {
-    protected static ?string $heading = 'نمودار وضعیت پرداخت‌ها';
+    protected ?string $heading = 'نمودار وضعیت پرداخت‌ها';
 
     protected function getData(): array
     {

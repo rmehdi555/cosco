@@ -7,7 +7,7 @@ use App\Models\Order;
 
 class OrdersStatusPieChart extends PieChartWidget
 {
-    protected static ?string $heading = 'نمودار وضعیت سفارش‌ها';
+    protected ?string $heading = 'نمودار وضعیت سفارش‌ها';
 
     protected function getData(): array
     {

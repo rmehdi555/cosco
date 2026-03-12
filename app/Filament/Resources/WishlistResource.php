@@ -4,11 +4,11 @@ namespace App\Filament\Resources;
 
 use App\Filament\Resources\WishlistResource\Pages;
 use App\Models\Wishlist;
-use Filament\Forms\Components\Grid;
-use Filament\Forms\Components\Section;
+use Filament\Schemas\Components\Grid;
+use Filament\Schemas\Components\Section;
 use Filament\Forms\Components\Select;
 use Filament\Forms\Components\TextInput;
-use Filament\Forms\Form;
+use Filament\Schemas\Schema;
 use Filament\Resources\Resource;
 use Filament\Tables;
 use Filament\Tables\Columns\TextColumn;
@@ -21,7 +21,10 @@ class WishlistResource extends Resource
 {
     protected static ?string $model = Wishlist::class;
 
-    protected static ?string $navigationIcon = 'heroicon-o-heart';
+    public static function getNavigationIcon(): ?string
+    {
+        return 'heroicon-o-heart';
+    }
 
     protected static ?string $modelLabel = 'لیست مورد علاقه';
 
@@ -29,12 +32,15 @@ class WishlistResource extends Resource
 
     protected static ?int $navigationSort = 2;
 
-    protected static ?string $navigationGroup = 'مدیریت کاربران';
-
-    public static function form(Form $form): Form
+    public static function getNavigationGroup(): ?string
     {
-        return $form
-            ->schema([
+        return 'مدیریت کاربران';
+    }
+
+    public static function form(Schema $schema): Schema
+    {
+        return $schema
+            ->components([
                 Grid::make(2)->schema([
                     Section::make('اطلاعات لیست مورد علاقه')->schema([
                         TextInput::make('name')

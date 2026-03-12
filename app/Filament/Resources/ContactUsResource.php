@@ -5,7 +5,7 @@ namespace App\Filament\Resources;
 use App\Filament\Resources\ContactUsResource\Pages;
 use App\Models\ContactUs;
 use Filament\Forms;
-use Filament\Forms\Form;
+use Filament\Schemas\Schema;
 use Filament\Resources\Resource;
 use Filament\Tables;
 use Filament\Tables\Table;
@@ -15,9 +15,15 @@ class ContactUsResource extends Resource
 {
     protected static ?string $model = ContactUs::class;
 
-    protected static ?string $navigationIcon = 'heroicon-o-chat-bubble-left-right';
+    public static function getNavigationIcon(): ?string
+    {
+        return 'heroicon-o-chat-bubble-left-right';
+    }
 
-    protected static ?string $navigationGroup = 'مدیریت کاربران';
+    public static function getNavigationGroup(): ?string
+    {
+        return 'مدیریت کاربران';
+    }
 
     protected static ?string $navigationLabel = 'پیام‌های تماس با ما';
 
@@ -30,10 +36,10 @@ class ContactUsResource extends Resource
         return Auth::user() && Auth::user()->isAdmin();
     }
 
-    public static function form(Form $form): Form
+    public static function form(Schema $schema): Schema
     {
-        return $form
-            ->schema([
+        return $schema
+            ->components([
                 Forms\Components\Section::make('اطلاعات شخصی')
                     ->schema([
                         Forms\Components\TextInput::make('first_name')

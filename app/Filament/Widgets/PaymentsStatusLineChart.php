@@ -8,7 +8,7 @@ use App\Enums\PaymentStatus;
 
 class PaymentsStatusLineChart extends LineChartWidget
 {
-    protected static ?string $heading = 'نمودار روند پرداخت‌ها بر اساس وضعیت (۳۰ روز گذشته)';
+    protected ?string $heading = 'نمودار روند پرداخت‌ها بر اساس وضعیت (۳۰ روز گذشته)';
 
     protected function getData(): array
     {

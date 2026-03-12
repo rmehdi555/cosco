@@ -7,14 +7,14 @@ use App\Models\ProductReview;
 use App\Models\User;
 use App\Models\Product;
 use Illuminate\Support\Facades\Auth;
-use Filament\Forms\Components\Grid;
-use Filament\Forms\Components\Section;
+use Filament\Schemas\Components\Grid;
+use Filament\Schemas\Components\Section;
 use Filament\Forms\Components\Select;
 use Filament\Forms\Components\Textarea;
 use Filament\Forms\Components\TextInput;
 use Filament\Forms\Components\Toggle;
 use Filament\Forms\Components\FileUpload;
-use Filament\Forms\Form;
+use Filament\Schemas\Schema;
 use Filament\Resources\Resource;
 use Filament\Tables;
 use Filament\Tables\Columns\IconColumn;
@@ -31,7 +31,10 @@ class ProductReviewResource extends Resource
 {
     protected static ?string $model = ProductReview::class;
 
-    protected static ?string $navigationIcon = 'heroicon-o-chat-bubble-left-right';
+    public static function getNavigationIcon(): ?string
+    {
+        return 'heroicon-o-chat-bubble-left-right';
+    }
 
     protected static ?string $modelLabel = 'نظر محصول';
 
@@ -39,12 +42,15 @@ class ProductReviewResource extends Resource
 
     protected static ?int $navigationSort = 4;
 
-    protected static ?string $navigationGroup = 'محصولات';
-
-    public static function form(Form $form): Form
+    public static function getNavigationGroup(): ?string
     {
-        return $form
-            ->schema([
+        return 'محصولات';
+    }
+
+    public static function form(Schema $schema): Schema
+    {
+        return $schema
+            ->components([
                 Grid::make(2)->schema([
                     Section::make('اطلاعات نظر')->schema([
                         Select::make('user_id')

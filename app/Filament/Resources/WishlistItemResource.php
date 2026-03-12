@@ -6,10 +6,10 @@ use App\Filament\Resources\WishlistItemResource\Pages;
 use App\Models\WishlistItem;
 use App\Models\Wishlist;
 use App\Models\Product;
-use Filament\Forms\Components\Grid;
-use Filament\Forms\Components\Section;
+use Filament\Schemas\Components\Grid;
+use Filament\Schemas\Components\Section;
 use Filament\Forms\Components\Select;
-use Filament\Forms\Form;
+use Filament\Schemas\Schema;
 use Filament\Resources\Resource;
 use Filament\Tables;
 use Filament\Tables\Columns\TextColumn;
@@ -22,7 +22,10 @@ class WishlistItemResource extends Resource
 {
     protected static ?string $model = WishlistItem::class;
 
-    protected static ?string $navigationIcon = 'heroicon-o-heart';
+    public static function getNavigationIcon(): ?string
+    {
+        return 'heroicon-o-heart';
+    }
 
     protected static ?string $modelLabel = 'آیتم لیست علاقه';
 
@@ -30,12 +33,15 @@ class WishlistItemResource extends Resource
 
     protected static ?int $navigationSort = 3;
 
-    protected static ?string $navigationGroup = 'مدیریت کاربران';
-
-    public static function form(Form $form): Form
+    public static function getNavigationGroup(): ?string
     {
-        return $form
-            ->schema([
+        return 'مدیریت کاربران';
+    }
+
+    public static function form(Schema $schema): Schema
+    {
+        return $schema
+            ->components([
                 Grid::make(2)->schema([
                     Section::make('اطلاعات لیست علاقه')->schema([
                         Select::make('wishlist_id')

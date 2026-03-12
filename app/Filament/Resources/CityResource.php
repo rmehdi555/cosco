@@ -7,7 +7,7 @@ use App\Models\City;
 use App\Models\Province;
 use Filament\Forms\Components\TextInput;
 use Filament\Forms\Components\Select;
-use Filament\Forms\Form;
+use Filament\Schemas\Schema;
 use Filament\Resources\Resource;
 use Filament\Tables\Columns\TextColumn;
 use Filament\Tables\Table;
@@ -17,7 +17,10 @@ class CityResource extends Resource
 {
     protected static ?string $model = City::class;
 
-    protected static ?string $navigationIcon = 'heroicon-o-building-office';
+    public static function getNavigationIcon(): ?string
+    {
+        return 'heroicon-o-building-office';
+    }
 
     protected static ?string $modelLabel = 'شهر';
 
@@ -25,13 +28,16 @@ class CityResource extends Resource
 
     protected static ?string $slug = 'cities';
 
-    protected static ?string $navigationGroup = 'مدیریت جغرافیایی';
+    public static function getNavigationGroup(): ?string
+    {
+        return 'مدیریت جغرافیایی';
+    }
 
     protected static ?int $navigationSort = 3;
 
-    public static function form(Form $form): Form
+    public static function form(Schema $schema): Schema
     {
-        return $form->schema([
+        return $schema->components([
             TextInput::make('title_fa')
                 ->label('نام فارسی')
                 ->maxLength(255)

@@ -6,7 +6,7 @@ use App\Filament\Resources\DiscountTypeResource;
 use Filament\Actions;
 use Filament\Resources\Pages\ViewRecord;
 use Filament\Infolists;
-use Filament\Infolists\Infolist;
+use Filament\Schemas\Schema;
 
 class ViewDiscountType extends ViewRecord
 {
@@ -20,10 +20,10 @@ class ViewDiscountType extends ViewRecord
         ];
     }
 
-    public function infolist(Infolist $infolist): Infolist
+    public function infolist(Schema $schema): Schema
     {
-        return $infolist
-            ->schema([
+        return $schema
+            ->components([
                 Infolists\Components\Section::make('اطلاعات اصلی')
                     ->schema([
                         Infolists\Components\TextEntry::make('productCategory.name')

@@ -8,7 +8,7 @@ use Illuminate\Support\Carbon;
 
 class OrdersDailyChart extends LineChartWidget
 {
-    protected static ?string $heading = 'نمودار سفارشات روزانه (۳۰ روز گذشته)';
+    protected ?string $heading = 'نمودار سفارشات روزانه (۳۰ روز گذشته)';
 
     protected function getData(): array
     {

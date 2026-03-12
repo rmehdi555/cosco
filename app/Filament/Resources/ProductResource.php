@@ -6,15 +6,15 @@ use App\Filament\Resources\ProductResource\Pages;
 use App\Models\Product;
 use App\Models\ProductCategory;
 use App\Models\Brand;
-use Filament\Forms\Components\Grid;
-use Filament\Forms\Components\Section;
+use Filament\Schemas\Components\Grid;
+use Filament\Schemas\Components\Section;
 use Filament\Forms\Components\Select;
 use Filament\Forms\Components\Textarea;
 use Filament\Forms\Components\TextInput;
 use Filament\Forms\Components\Toggle;
 use Filament\Forms\Components\FileUpload;
 use Filament\Forms\Components\Repeater;
-use Filament\Forms\Form;
+use Filament\Schemas\Schema;
 use Filament\Resources\Resource;
 use Filament\Tables;
 use Filament\Tables\Columns\IconColumn;
@@ -26,13 +26,16 @@ use Filament\Tables\Filters\TernaryFilter;
 use Filament\Tables\Table;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Support\Str;
-use Mohamedsabil83\FilamentFormsTinyeditor\Components\TinyEditor;
+use AmidEsfahani\FilamentTinyEditor\TinyEditor;
 
 class ProductResource extends Resource
 {
     protected static ?string $model = Product::class;
 
-    protected static ?string $navigationIcon = 'heroicon-o-cube';
+    public static function getNavigationIcon(): ?string
+    {
+        return 'heroicon-o-cube';
+    }
 
     protected static ?string $modelLabel = 'محصول';
 
@@ -40,12 +43,15 @@ class ProductResource extends Resource
 
     protected static ?int $navigationSort = 3;
 
-    protected static ?string $navigationGroup = 'محصولات';
-
-    public static function form(Form $form): Form
+    public static function getNavigationGroup(): ?string
     {
-        return $form
-            ->schema([
+        return 'محصولات';
+    }
+
+    public static function form(Schema $schema): Schema
+    {
+        return $schema
+            ->components([
                 Grid::make(2)->schema([
                     Section::make('اطلاعات اصلی')->schema([
                         TextInput::make('name')

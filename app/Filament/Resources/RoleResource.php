@@ -3,10 +3,10 @@
 namespace App\Filament\Resources;
 
 use App\Filament\Resources\RoleResource\Pages;
-use Filament\Forms\Components\Grid;
+use Filament\Schemas\Components\Grid;
 use Filament\Forms\Components\Select;
 use Filament\Forms\Components\TextInput;
-use Filament\Forms\Form;
+use Filament\Schemas\Schema;
 use Filament\Resources\Resource;
 use Filament\Tables\Table;
 use Filament\Tables;
@@ -18,7 +18,10 @@ class RoleResource extends Resource
 {
     protected static ?string $model = Role::class;
 
-    protected static ?string $navigationIcon = 'heroicon-o-shield-check';
+    public static function getNavigationIcon(): ?string
+    {
+        return 'heroicon-o-shield-check';
+    }
 
     protected static ?string $modelLabel = 'نقش';
 
@@ -26,13 +29,16 @@ class RoleResource extends Resource
 
     protected static ?string $slug = 'roles';
 
-    protected static ?string $navigationGroup = 'مدیریت کاربران';
+    public static function getNavigationGroup(): ?string
+    {
+        return 'مدیریت کاربران';
+    }
 
     protected static ?int $navigationSort = 3;
 
-    public static function form(Form $form): Form
+    public static function form(Schema $schema): Schema
     {
-        return $form->schema([
+        return $schema->components([
             Grid::make(1)->schema([
                 TextInput::make('name')->label('نام')->required(),
             ]),

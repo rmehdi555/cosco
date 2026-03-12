@@ -5,7 +5,7 @@ namespace App\Filament\Resources;
 use App\Filament\Resources\MembershipTypeResource\Pages;
 use App\Models\MembershipType;
 use Filament\Forms;
-use Filament\Forms\Form;
+use Filament\Schemas\Schema;
 use Filament\Resources\Resource;
 use Filament\Tables;
 use Filament\Tables\Table;
@@ -16,9 +16,15 @@ class MembershipTypeResource extends Resource
 {
     protected static ?string $model = MembershipType::class;
 
-    protected static ?string $navigationIcon = 'heroicon-o-rectangle-stack';
+    public static function getNavigationIcon(): ?string
+    {
+        return 'heroicon-o-rectangle-stack';
+    }
 
-    protected static ?string $navigationGroup = 'مدیریت عضویت';
+    public static function getNavigationGroup(): ?string
+    {
+        return 'مدیریت عضویت';
+    }
 
     protected static ?string $navigationLabel = 'انواع عضویت';
 
@@ -26,10 +32,10 @@ class MembershipTypeResource extends Resource
 
     protected static ?string $pluralModelLabel = 'انواع عضویت';
 
-    public static function form(Form $form): Form
+    public static function form(Schema $schema): Schema
     {
-        return $form
-            ->schema([
+        return $schema
+            ->components([
                 Forms\Components\Section::make('اطلاعات نوع عضویت')
                     ->schema([
                         Forms\Components\TextInput::make('name')

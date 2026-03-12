@@ -5,14 +5,14 @@ namespace App\Filament\Resources;
 use App\Filament\Resources\ArticleCategoryResource\Pages;
 use App\Models\ArticleCategory;
 use Filament\Forms\Components\FileUpload;
-use Filament\Forms\Components\Grid;
-use Filament\Forms\Components\Section;
+use Filament\Schemas\Components\Grid;
+use Filament\Schemas\Components\Section;
 use Filament\Forms\Components\Select;
 use Filament\Forms\Components\Tabs;
 use Filament\Forms\Components\Textarea;
 use Filament\Forms\Components\TextInput;
 use Filament\Forms\Components\Toggle;
-use Filament\Forms\Form;
+use Filament\Schemas\Schema;
 use Filament\Resources\Resource;
 use Filament\Tables;
 use Filament\Tables\Columns\IconColumn;
@@ -25,7 +25,10 @@ class ArticleCategoryResource extends Resource
 {
     protected static ?string $model = ArticleCategory::class;
 
-    protected static ?string $navigationIcon = 'heroicon-o-inbox-stack';
+    public static function getNavigationIcon(): ?string
+    {
+        return 'heroicon-o-inbox-stack';
+    }
 
     protected static ?string $modelLabel = 'دسته بندی مقالات';
 
@@ -33,11 +36,14 @@ class ArticleCategoryResource extends Resource
 
     protected static ?int $navigationSort = 2;
 
-    protected static ?string $navigationGroup = 'محتوا';
-
-    public static function form(Form $form): Form
+    public static function getNavigationGroup(): ?string
     {
-        return $form->schema([
+        return 'محتوا';
+    }
+
+    public static function form(Schema $schema): Schema
+    {
+        return $schema->components([
             Grid::make(3)->schema([
                 Grid::make(1)->schema([
                     Grid::make(1)->schema([

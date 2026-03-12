@@ -6,12 +6,12 @@ use App\Filament\Resources\OrderItemResource\Pages;
 use App\Models\OrderItem;
 use App\Models\Order;
 use App\Models\Product;
-use Filament\Forms\Components\Grid;
-use Filament\Forms\Components\Section;
+use Filament\Schemas\Components\Grid;
+use Filament\Schemas\Components\Section;
 use Filament\Forms\Components\Select;
 use Filament\Forms\Components\Textarea;
 use Filament\Forms\Components\TextInput;
-use Filament\Forms\Form;
+use Filament\Schemas\Schema;
 use Filament\Resources\Resource;
 use Filament\Tables;
 use Filament\Tables\Columns\TextColumn;
@@ -24,7 +24,10 @@ class OrderItemResource extends Resource
 {
     protected static ?string $model = OrderItem::class;
 
-    protected static ?string $navigationIcon = 'heroicon-o-shopping-bag';
+    public static function getNavigationIcon(): ?string
+    {
+        return 'heroicon-o-shopping-bag';
+    }
 
     protected static ?string $modelLabel = 'آیتم سفارش';
 
@@ -32,12 +35,15 @@ class OrderItemResource extends Resource
 
     protected static ?int $navigationSort = 6;
 
-    protected static ?string $navigationGroup = 'فروشگاه';
-
-    public static function form(Form $form): Form
+    public static function getNavigationGroup(): ?string
     {
-        return $form
-            ->schema([
+        return 'فروشگاه';
+    }
+
+    public static function form(Schema $schema): Schema
+    {
+        return $schema
+            ->components([
                 Grid::make(2)->schema([
                     Section::make('اطلاعات سفارش')->schema([
                         Select::make('order_id')

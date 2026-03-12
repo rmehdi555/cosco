@@ -8,7 +8,7 @@ use App\Enums\OrderStatus;
 
 class OrdersStatusLineChart extends LineChartWidget
 {
-    protected static ?string $heading = 'نمودار روند سفارش‌ها بر اساس وضعیت (۳۰ روز گذشته)';
+    protected ?string $heading = 'نمودار روند سفارش‌ها بر اساس وضعیت (۳۰ روز گذشته)';
 
     protected function getData(): array
     {

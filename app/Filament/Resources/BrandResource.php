@@ -6,11 +6,11 @@ use App\Filament\Resources\BrandResource\Pages;
 use App\Models\Brand;
 use App\Models\ProductCategory;
 use Filament\Forms\Components\FileUpload;
-use Filament\Forms\Components\Section;
+use Filament\Schemas\Components\Section;
 use Filament\Forms\Components\Select;
 use Filament\Forms\Components\TextInput;
 use Filament\Forms\Components\Toggle;
-use Filament\Forms\Form;
+use Filament\Schemas\Schema;
 use Filament\Resources\Resource;
 use Filament\Tables;
 use Filament\Tables\Columns\IconColumn;
@@ -26,7 +26,10 @@ class BrandResource extends Resource
 {
     protected static ?string $model = Brand::class;
 
-    protected static ?string $navigationIcon = 'heroicon-o-tag';
+    public static function getNavigationIcon(): ?string
+    {
+        return 'heroicon-o-tag';
+    }
 
     protected static ?string $modelLabel = 'برند';
 
@@ -34,12 +37,15 @@ class BrandResource extends Resource
 
     protected static ?int $navigationSort = 2;
 
-    protected static ?string $navigationGroup = 'محصولات';
-
-    public static function form(Form $form): Form
+    public static function getNavigationGroup(): ?string
     {
-        return $form
-            ->schema([
+        return 'محصولات';
+    }
+
+    public static function form(Schema $schema): Schema
+    {
+        return $schema
+            ->components([
                 Section::make('اطلاعات برند')->schema([
                     Select::make('product_category_id')
                         ->label('دسته‌بندی محصول')
