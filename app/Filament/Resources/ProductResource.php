@@ -6,6 +6,7 @@ use App\Filament\Resources\ProductResource\Pages;
 use App\Models\Product;
 use App\Models\ProductCategory;
 use App\Models\Brand;
+use Filament\Actions;
 use Filament\Schemas\Components\Grid;
 use Filament\Schemas\Components\Section;
 use Filament\Forms\Components\Select;
@@ -419,10 +420,10 @@ class ProductResource extends Resource
                     ->query(fn (Builder $query): Builder => $query->whereMonth('created_at', now()->month)),
             ])
             ->actions([
-                Tables\Actions\EditAction::make(),
+                Actions\EditAction::make(),
             ])
             ->bulkActions([
-                Tables\Actions\BulkActionGroup::make([
+                Actions\BulkActionGroup::make([
                 ]),
             ])
             ->defaultSort('created_at', 'desc');

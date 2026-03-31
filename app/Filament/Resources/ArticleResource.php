@@ -6,6 +6,7 @@ use App\Filament\Resources\ArticleResource\Pages;
 use App\Models\Article;
 use App\Models\User;
 use App\Models\ArticleCategory;
+use Filament\Actions;
 use Filament\Forms\Components\FileUpload;
 use Filament\Schemas\Components\Grid;
 use Filament\Schemas\Components\Section;
@@ -147,7 +148,7 @@ class ArticleResource extends Resource
                 Filter::make('is_future')->label('انتشار آینده')->toggle(),
             ])
             ->actions([
-                Tables\Actions\EditAction::make(),
+                Actions\EditAction::make(),
             ])
             ->bulkActions([
             ])->defaultSort('created_at', 'desc');

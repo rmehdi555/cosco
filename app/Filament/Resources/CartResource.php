@@ -6,6 +6,7 @@ use App\Enums\CartStatus;
 use App\Filament\Resources\CartResource\Pages;
 use App\Models\Cart;
 use App\Models\User;
+use Filament\Actions;
 use Filament\Forms\Components\Select;
 use Filament\Forms\Components\TextInput;
 use Filament\Schemas\Schema;
@@ -169,10 +170,10 @@ class CartResource extends Resource
                     ->query(fn (Builder $query): Builder => $query->whereMonth('created_at', now()->month)),
             ])
             ->actions([
-                Tables\Actions\EditAction::make(),
+                Actions\EditAction::make(),
             ])
             ->bulkActions([
-                Tables\Actions\BulkActionGroup::make([
+                Actions\BulkActionGroup::make([
                 ]),
             ])
             ->defaultSort('created_at', 'desc');

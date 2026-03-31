@@ -7,6 +7,7 @@ use App\Models\ProductReview;
 use App\Models\User;
 use App\Models\Product;
 use Illuminate\Support\Facades\Auth;
+use Filament\Actions;
 use Filament\Schemas\Components\Grid;
 use Filament\Schemas\Components\Section;
 use Filament\Forms\Components\Select;
@@ -361,8 +362,8 @@ class ProductReviewResource extends Resource
                     ->query(fn (Builder $query): Builder => $query->whereDoesntHave('productReviewFile')),
             ])
             ->actions([
-                Tables\Actions\EditAction::make(),
-                Tables\Actions\Action::make('view_images')
+                Actions\EditAction::make(),
+                Actions\Action::make('view_images')
                     ->label('مشاهده تصاویر')
                     ->icon('heroicon-o-photo')
                     ->color('info')
@@ -378,7 +379,7 @@ class ProductReviewResource extends Resource
                         ]);
                     })
                     ->modalWidth('4xl'),
-                Tables\Actions\Action::make('approve')
+                Actions\Action::make('approve')
                     ->label('تایید کردن')
                     ->icon('heroicon-o-check-circle')
                     ->color('success')
@@ -396,7 +397,7 @@ class ProductReviewResource extends Resource
                             ->success()
                             ->send();
                     }),
-                Tables\Actions\Action::make('disapprove')
+                Actions\Action::make('disapprove')
                     ->label('عدم تایید')
                     ->icon('heroicon-o-x-circle')
                     ->color('danger')
@@ -416,8 +417,8 @@ class ProductReviewResource extends Resource
                     }),
             ])
             ->bulkActions([
-                Tables\Actions\BulkActionGroup::make([
-                    Tables\Actions\BulkAction::make('approve')
+                Actions\BulkActionGroup::make([
+                    Actions\BulkAction::make('approve')
                         ->label('تایید کردن انتخاب شده‌ها')
                         ->icon('heroicon-o-check-circle')
                         ->color('success')
@@ -436,7 +437,7 @@ class ProductReviewResource extends Resource
                                 ->success()
                                 ->send();
                         }),
-                    Tables\Actions\BulkAction::make('disapprove')
+                    Actions\BulkAction::make('disapprove')
                         ->label('عدم تایید انتخاب شده‌ها')
                         ->icon('heroicon-o-x-circle')
                         ->color('danger')

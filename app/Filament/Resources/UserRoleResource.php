@@ -4,13 +4,13 @@ namespace App\Filament\Resources;
 
 use App\Filament\Resources\UserRoleResource\Pages;
 use App\Models\User;
+use Filament\Actions\Action;
 use Filament\Forms\Components\Select;
 use Filament\Forms\Components\TextInput;
 use Filament\Schemas\Schema;
 use Filament\Resources\Resource;
 use Filament\Tables\Filters\Filter;
 use Filament\Tables\Table;
-use Filament\Tables\Actions\Action;
 use Filament\Tables\Columns\TextColumn;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Support\Facades\Hash;

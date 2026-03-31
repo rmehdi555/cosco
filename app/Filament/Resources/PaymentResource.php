@@ -7,6 +7,7 @@ use App\Enums\PaymentMethod;
 use App\Filament\Resources\PaymentResource\Pages;
 use App\Models\Payment;
 use App\Models\Order;
+use Filament\Actions;
 use Filament\Forms\Components\DateTimePicker;
 use Filament\Schemas\Components\Grid;
 use Filament\Schemas\Components\Section;
@@ -215,10 +216,10 @@ class PaymentResource extends Resource
                     ->query(fn (Builder $query): Builder => $query->where('status', PaymentStatus::FAILED->value)),
             ])
             ->actions([
-                Tables\Actions\EditAction::make(),
+                Actions\EditAction::make(),
             ])
             ->bulkActions([
-                Tables\Actions\BulkActionGroup::make([
+                Actions\BulkActionGroup::make([
                 ]),
             ])
             ->defaultSort('created_at', 'desc');

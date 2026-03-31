@@ -4,6 +4,7 @@ namespace App\Filament\Resources;
 
 use App\Filament\Resources\ContactUsResource\Pages;
 use App\Models\ContactUs;
+use Filament\Actions;
 use Filament\Forms;
 use Filament\Schemas\Schema;
 use Filament\Resources\Resource;
@@ -153,10 +154,10 @@ class ContactUsResource extends Resource
             ])
             ->actions([
 
-                Tables\Actions\EditAction::make()
+                Actions\EditAction::make()
                     ->label('ویرایش'),
 
-                Tables\Actions\Action::make('mark_answered')
+                Actions\Action::make('mark_answered')
                     ->label('علامت‌گذاری پاسخ')
                     ->icon('heroicon-o-check-circle')
                     ->color('success')
@@ -169,7 +170,7 @@ class ContactUsResource extends Resource
                     ->modalDescription('آیا مطمئن هستید که می‌خواهید این پیام را به عنوان پاسخ داده شده علامت‌گذاری کنید؟')
                     ->modalSubmitActionLabel('بله، علامت‌گذاری کن'),
 
-                Tables\Actions\Action::make('mark_unanswered')
+                Actions\Action::make('mark_unanswered')
                     ->label('علامت‌گذاری بدون پاسخ')
                     ->icon('heroicon-o-x-circle')
                     ->color('danger')
@@ -183,8 +184,8 @@ class ContactUsResource extends Resource
                     ->modalSubmitActionLabel('بله، علامت‌گذاری کن'),
             ])
             ->bulkActions([
-                Tables\Actions\BulkActionGroup::make([
-                    Tables\Actions\BulkAction::make('mark_answered')
+                Actions\BulkActionGroup::make([
+                    Actions\BulkAction::make('mark_answered')
                         ->label('علامت‌گذاری پاسخ داده شده')
                         ->icon('heroicon-o-check-circle')
                         ->color('success')
@@ -198,7 +199,7 @@ class ContactUsResource extends Resource
                         ->modalDescription('آیا مطمئن هستید که می‌خواهید پیام‌های انتخاب شده را به عنوان پاسخ داده شده علامت‌گذاری کنید؟')
                         ->modalSubmitActionLabel('بله، علامت‌گذاری کن'),
 
-                    Tables\Actions\BulkAction::make('mark_unanswered')
+                    Actions\BulkAction::make('mark_unanswered')
                         ->label('علامت‌گذاری بدون پاسخ')
                         ->icon('heroicon-o-x-circle')
                         ->color('danger')

@@ -11,6 +11,7 @@ use App\Models\Address;
 use App\Filament\ExcelExport\OrderExport;
 use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Support\Facades\Auth;
+use Filament\Actions;
 use Filament\Forms\Components\Select;
 use Filament\Forms\Components\TextInput;
 use Filament\Forms\Components\Textarea;
@@ -237,7 +238,7 @@ class OrderResource extends Resource
                     ->query(fn (Builder $query): Builder => $query->whereMonth('created_at', now()->month)),
             ])
             ->headerActions([
-                Tables\Actions\Action::make('export')
+                Actions\Action::make('export')
                     ->label('خروجی Excel')
                     ->icon('heroicon-o-arrow-down-tray')
                     ->color('success')
@@ -246,11 +247,11 @@ class OrderResource extends Resource
                     }),
             ])
             ->actions([
-                Tables\Actions\EditAction::make(),
+                Actions\EditAction::make(),
             ])
             ->bulkActions([
-                Tables\Actions\BulkActionGroup::make([
-                    Tables\Actions\Action::make('export_selected')
+                Actions\BulkActionGroup::make([
+                    Actions\Action::make('export_selected')
                         ->label('خروجی انتخاب شده‌ها')
                         ->icon('heroicon-o-arrow-down-tray')
                         ->color('success')

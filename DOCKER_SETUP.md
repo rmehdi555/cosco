@@ -168,3 +168,8 @@ docker-compose exec app php artisan key:generate
 ---
 
 با انجام این مراحل، پروژه با Docker بالا می‌آید و پنل مدیریت دیتابیس phpMyAdmin روی پورت 8080 در دسترس است.
+
+
+##پاک کردن کش بعد از تغییرات در قالب ادمین 
+docker-compose exec -T app php artisan optimize:clear
+

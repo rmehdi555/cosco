@@ -5,6 +5,7 @@ namespace App\Filament\Resources;
 use App\Enums\UserType;
 use App\Filament\Resources\UserResource\Pages;
 use App\Models\User;
+use Filament\Actions;
 use Filament\Forms\Components\Select;
 use Illuminate\Database\Eloquent\Model;
 use Filament\Forms\Components\TextInput;
@@ -147,10 +148,10 @@ class UserResource extends Resource
                 //
             ])
             ->actions([
-                \Filament\Tables\Actions\EditAction::make(),
+                Actions\EditAction::make(),
             ])
             ->bulkActions([
-                \Filament\Tables\Actions\BulkActionGroup::make([
+                Actions\BulkActionGroup::make([
                 ]),
             ])
             ->defaultSort('id', 'desc');

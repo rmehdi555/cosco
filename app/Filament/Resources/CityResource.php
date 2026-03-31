@@ -5,6 +5,7 @@ namespace App\Filament\Resources;
 use App\Filament\Resources\CityResource\Pages;
 use App\Models\City;
 use App\Models\Province;
+use Filament\Actions;
 use Filament\Forms\Components\TextInput;
 use Filament\Forms\Components\Select;
 use Filament\Schemas\Schema;
@@ -106,10 +107,10 @@ class CityResource extends Resource
                     ->searchable(),
             ])
             ->actions([
-                \Filament\Tables\Actions\EditAction::make(),
+                Actions\EditAction::make(),
             ])
             ->bulkActions([
-                \Filament\Tables\Actions\BulkActionGroup::make([
+                Actions\BulkActionGroup::make([
                 ]),
             ]);
     }
