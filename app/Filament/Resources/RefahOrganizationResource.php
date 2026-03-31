@@ -59,7 +59,7 @@ class RefahOrganizationResource extends Resource
                             ->helperText('آیا این سازمان در حال حاضر فعال است؟')
                             ->inline(false),
                     ])
-                    ->columns(1),
+                    ->columnSpanFull(),
             ]);
     }
 

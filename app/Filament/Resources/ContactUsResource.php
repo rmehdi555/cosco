@@ -6,6 +6,7 @@ use App\Filament\Resources\ContactUsResource\Pages;
 use App\Models\ContactUs;
 use Filament\Actions;
 use Filament\Forms;
+use Filament\Schemas\Components\Section;
 use Filament\Schemas\Schema;
 use Filament\Resources\Resource;
 use Filament\Tables;
@@ -41,7 +42,7 @@ class ContactUsResource extends Resource
     {
         return $schema
             ->components([
-                Forms\Components\Section::make('اطلاعات شخصی')
+                Section::make('اطلاعات شخصی')
                     ->schema([
                         Forms\Components\TextInput::make('first_name')
                             ->label('نام')
@@ -63,7 +64,7 @@ class ContactUsResource extends Resource
                     ])
                     ->columns(2),
 
-                Forms\Components\Section::make('متن پیام')
+                Section::make('متن پیام')
                     ->schema([
                         Forms\Components\Textarea::make('body')
                             ->label('متن پیام')
@@ -73,7 +74,7 @@ class ContactUsResource extends Resource
                             ->columnSpanFull(),
                     ]),
 
-                Forms\Components\Section::make('وضعیت')
+                Section::make('وضعیت')
                     ->schema([
                         Forms\Components\Toggle::make('is_answered')
                             ->label('پاسخ داده شده')

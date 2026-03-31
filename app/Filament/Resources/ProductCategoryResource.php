@@ -4,6 +4,7 @@ namespace App\Filament\Resources;
 
 use App\Filament\Resources\ProductCategoryResource\Pages;
 use App\Models\ProductCategory;
+use Filament\Actions;
 use Filament\Forms\Components\FileUpload;
 use Filament\Schemas\Components\Grid;
 use Filament\Schemas\Components\Section;
@@ -81,7 +82,7 @@ class ProductCategoryResource extends Resource
                                 ->label('فعال')
                                 ->default(true),
                         ]),
-                    ])->columnSpan(2),
+                    ])->columnSpanFull(),
 
                     Section::make('تصویر')->schema([
                         FileUpload::make('image_url')
@@ -93,7 +94,7 @@ class ProductCategoryResource extends Resource
                             ->directory('product-categories')
                             ->maxSize(2048)
                             ->helperText('حداکثر اندازه: 2MB'),
-                    ])->columnSpan(1),
+                    ])->columnSpanFull(),
                 ]),
             ]);
     }
@@ -157,10 +158,10 @@ class ProductCategoryResource extends Resource
                     )),
             ])
             ->actions([
-                Tables\Actions\EditAction::make(),
+                Actions\EditAction::make(),
             ])
             ->bulkActions([
-                Tables\Actions\BulkActionGroup::make([
+                Actions\BulkActionGroup::make([
                 ]),
             ])
             ->defaultSort('created_at', 'desc');

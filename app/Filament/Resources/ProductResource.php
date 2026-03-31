@@ -53,8 +53,8 @@ class ProductResource extends Resource
     {
         return $schema
             ->components([
-                Grid::make(2)->schema([
-                    Section::make('اطلاعات اصلی')->schema([
+                Section::make('اطلاعات اصلی')->schema([
+                    Grid::make(3)->schema([
                         TextInput::make('name')
                             ->label('نام محصول')
                             ->required()
@@ -96,9 +96,12 @@ class ProductResource extends Resource
                             ->required()
                             ->searchable()
                             ->placeholder('انتخاب برند'),
-                    ])->columnSpan(1),
+                    ]),
 
-                    Section::make('قیمت و موجودی')->schema([
+                ])->columnSpanFull(),
+
+                Section::make('قیمت و موجودی')->schema([
+                    Grid::make(3)->schema([
                         TextInput::make('price')
                             ->label('قیمت')
                             ->numeric()
@@ -113,8 +116,8 @@ class ProductResource extends Resource
                             ->minValue(0)
                             ->required()
                             ->helperText('تعداد موجود در انبار'),
-                    ])->columnSpan(1),
-                ]),
+                    ]),
+                ])->columnSpanFull(),
 
                 Section::make('توضیحات')->schema([
                     Textarea::make('description')
@@ -123,10 +126,11 @@ class ProductResource extends Resource
                         ->rows(5)
                         ->placeholder('توضیحات کامل محصول را وارد کنید')
                         ->helperText('توضیحات کامل محصول برای نمایش به مشتریان'),
-                ]),
+                ])
+                ->columnSpanFull(),
                 TinyEditor::make('body')
                 ->label('توضیحات کامل محصول')
-                ->columnSpanFull(),
+                ->columnSpan(2),
 
                 Section::make('آلبوم تصاویر')->schema([
                     Repeater::make('images')
