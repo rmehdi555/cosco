@@ -1,29 +1,9 @@
 <?php
 
-/**
- * Map every tinymce-i18n langs8/*.min.js under public to a local asset URL (no jsDelivr).
- */
-function filament_tinymce_local_languages(): array
-{
-    $dir = public_path('vendor/tinymce-i18n/langs8');
-    if (! is_dir($dir)) {
-        return [];
-    }
-
-    $languages = [];
-    foreach (glob($dir.'/*.min.js') ?: [] as $path) {
-        $base = basename($path, '.min.js');
-        $languages[$base] = tinymce_local_asset_url('vendor/tinymce-i18n/langs8/'.basename($path));
-    }
-
-    return $languages;
-}
-
 return [
     'version' => [
         'tiny' => '8.0.2',
         'language' => [
-            // https://cdn.jsdelivr.net/npm/tinymce-i18n@latest/
             'version' => '25.8.4',
             'package' => 'langs8',
         ],
@@ -73,10 +53,8 @@ return [
     ],
 
     /**
-     * Per-locale language pack URLs (overrides jsDelivr from the package).
-     * Filled automatically from public/vendor/tinymce-i18n/langs8/*.min.js — run:
-     * php artisan tinymce:sync-i18n
-     * (or npm install, which runs scripts/copy-tinymce-i18n.mjs if you use the npm workflow).
+     * Every UI locale → local URL (see app/helpers.php). Never uses jsDelivr.
+     * Run `php artisan tinymce:sync-i18n` for full langs8; otherwise en/fa file fallbacks apply.
      */
     'languages' => filament_tinymce_local_languages(),
 

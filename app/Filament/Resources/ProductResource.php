@@ -27,7 +27,7 @@ use Filament\Tables\Filters\TernaryFilter;
 use Filament\Tables\Table;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Support\Str;
-use AmidEsfahani\FilamentTinyEditor\TinyEditor;
+use App\Forms\Components\TinyEditor;
 
 class ProductResource extends Resource
 {

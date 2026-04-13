@@ -4,7 +4,13 @@ namespace App\Filament\Resources;
 
 use App\Filament\Resources\DiscountTypeResource\Pages;
 use App\Models\DiscountType;
-use Filament\Forms;
+use Filament\Actions;
+use Filament\Forms\Components\ColorPicker;
+use Filament\Forms\Components\FileUpload;
+use Filament\Forms\Components\Select;
+use Filament\Forms\Components\TextInput;
+use Filament\Forms\Components\Toggle;
+use Filament\Schemas\Components\Section;
 use Filament\Schemas\Schema;
 use Filament\Resources\Resource;
 use Filament\Tables;
@@ -36,78 +42,78 @@ class DiscountTypeResource extends Resource
     {
         return $schema
             ->components([
-                Forms\Components\Section::make('اطلاعات اصلی')
+                Section::make('اطلاعات اصلی')
                     ->schema([
-                        Forms\Components\Select::make('product_category_id')
+                        Select::make('product_category_id')
                             ->label('دسته‌بندی محصول')
                             ->relationship('productCategory', 'name')
                             ->required()
                             ->searchable(),
 
-                        Forms\Components\TextInput::make('title')
+                        TextInput::make('title')
                             ->label('عنوان')
                             ->maxLength(255),
 
-                        Forms\Components\TextInput::make('footer')
+                        TextInput::make('footer')
                             ->label('پاورقی')
                             ->maxLength(255),
 
-                        Forms\Components\ColorPicker::make('background_color_up')
+                        ColorPicker::make('background_color_up')
                             ->label('رنگ پس‌زمینه بالا'),
 
-                        Forms\Components\ColorPicker::make('background_color_down')
+                        ColorPicker::make('background_color_down')
                             ->label('رنگ پس‌زمینه پایین'),
 
-                        Forms\Components\FileUpload::make('image_url')
+                        FileUpload::make('image_url')
                             ->label('تصویر')
                             ->image()
                             ->disk('public')
                             ->directory('discount-types'),
 
-                        Forms\Components\TextInput::make('link')
+                        TextInput::make('link')
                             ->label('لینک')
                             ->url()
                             ->maxLength(255),
 
-                        Forms\Components\Toggle::make('target')
+                        Toggle::make('target')
                             ->label('باز شدن در تب جدید')
                             ->default(true),
 
-                        Forms\Components\Toggle::make('is_show')
+                        Toggle::make('is_show')
                             ->label('نمایش')
                             ->default(true),
                     ])
                     ->columns(2),
 
-                Forms\Components\Section::make('اطلاعات تبلیغات')
+                Section::make('اطلاعات تبلیغات')
                     ->schema([
-                        Forms\Components\TextInput::make('ads_title')
+                        TextInput::make('ads_title')
                             ->label('عنوان تبلیغات')
                             ->maxLength(255),
 
-                        Forms\Components\TextInput::make('ads_footer')
+                        TextInput::make('ads_footer')
                             ->label('پاورقی تبلیغات')
                             ->maxLength(255),
 
-                        Forms\Components\ColorPicker::make('ads_background_color_up')
+                        ColorPicker::make('ads_background_color_up')
                             ->label('رنگ پس‌زمینه تبلیغات بالا'),
 
-                        Forms\Components\ColorPicker::make('ads_background_color_down')
+                        ColorPicker::make('ads_background_color_down')
                             ->label('رنگ پس‌زمینه تبلیغات پایین'),
 
-                        Forms\Components\FileUpload::make('ads_image_url')
+                        FileUpload::make('ads_image_url')
                             ->label('تصویر تبلیغات')
                             ->image()
                             ->disk('public')
                             ->directory('discount-types/ads'),
 
-                        Forms\Components\TextInput::make('ads_link')
+                        TextInput::make('ads_link')
                             ->label('لینک تبلیغات')
                             ->required()
                             ->url()
                             ->maxLength(255),
 
-                        Forms\Components\Toggle::make('ads_target')
+                        Toggle::make('ads_target')
                             ->label('باز شدن تبلیغات در تب جدید')
                             ->default(true),
                     ])
@@ -182,10 +188,10 @@ class DiscountTypeResource extends Resource
                 Tables\Filters\TrashedFilter::make(),
             ])
             ->actions([
-                Tables\Actions\EditAction::make(),
+                Actions\EditAction::make(),
             ])
             ->bulkActions([
-                Tables\Actions\BulkActionGroup::make([
+                Actions\BulkActionGroup::make([
                 ]),
             ])
             ->defaultSort('created_at', 'desc');

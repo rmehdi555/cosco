@@ -5,6 +5,7 @@ namespace App\Filament\Resources;
 use App\Filament\Resources\BrandResource\Pages;
 use App\Models\Brand;
 use App\Models\ProductCategory;
+use Filament\Actions;
 use Filament\Forms\Components\FileUpload;
 use Filament\Schemas\Components\Section;
 use Filament\Forms\Components\Select;
@@ -209,10 +210,10 @@ class BrandResource extends Resource
                     ->query(fn (Builder $query): Builder => $query->whereMonth('created_at', now()->month)),
             ])
             ->actions([
-                Tables\Actions\EditAction::make(),
+                Actions\EditAction::make(),
             ])
             ->bulkActions([
-                Tables\Actions\BulkActionGroup::make([
+                Actions\BulkActionGroup::make([
                 ]),
             ])
             ->defaultSort('created_at', 'desc');

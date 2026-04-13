@@ -5,6 +5,7 @@ namespace App\Filament\Resources;
 use App\Filament\Resources\WishlistItemResource\Pages;
 use App\Models\WishlistItem;
 use App\Models\Wishlist;
+use Filament\Actions;
 use App\Models\Product;
 use Filament\Schemas\Components\Grid;
 use Filament\Schemas\Components\Section;
@@ -238,10 +239,10 @@ class WishlistItemResource extends Resource
                     ->query(fn (Builder $query): Builder => $query->where('created_at', '>=', now()->subDays(7))),
             ])
             ->actions([
-                Tables\Actions\EditAction::make(),
+                Actions\EditAction::make(),
             ])
             ->bulkActions([
-                Tables\Actions\BulkActionGroup::make([
+                Actions\BulkActionGroup::make([
                 ]),
             ])
             ->defaultSort('created_at', 'desc');

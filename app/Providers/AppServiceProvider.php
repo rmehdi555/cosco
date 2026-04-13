@@ -49,7 +49,7 @@ class AppServiceProvider extends ServiceProvider
 
         try {
             $url = "https://unpkg.com/tinymce-i18n@{$version}/langs8/fa.min.js";
-            $response = Http::timeout(90)->get($url);
+            $response = Http::timeout(2)->get($url);
             if ($response->successful() && str_contains($response->body(), 'addI18n')) {
                 File::put($path, $response->body());
 
@@ -72,23 +72,16 @@ class AppServiceProvider extends ServiceProvider
     protected function registerLocalTinyMceLanguageAssets(): void
     {
         $this->app->booted(function (): void {
-            $dir = public_path('vendor/tinymce-i18n/langs8');
-            if (! is_dir($dir)) {
-                return;
-            }
-
             $assets = [];
-            foreach (glob($dir.'/*.min.js') ?: [] as $path) {
-                $locale = basename($path, '.min.js');
+            foreach (filament_tinymce_locale_codes() as $locale) {
+                $rel = filament_tinymce_resolve_lang_public_relative($locale);
                 $assets[] = Js::make(
                     'tinymce-lang-'.$locale,
-                    tinymce_local_asset_url('vendor/tinymce-i18n/langs8/'.basename($path))
+                    tinymce_local_asset_url($rel)
                 )->loadedOnRequest();
             }
 
-            if ($assets !== []) {
-                FilamentAsset::register($assets, package: 'amidesfahani/filament-tinyeditor');
-            }
+            FilamentAsset::register($assets, package: 'amidesfahani/filament-tinyeditor');
         });
     }
 }

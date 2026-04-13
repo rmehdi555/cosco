@@ -4,7 +4,11 @@ namespace App\Filament\Resources;
 
 use App\Filament\Resources\MembershipTypeResource\Pages;
 use App\Models\MembershipType;
-use Filament\Forms;
+use Filament\Actions;
+use Filament\Forms\Components\Textarea;
+use Filament\Forms\Components\TextInput;
+use Filament\Forms\Components\Toggle;
+use Filament\Schemas\Components\Section;
 use Filament\Schemas\Schema;
 use Filament\Resources\Resource;
 use Filament\Tables;
@@ -36,34 +40,34 @@ class MembershipTypeResource extends Resource
     {
         return $schema
             ->components([
-                Forms\Components\Section::make('اطلاعات نوع عضویت')
+                Section::make('اطلاعات نوع عضویت')
                     ->schema([
-                        Forms\Components\TextInput::make('name')
+                        TextInput::make('name')
                             ->label('نام')
                             ->required()
                             ->maxLength(255),
                         
-                        Forms\Components\Textarea::make('description')
+                        Textarea::make('description')
                             ->label('توضیحات')
                             ->required()
                             ->maxLength(65535)
                             ->columnSpanFull(),
                         
-                        Forms\Components\TextInput::make('price')
+                        TextInput::make('price')
                             ->label('قیمت (ریال)')
                             ->required()
                             ->numeric()
                             ->minValue(0)
                             ->step(1000),
                         
-                        Forms\Components\TextInput::make('day_cycle')
+                        TextInput::make('day_cycle')
                             ->label('دوره (روز)')
                             ->required()
                             ->numeric()
                             ->minValue(1)
                             ->step(1),
                         
-                        Forms\Components\Toggle::make('is_active')
+                        Toggle::make('is_active')
                             ->label('فعال')
                             ->default(true),
                     ])
@@ -120,10 +124,10 @@ class MembershipTypeResource extends Resource
                     ->falseLabel('غیرفعال'),
             ])
             ->actions([
-                Tables\Actions\EditAction::make(),
+                Actions\EditAction::make(),
             ])
             ->bulkActions([
-                Tables\Actions\BulkActionGroup::make([
+                Actions\BulkActionGroup::make([
                 ]),
             ]);
     }

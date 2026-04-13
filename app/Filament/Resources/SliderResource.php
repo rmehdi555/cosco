@@ -4,7 +4,11 @@ namespace App\Filament\Resources;
 
 use App\Filament\Resources\SliderResource\Pages;
 use App\Models\Slider;
-use Filament\Forms;
+use Filament\Actions;
+use Filament\Forms\Components\FileUpload;
+use Filament\Forms\Components\TextInput;
+use Filament\Forms\Components\Toggle;
+use Filament\Schemas\Components\Section;
 use Filament\Schemas\Schema;
 use Filament\Resources\Resource;
 use Filament\Tables;
@@ -36,35 +40,35 @@ class SliderResource extends Resource
     {
         return $schema
             ->components([
-                Forms\Components\Section::make('اطلاعات اسلایدر')
+                Section::make('اطلاعات اسلایدر')
                     ->schema([
-                        Forms\Components\TextInput::make('title')
+                        TextInput::make('title')
                             ->label('عنوان')
                             ->required()
                             ->maxLength(255),
 
-                        Forms\Components\TextInput::make('link')
+                        TextInput::make('link')
                             ->label('لینک')
                             ->url()
                             ->maxLength(255),
 
-                        Forms\Components\FileUpload::make('image_url')
+                        FileUpload::make('image_url')
                             ->label('تصویر')
                             ->image()
                             ->required()
                             ->disk('public')
                             ->directory('sliders'),
 
-                        Forms\Components\TextInput::make('type')
+                        TextInput::make('type')
                             ->label('نوع')
                             ->required()
                             ->maxLength(255),
 
-                        Forms\Components\Toggle::make('is_show')
+                        Toggle::make('is_show')
                             ->label('نمایش')
                             ->default(true),
 
-                        Forms\Components\Toggle::make('target')
+                        Toggle::make('target')
                             ->label('باز شدن در تب جدید')
                             ->default(true),
                     ])
@@ -134,11 +138,11 @@ class SliderResource extends Resource
                 Tables\Filters\TrashedFilter::make(),
             ])
             ->actions([
-                Tables\Actions\EditAction::make(),
+                Actions\EditAction::make(),
             ])
             ->bulkActions([
-                Tables\Actions\BulkActionGroup::make([
-                    Tables\Actions\RestoreBulkAction::make(),
+                Actions\BulkActionGroup::make([
+                    Actions\RestoreBulkAction::make(),
                 ]),
             ])
             ->defaultSort('created_at', 'desc');

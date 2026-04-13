@@ -8,6 +8,7 @@ use App\Models\Country;
 use App\Models\Province;
 use App\Models\City;
 use App\Models\User;
+use Filament\Actions;
 use Filament\Forms\Components\Select;
 use Filament\Forms\Components\Textarea;
 use Filament\Forms\Components\TextInput;
@@ -205,10 +206,10 @@ class AddressResource extends Resource
                     )),
             ])
             ->actions([
-                Tables\Actions\EditAction::make(),
+                Actions\EditAction::make(),
             ])
             ->bulkActions([
-                Tables\Actions\BulkActionGroup::make([
+                Actions\BulkActionGroup::make([
                 ]),
             ])
             ->defaultSort('created_at', 'desc');

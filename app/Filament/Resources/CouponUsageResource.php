@@ -6,6 +6,7 @@ use App\Filament\Resources\CouponUsageResource\Pages;
 use App\Models\CouponUsage;
 use App\Models\Coupon;
 use App\Models\Order;
+use Filament\Actions;
 use Filament\Forms\Components\DateTimePicker;
 use Filament\Schemas\Components\Grid;
 use Filament\Schemas\Components\Section;
@@ -152,10 +153,10 @@ class CouponUsageResource extends Resource
                     ->query(fn (Builder $query): Builder => $query->whereMonth('used_at', now()->month)->whereYear('used_at', now()->year)),
             ])
             ->actions([
-                Tables\Actions\EditAction::make(),
+                Actions\EditAction::make(),
             ])
             ->bulkActions([
-                Tables\Actions\BulkActionGroup::make([
+                Actions\BulkActionGroup::make([
                 ]),
             ])
             ->defaultSort('used_at', 'desc');

@@ -6,7 +6,12 @@ use App\Filament\Resources\MembershipResource\Pages;
 use App\Models\Membership;
 use App\Models\MembershipType;
 use App\Models\User;
-use Filament\Forms;
+use Filament\Actions;
+use Filament\Forms\Components\DatePicker;
+use Filament\Forms\Components\Select;
+use Filament\Forms\Components\TextInput;
+use Filament\Forms\Components\Toggle;
+use Filament\Schemas\Components\Section;
 use Filament\Schemas\Schema;
 use Filament\Resources\Resource;
 use Filament\Tables;
@@ -38,37 +43,37 @@ class MembershipResource extends Resource
     {
         return $schema
             ->components([
-                Forms\Components\Section::make('اطلاعات عضویت')
+                Section::make('اطلاعات عضویت')
                     ->schema([
-                        Forms\Components\TextInput::make('serial_number')
+                        TextInput::make('serial_number')
                             ->label('شماره سریال')
                             ->required()
                             ->maxLength(255)
                             ->unique(ignoreRecord: true),
                         
-                        Forms\Components\Select::make('user_id')
+                        Select::make('user_id')
                             ->label('کاربر')
                             ->options(User::all()->pluck('first_name', 'id'))
                             ->searchable()
                             ->required(),
                         
-                        Forms\Components\Select::make('membership_type_id')
+                        Select::make('membership_type_id')
                             ->label('نوع عضویت')
                             ->options(MembershipType::where('is_active', true)->pluck('name', 'id'))
                             ->searchable()
                             ->required(),
                         
-                        Forms\Components\DatePicker::make('start_date')
+                        DatePicker::make('start_date')
                             ->label('تاریخ شروع')
                             ->required()
                             ->default(now()),
                         
-                        Forms\Components\DatePicker::make('end_date')
+                        DatePicker::make('end_date')
                             ->label('تاریخ پایان')
                             ->required()
                             ->after('start_date'),
                         
-                        Forms\Components\Toggle::make('is_active')
+                        Toggle::make('is_active')
                             ->label('فعال')
                             ->default(true),
                     ])
@@ -157,10 +162,10 @@ class MembershipResource extends Resource
                     ->query(fn (Builder $query): Builder => $query->where('end_date', '>=', now())->where('start_date', '<=', now())),
             ])
             ->actions([
-                Tables\Actions\EditAction::make(),
+                Actions\EditAction::make(),
             ])
             ->bulkActions([
-                Tables\Actions\BulkActionGroup::make([
+                Actions\BulkActionGroup::make([
                 ]),
             ]);
     }
