@@ -106,7 +106,10 @@ class ProductCategoryResource extends Resource
                 ImageColumn::make('image_url')
                     ->label('تصویر')
                     ->circular()
-                    ->size(50),
+                    ->size(50)
+                    ->getStateUsing(fn ($record): ?string => $record->image_url
+                        ? asset('storage/'.$record->image_url)
+                        : null),
 
                 TextColumn::make('name')
                     ->label('نام')

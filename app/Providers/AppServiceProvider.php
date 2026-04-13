@@ -2,6 +2,10 @@
 
 namespace App\Providers;
 
+use Filament\Support\Assets\Js;
+use Filament\Support\Facades\FilamentAsset;
+use Illuminate\Support\Facades\File;
+use Illuminate\Support\Facades\Http;
 use Illuminate\Support\ServiceProvider;
 
 class AppServiceProvider extends ServiceProvider
@@ -23,5 +27,68 @@ class AppServiceProvider extends ServiceProvider
         if (class_exists('\App\Http\Resources\SwaggerSchemas')) {
             new \App\Http\Resources\SwaggerSchemas();
         }
+
+        $this->ensureTinyMceI18nFiles();
+        $this->registerLocalTinyMceLanguageAssets();
+    }
+
+    /**
+     * Try to fetch tinymce-i18n langs8 from unpkg when missing (jsDelivr may be blocked).
+     */
+    protected function ensureTinyMceI18nFiles(): void
+    {
+        $version = config('filament-tinyeditor.version.language.version', '25.8.4');
+        $dir = public_path('vendor/tinymce-i18n/langs8');
+        $path = $dir.'/fa.min.js';
+
+        if (is_file($path) && filesize($path) > 500) {
+            return;
+        }
+
+        File::ensureDirectoryExists($dir);
+
+        try {
+            $url = "https://unpkg.com/tinymce-i18n@{$version}/langs8/fa.min.js";
+            $response = Http::timeout(90)->get($url);
+            if ($response->successful() && str_contains($response->body(), 'addI18n')) {
+                File::put($path, $response->body());
+
+                return;
+            }
+        } catch (\Throwable) {
+            // try fallback file
+        }
+
+        $fallback = resource_path('tinymce-i18n-fallback/fa.min.js');
+        if (is_file($fallback)) {
+            File::copy($fallback, $path);
+        }
+    }
+
+    /**
+     * Override filament-tinyeditor language script URLs so local files are used instead of jsDelivr CDN.
+     * Runs after the package registers assets (same package id = Filament merges/overrides).
+     */
+    protected function registerLocalTinyMceLanguageAssets(): void
+    {
+        $this->app->booted(function (): void {
+            $dir = public_path('vendor/tinymce-i18n/langs8');
+            if (! is_dir($dir)) {
+                return;
+            }
+
+            $assets = [];
+            foreach (glob($dir.'/*.min.js') ?: [] as $path) {
+                $locale = basename($path, '.min.js');
+                $assets[] = Js::make(
+                    'tinymce-lang-'.$locale,
+                    tinymce_local_asset_url('vendor/tinymce-i18n/langs8/'.basename($path))
+                )->loadedOnRequest();
+            }
+
+            if ($assets !== []) {
+                FilamentAsset::register($assets, package: 'amidesfahani/filament-tinyeditor');
+            }
+        });
     }
 }

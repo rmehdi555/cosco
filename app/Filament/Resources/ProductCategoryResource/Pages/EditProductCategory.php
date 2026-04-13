@@ -155,7 +155,7 @@ class EditProductCategory extends EditRecord
                                     'parent_id' => $parentCategory->id,
                                     'name' => $categoryName,
                                     'slug' => $slug,
-                                    'image_url' => $parentCategory->image_url ?: 'roduct-images/default.png',
+                                    'image_url' => $parentCategory->image_url ?: 'product-categories/default.png',
                                     'description' => $parentCategory->description ?: 'Imported from Excel',
                                     'is_active' => true,
                                 ]);
@@ -244,7 +244,7 @@ class EditProductCategory extends EditRecord
                                 }
 
                                 $normalized = ltrim($raw, '/\\');
-                                $imageUrl = 'roduct-images/' . $normalized;
+                                $imageUrl = 'product-images/category-' .$parentCategory->id . '/' . $normalized;
 
                                 ProductImage::query()->create([
                                     'product_id' => $product->id,

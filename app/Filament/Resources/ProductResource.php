@@ -221,7 +221,11 @@ class ProductResource extends Resource
                     ->size(50)
                     ->getStateUsing(function ($record) {
                         $mainImage = $record->images()->where('is_main', true)->first();
-                        return $mainImage ? $mainImage->image_url : null;
+                        if (! $mainImage?->image_url) {
+                            return null;
+                        }
+
+                        return asset('storage/'.$mainImage->image_url);
                     }),
 
                 TextColumn::make('name')
